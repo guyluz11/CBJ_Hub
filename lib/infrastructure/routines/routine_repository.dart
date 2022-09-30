@@ -6,6 +6,7 @@ import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/routine/i_routine_cbj_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_failures.dart';
+import 'package:cbj_hub/domain/routine/value_objects_routine_cbj.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:dartz/dartz.dart';
@@ -56,20 +57,30 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
   Future<Either<RoutineCbjFailure, Unit>> addNewRoutine(
     RoutineCbjEntity routineCbj,
   ) async {
-    /// Check if routine already exist
-    if (findRoutineIfAlreadyBeenAdded(routineCbj) == null) {
-      _allRoutines
-          .addEntries([MapEntry(routineCbj.uniqueId.getOrCrash(), routineCbj)]);
+    RoutineCbjEntity tempRoutineCbj = routineCbj;
 
-      final String entityId = routineCbj.uniqueId.getOrCrash();
+    /// Check if routine already exist
+    if (findRoutineIfAlreadyBeenAdded(tempRoutineCbj) == null) {
+      _allRoutines.addEntries(
+          [MapEntry(tempRoutineCbj.uniqueId.getOrCrash(), tempRoutineCbj)]);
+
+      final String entityId = tempRoutineCbj.uniqueId.getOrCrash();
 
       /// If it is new routine
-      _allRoutines[entityId] = routineCbj;
+      _allRoutines[entityId] = tempRoutineCbj;
 
-      await saveAndActivateRoutineToDb();
       await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-      getIt<ISavedRoomsRepo>().addRoutineToRoomDiscoveredIfNotExist(routineCbj);
-      await getIt<INodeRedRepository>().createNewNodeRedRoutine(routineCbj);
+
+      getIt<ISavedRoomsRepo>()
+          .addRoutineToRoomDiscoveredIfNotExist(tempRoutineCbj);
+      final String routineNodeRedFlowId = await getIt<INodeRedRepository>()
+          .createNewNodeRedRoutine(tempRoutineCbj);
+      if (routineNodeRedFlowId.isNotEmpty) {
+        tempRoutineCbj = tempRoutineCbj.copyWith(
+          nodeRedFlowId: RoutineCbjNodeRedFlowId(routineNodeRedFlowId),
+        );
+      }
+      await saveAndActivateRoutineToDb();
     }
     return right(unit);
   }

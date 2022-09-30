@@ -1,6 +1,7 @@
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
 import 'package:cbj_hub/domain/binding/binding_cbj_failures.dart';
 import 'package:cbj_hub/domain/binding/i_binding_cbj_repository.dart';
+import 'package:cbj_hub/domain/binding/value_objects_routine_cbj.dart';
 import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
 import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
@@ -56,20 +57,29 @@ class BindingCbjRepository implements IBindingCbjRepository {
   Future<Either<BindingCbjFailure, Unit>> addNewBinding(
     BindingCbjEntity bindingCbj,
   ) async {
-    /// Check if binding already exist
-    if (findBindingIfAlreadyBeenAdded(bindingCbj) == null) {
-      _allBindings
-          .addEntries([MapEntry(bindingCbj.uniqueId.getOrCrash(), bindingCbj)]);
+    BindingCbjEntity tempBindingCbj = bindingCbj;
 
-      final String entityId = bindingCbj.uniqueId.getOrCrash();
+    /// Check if binding already exist
+    if (findBindingIfAlreadyBeenAdded(tempBindingCbj) == null) {
+      _allBindings.addEntries(
+          [MapEntry(tempBindingCbj.uniqueId.getOrCrash(), tempBindingCbj)]);
+
+      final String entityId = tempBindingCbj.uniqueId.getOrCrash();
 
       /// If it is new binding
-      _allBindings[entityId] = bindingCbj;
+      _allBindings[entityId] = tempBindingCbj;
 
-      await saveAndActivateBindingToDb();
       await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-      getIt<ISavedRoomsRepo>().addBindingToRoomDiscoveredIfNotExist(bindingCbj);
-      await getIt<INodeRedRepository>().createNewNodeRedBinding(bindingCbj);
+      getIt<ISavedRoomsRepo>()
+          .addBindingToRoomDiscoveredIfNotExist(tempBindingCbj);
+      final String bindingNodeRedFlowId = await getIt<INodeRedRepository>()
+          .createNewNodeRedBinding(tempBindingCbj);
+      if (bindingNodeRedFlowId.isNotEmpty) {
+        tempBindingCbj = tempBindingCbj.copyWith(
+          nodeRedFlowId: BindingCbjNodeRedFlowId(bindingNodeRedFlowId),
+        );
+      }
+      await saveAndActivateBindingToDb();
     }
     return right(unit);
   }

@@ -184,9 +184,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
           ),
         );
 
-        // TODO: add new type for adding new scenes and not use noDevicesToTransfer
-        if (sceneStateGrpcTemp ==
-            DeviceStateGRPC.noDevicesToTransfer.toString()) {
+        if (sceneStateGrpcTemp == DeviceStateGRPC.addingNewScene.toString()) {
           getIt<ISceneCbjRepository>().addNewScene(sceneCbj);
         } else {
           getIt<ISceneCbjRepository>().activateScene(sceneCbj);
@@ -207,9 +205,8 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
           ),
         );
 
-        // TODO: add new type for adding new routine and not use noDevicesToTransfer
         if (routineStateGrpcTemp ==
-            DeviceStateGRPC.noDevicesToTransfer.toString()) {
+            DeviceStateGRPC.addingNewRoutine.toString()) {
           getIt<IRoutineCbjRepository>().addNewRoutine(routineCbj);
         } else {
           // For a way to active it manually
@@ -329,10 +326,11 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         uniqueId: UniqueId(),
         name: SceneCbjName('Empty'),
         backgroundColor: SceneCbjBackgroundColor(000.toString()),
-        firstNodeId: SceneCbjFirstNodeId(null),
         image: SceneCbjBackgroundImage(null),
         iconCodePoint: SceneCbjIconCodePoint(null),
         automationString: SceneCbjAutomationString(null),
+        nodeRedFlowId: SceneCbjNodeRedFlowId(null),
+        firstNodeId: SceneCbjFirstNodeId(null),
         lastDateOfExecute: SceneCbjLastDateOfExecute(null),
         deviceStateGRPC:
             SceneCbjDeviceStateGRPC(DeviceStateGRPC.ack.toString()),
@@ -358,10 +356,10 @@ class HubRequestsToApp {
 /// Requests and updates from app to the hub
 class AppRequestsToHub {
   /// Stream controller of the requests from the hub
-  static final hubRequestsStreamController =
+  static final appRequestsToHubStreamController =
       StreamController<RequestsAndStatusFromHub>();
 
   /// Stream of the requests from the hub
-  static Stream<RequestsAndStatusFromHub> get hubRequestsStream =>
-      hubRequestsStreamController.stream;
+  static Stream<RequestsAndStatusFromHub> get appRequestsToHubStream =>
+      appRequestsToHubStreamController.stream;
 }

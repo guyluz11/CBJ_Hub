@@ -32,9 +32,7 @@ class BootUp {
 
     CompaniesConnectorConjector.searchAllMdnsDevicesAndSetThemUp();
 
-    // TODO: ping command does not work under snap.
-    // https://github.com/CyBear-Jinni-user/CBJ_Hub_Snap/issues/2
-    // CompaniesConnectorConjector.searchPingableDevicesAndSetThemUpByHostName();
+    CompaniesConnectorConjector.searchPingableDevicesAndSetThemUpByHostName();
 
     getIt<IMqttServerRepository>();
 

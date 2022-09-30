@@ -30,6 +30,11 @@ abstract class ISavedRoomsRepo {
     required RoomEntity roomEntity,
   });
 
+  Future<Either<LocalDbFailures, RoomEntity>>
+      createScenesForAllSelectedRoomTypes({
+    required RoomEntity roomEntity,
+  });
+
   /// Get all saved rooms
   Future<Map<String, RoomEntity>> getAllRooms();
 }

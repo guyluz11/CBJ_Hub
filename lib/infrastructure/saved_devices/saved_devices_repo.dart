@@ -145,4 +145,15 @@ class SavedDevicesRepo extends ISavedDevicesRepo {
       deviceList: List<DeviceEntityAbstract>.from(_allDevices.values),
     );
   }
+
+  @override
+  Future<Either<LocalDbFailures, DeviceEntityAbstract>> getDeviceById(
+    String deviceUniqueId,
+  ) async {
+    final DeviceEntityAbstract? device = _allDevices[deviceUniqueId];
+    if (device != null) {
+      return right(device);
+    }
+    return left(const LocalDbFailures.unexpected());
+  }
 }

@@ -8,7 +8,7 @@ part 'routine_cbj_entity.freezed.dart';
 @freezed
 class RoutineCbjEntity with _$RoutineCbjEntity {
   const factory RoutineCbjEntity({
-    /// The unique id of the routine, will alsow be used as the path id of the.
+    /// The unique id of the routine, will alsow be used as the flow/tab id.
     required UniqueId uniqueId,
 
     /// Name of the automation, will be shown to the user.
@@ -17,6 +17,9 @@ class RoutineCbjEntity with _$RoutineCbjEntity {
 
     /// All the automation as string.
     required RoutineCbjAutomationString automationString,
+
+    /// Node-Red flow id of the scene
+    required RoutineCbjNodeRedFlowId nodeRedFlowId,
 
     /// The actual id of the first node, most of the time will be the same as
     /// uniqueId variable.
@@ -54,6 +57,7 @@ class RoutineCbjEntity with _$RoutineCbjEntity {
       name: name.getOrCrash(),
       backgroundColor: backgroundColor.getOrCrash(),
       automationString: automationString.getOrCrash(),
+      nodeRedFlowId: nodeRedFlowId.getOrCrash(),
       firstNodeId: firstNodeId.getOrCrash(),
       iconCodePoint: iconCodePoint.getOrCrash(),
       image: image.getOrCrash(),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
 import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
@@ -38,61 +40,133 @@ class NodeRedRepository extends INodeRedRepository {
   /// https://github.com/CyBear-Jinni/cbj_hub/issues/150
   late Future<bool> _deviceIsReadyToSendInternetRequests;
 
-  static NodeRedAPI nodeRedAPI = NodeRedAPI();
+  static NodeRedAPI nodeRedApi = NodeRedAPI();
 
-  /// List of all the scenes JSONs in Node-RED
-  List<String> scenesList = [];
-
-  /// List of all the routines JSONs in Node-RED
-  List<String> routinesList = [];
-
-  /// List of all the bindings JSONs in Node-RED
-  List<String> bindingsList = [];
+  // /// List of all the scenes JSONs in Node-RED
+  // List<String> scenesList = [];
+  //
+  // /// List of all the routines JSONs in Node-RED
+  // List<String> routinesList = [];
+  //
+  // /// List of all the bindings JSONs in Node-RED
+  // List<String> bindingsList = [];
 
   @override
-  Future<bool> createNewNodeRedScene(SceneCbjEntity sceneCbj) async {
+  Future<String> createNewNodeRedScene(SceneCbjEntity sceneCbj) async {
     await _deviceIsReadyToSendInternetRequests;
-    // TODO: Check if sceneCbj unique Id exist, if so don't try to add it again
-    final Response response = await nodeRedAPI.postFlow(
-      label: sceneCbj.name.getOrCrash(),
-      nodes: sceneCbj.automationString.getOrCrash()!,
-    );
-    if (response.statusCode == 200) {
-      return true;
+
+    // final String flowId = sceneCbj.uniqueId.getOrCrash();
+
+    try {
+      if (sceneCbj.nodeRedFlowId.getOrCrash() != null) {
+        await nodeRedApi.deleteFlowById(
+          id: sceneCbj.nodeRedFlowId.getOrCrash()!,
+        );
+      }
+      final Response response = await nodeRedApi.postFlow(
+        label: sceneCbj.name.getOrCrash(),
+        nodes: sceneCbj.automationString.getOrCrash()!,
+        flowId: sceneCbj.uniqueId.getOrCrash(),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBodyJson =
+            json.decode(response.body) as Map<String, dynamic>;
+        final String flowId = responseBodyJson["id"] as String;
+        return flowId;
+      } else if (response.statusCode == 400) {
+        logger.w(
+          'Scene probably already exist in node red status code\n${response.statusCode}',
+        );
+      } else {
+        logger.e(
+          'Error setting scene in node red status code\n${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      if (e.toString() ==
+          'The remote computer refused the network connection.\r\n') {
+        logger.e('Node-RED is not installed');
+      } else {
+        logger.e('Node-RED create new scene error:\n$e');
+      }
     }
-    logger.i('Response\n${response.statusCode}');
-    return false;
+    return "";
   }
 
   @override
-  Future<bool> createNewNodeRedRoutine(RoutineCbjEntity routineCbj) async {
+  Future<String> createNewNodeRedRoutine(RoutineCbjEntity routineCbj) async {
     await _deviceIsReadyToSendInternetRequests;
+    // final String flowId = routineCbj.uniqueId.getOrCrash();
 
-    // TODO: Check if routineCbj unique Id exist, if so don't try to add it again
-    final Response response = await nodeRedAPI.postFlow(
-      label: routineCbj.name.getOrCrash(),
-      nodes: routineCbj.automationString.getOrCrash()!,
-    );
-    if (response.statusCode == 200) {
-      return true;
+    try {
+      // if (routinesList.contains(routineCbj.uniqueId.getOrCrash())) {
+      //   await nodeRedApi.deleteFlowById(id: flowId);
+      // }
+      final Response response = await nodeRedApi.postFlow(
+        label: routineCbj.name.getOrCrash(),
+        nodes: routineCbj.automationString.getOrCrash()!,
+        flowId: routineCbj.uniqueId.getOrCrash(),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBodyJson =
+            json.decode(response.body) as Map<String, dynamic>;
+        final String flowId = responseBodyJson["id"] as String;
+        return flowId;
+      } else if (response.statusCode == 400) {
+        logger.w(
+          'Routine probably already exist in node red status code\n${response.statusCode}',
+        );
+      } else {
+        logger.e(
+          'Error setting routine in node red status code\n${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      if (e.toString() ==
+          'The remote computer refused the network connection.\r\n') {
+        logger.e('Node-RED is not installed');
+      } else {
+        logger.e('Node-RED create new routine error:\n$e');
+      }
     }
-    logger.i('Response\n${response.statusCode}');
-    return false;
+    return "";
   }
 
   @override
-  Future<bool> createNewNodeRedBinding(BindingCbjEntity bindingCbj) async {
+  Future<String> createNewNodeRedBinding(BindingCbjEntity bindingCbj) async {
     await _deviceIsReadyToSendInternetRequests;
 
-    // TODO: Check if routineCbj unique Id exist, if so don't try to add it again
-    final Response response = await nodeRedAPI.postFlow(
-      label: bindingCbj.name.getOrCrash(),
-      nodes: bindingCbj.automationString.getOrCrash()!,
-    );
-    if (response.statusCode == 200) {
-      return true;
+    try {
+      // if (bindingsList.contains(bindingCbj.uniqueId.getOrCrash())) {
+      //   await nodeRedApi.deleteFlowById(id: flowId);
+      // }
+      final Response response = await nodeRedApi.postFlow(
+        label: bindingCbj.name.getOrCrash(),
+        nodes: bindingCbj.automationString.getOrCrash()!,
+        flowId: bindingCbj.uniqueId.getOrCrash(),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBodyJson =
+            json.decode(response.body) as Map<String, dynamic>;
+        final String flowId = responseBodyJson["id"] as String;
+        return flowId;
+      } else if (response.statusCode == 400) {
+        logger.w(
+          'Binding probably already exist in node red status code\n${response.statusCode}',
+        );
+      } else {
+        logger.e(
+          'Error setting binding in node red status code\n${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      if (e.toString() ==
+          'The remote computer refused the network connection.\r\n') {
+        logger.e('Node-RED is not installed');
+      } else {
+        logger.e('Node-RED create new Binding error:\n$e');
+      }
     }
-    logger.i('Response\n${response.statusCode}');
-    return false;
+    return "";
   }
 }

@@ -27,4 +27,9 @@ abstract class ISavedDevicesRepo {
 
   /// Get all saved devices
   Future<Map<String, DeviceEntityAbstract>> getAllDevices();
+
+  /// Get device by unique ID
+  Future<Either<LocalDbFailures, DeviceEntityAbstract>> getDeviceById(
+    String deviceUniqueId,
+  );
 }

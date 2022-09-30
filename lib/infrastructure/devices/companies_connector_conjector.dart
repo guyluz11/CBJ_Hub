@@ -239,8 +239,6 @@ class CompaniesConnectorConjector {
 
   /// Get all the host names in the connected networks and try to add the device
   static Future<void> searchPingableDevicesAndSetThemUpByHostName() async {
-    final List<Stream<ActiveHost>> activeHostStreamList = [];
-
     while (true) {
       final List<NetworkInterface> networkInterfaceList =
           await NetworkInterface.list();
@@ -249,23 +247,40 @@ class CompaniesConnectorConjector {
         for (final InternetAddress address in networkInterface.addresses) {
           final String ip = address.address;
           final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-          activeHostStreamList.add(HostScanner.getAllPingableDevices(subnet));
-        }
-      }
 
-      for (final Stream<ActiveHost> activeHostStream in activeHostStreamList) {
-        await for (final ActiveHost activeHost in activeHostStream) {
-          try {
-            setHostNameDeviceByCompany(
-              activeHost: activeHost,
-            );
-          } catch (e) {
-            continue;
+          await for (final ActiveHost activeHost
+              in HostScanner.getAllPingableDevices(
+            subnet,
+            resultsInAddressAscendingOrder: false,
+            lastSubnet: 126,
+          )) {
+            try {
+              setHostNameDeviceByCompany(
+                activeHost: activeHost,
+              );
+            } catch (e) {
+              continue;
+            }
+          }
+
+          // Spits to 2 requests to fix error in snap https://github.com/CyBear-Jinni-user/CBJ_Hub_Snap/issues/2
+          await for (final ActiveHost activeHost
+              in HostScanner.getAllPingableDevices(
+            subnet,
+            resultsInAddressAscendingOrder: false,
+            firstSubnet: 127,
+          )) {
+            try {
+              setHostNameDeviceByCompany(
+                activeHost: activeHost,
+              );
+            } catch (e) {
+              continue;
+            }
           }
         }
-
-        await Future.delayed(const Duration(minutes: 5));
       }
+      await Future.delayed(const Duration(minutes: 5));
     }
   }
 

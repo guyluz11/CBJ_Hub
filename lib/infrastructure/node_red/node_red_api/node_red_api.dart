@@ -36,7 +36,7 @@ class NodeRedAPI {
     required String password,
     String clientId = 'node-red-editor',
   }) async {
-    logger.e('Not tested yet');
+    logger.e('postAuthToken Not tested yet');
     final String jsonStringWithFields = '''
     {
       "client_id": "$clientId",
@@ -55,7 +55,7 @@ class NodeRedAPI {
 
   /// Revoke an access token
   Future<Response> postAuthRevoke(String token) async {
-    logger.e('Not tested yet');
+    logger.e('postAuthRevoke Not tested yet');
     return post(
       Uri.parse('$requestsUrl/auth/revoke'),
       headers: {'Content-Type': 'application/json'},
@@ -81,7 +81,7 @@ class NodeRedAPI {
     int vType = 1,
     String? rev,
   }) async {
-    logger.e('Not tested yet');
+    logger.e('postFlows Not tested yet');
 
     final String jsonStringWithFields;
 
@@ -125,15 +125,18 @@ class NodeRedAPI {
 
     /// Should start as list of jsons [{},{}]
     required String nodes,
-    String? id,
+
+    /// Flow id will get ignored when creating new flow as mentioned in the doc
+    /// TODO: check if flow id stopped getting ignored https://discourse.nodered.org/t/make-setting-an-id-in-post-flow-work/67815
+    String? flowId,
     List<dynamic>? configs,
   }) async {
-    final String flowId = id ?? const Uuid().v1();
+    final String idOfTheFlow = flowId ?? const Uuid().v1();
     final List<dynamic> configsList = configs ?? [];
 
     final String jsonStringWithFields = '''
       {
-        "id": "$flowId",
+        "id": "$idOfTheFlow",
         "label": "$label",
         "nodes": $nodes,
         "configs": $configsList
@@ -153,37 +156,39 @@ class NodeRedAPI {
 
   /// Update an individual flow configuration
   Future<Response> putFlowById({
-    required String id,
-    required List<dynamic> configs,
-    required List<dynamic> nodes,
+    required String flowId,
+    required String nodes,
+    List<dynamic>? configs,
     bool normalFlow = true,
     String? label,
     List<dynamic>? subFlows,
   }) async {
-    logger.e('Not tested yet');
+    final List<dynamic> configsList = configs ?? [];
+
+    logger.e('putFlowById Not tested yet');
     final String jsonStringWithFields;
 
     if (normalFlow) {
       jsonStringWithFields = '''
         {
-          "id": "$id",
+          "id": "$flowId",
           "label": "$label",
           "nodes": $nodes,
-          "configs": $configs,
+          "configs": $configsList,
         }
         ''';
     } else {
       jsonStringWithFields = '''
         {
-          "id": "$id",
-          "configs": $configs,
+          "id": "$flowId",
+          "configs": $configsList,
           "subflows": $subFlows,
         }
         ''';
     }
 
     return put(
-      Uri.parse('$requestsUrl/flow/$id'),
+      Uri.parse('$requestsUrl/flow/$flowId'),
       headers: {'Content-Type': 'application/json'},
       body: jsonStringWithFields,
     );
@@ -193,7 +198,6 @@ class NodeRedAPI {
   Future<Response> deleteFlowById({
     required String id,
   }) async {
-    logger.e('Not tested yet');
     return delete(
       Uri.parse('$requestsUrl/flow/$id'),
     );
@@ -208,7 +212,7 @@ class NodeRedAPI {
   Future<Response> postNodes({
     required String module,
   }) async {
-    logger.e('Not tested yet');
+    logger.e('postNodes Not tested yet');
     final String jsonStringWithFields = '''
     {
       "module": "$module",
@@ -231,7 +235,7 @@ class NodeRedAPI {
     required String module,
     required bool enableTheModule,
   }) async {
-    logger.e('Not tested yet');
+    logger.e('putNodesByModule Not tested yet');
     final String jsonStringWithFields = '''
         {
           "enabled": $enableTheModule
@@ -249,7 +253,7 @@ class NodeRedAPI {
   Future<Response> deleteNodesByModule({
     required String module,
   }) async {
-    logger.e('Not tested yet');
+    logger.e('deleteNodesByModule Not tested yet');
     return delete(
       Uri.parse('$requestsUrl/nodes/$module'),
     );
@@ -269,7 +273,7 @@ class NodeRedAPI {
     required String setName,
     required String enableTheModule,
   }) async {
-    logger.e('Not tested yet');
+    logger.e('putNodesModuleSetInformation Not tested yet');
     final String jsonStringWithFields = '''
         {
           "enabled": $enableTheModule
