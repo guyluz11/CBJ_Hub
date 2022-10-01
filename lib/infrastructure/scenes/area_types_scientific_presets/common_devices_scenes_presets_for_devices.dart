@@ -207,20 +207,70 @@ class CommonDevicesScenesPresetsForDevices {
       action: action,
     );
   }
-  //
-  // static MapEntry<String, String> rgbLightOrangePreset() {
-  //   return 'Orange';
-  // }
-  //
-  // static MapEntry<String, String> rgbLightWhitePreset() {
-  //   return 'White';
-  // }
 
-  // static MapEntry<String, String> rgbLightBluePreset(
-  //   DeviceEntityAbstract deviceEntity,
-  //   String firstNodeId,
-  // ) {
-  // }
+  static MapEntry<String, String> rgbLightOrangePreset(
+    DeviceEntityAbstract deviceEntity,
+    String brokerNodeId,
+  ) {
+    final String property =
+        GenericRgbwLightDE.empty().getListOfPropertiesToChange()[1];
+    const String action = '2500';
+
+    return NodeRedConverter.convertToNodeString(
+      device: deviceEntity,
+      brokerNodeId: brokerNodeId,
+      property: property,
+      action: action,
+    );
+  }
+
+  static MapEntry<String, String> rgbLightWhitePreset(
+    DeviceEntityAbstract deviceEntity,
+    String brokerNodeId,
+  ) {
+    final String property =
+        GenericRgbwLightDE.empty().getListOfPropertiesToChange()[1];
+    const String action = '5400';
+
+    return NodeRedConverter.convertToNodeString(
+      device: deviceEntity,
+      brokerNodeId: brokerNodeId,
+      property: property,
+      action: action,
+    );
+  }
+
+  static MapEntry<String, String> rgbLightBluePreset(
+    DeviceEntityAbstract deviceEntity,
+    String brokerNodeId,
+  ) {
+    final String property =
+        GenericRgbwLightDE.empty().getListOfPropertiesToChange()[1];
+    const String action = '8800';
+
+    return NodeRedConverter.convertToNodeString(
+      device: deviceEntity,
+      brokerNodeId: brokerNodeId,
+      property: property,
+      action: action,
+    );
+  }
+
+  static MapEntry<String, String> rgbLightMaxBrightnessPreset(
+    DeviceEntityAbstract deviceEntity,
+    String brokerNodeId,
+  ) {
+    final String property =
+        GenericRgbwLightDE.empty().getListOfPropertiesToChange()[6];
+    final String action = 100.toString();
+
+    return NodeRedConverter.convertToNodeString(
+      device: deviceEntity,
+      brokerNodeId: brokerNodeId,
+      property: property,
+      action: action,
+    );
+  }
 
   /// TODO: Add RgbcctLights preset
 

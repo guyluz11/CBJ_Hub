@@ -111,12 +111,23 @@ class WorkRoomAreaAction {
         break;
       case DeviceTypes.rgbwLights:
         actionsList.addEntries([
+          CommonDevicesScenesPresetsForDevices.rgbLightBluePreset(
+            deviceEntity,
+            brokerNodeId,
+          ),
+        ]);
+        actionsList.addEntries([
+          CommonDevicesScenesPresetsForDevices.rgbLightMaxBrightnessPreset(
+            deviceEntity,
+            brokerNodeId,
+          ),
+        ]);
+        actionsList.addEntries([
           CommonDevicesScenesPresetsForDevices.rgbwLightOnPreset(
             deviceEntity,
             brokerNodeId,
           ),
         ]);
-        // TODO: add light color change to blue
         break;
       case DeviceTypes.scanner:
         // TODO: Handle this case.

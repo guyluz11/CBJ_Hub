@@ -112,6 +112,18 @@ class VideoGamesAreaAction {
         break;
       case DeviceTypes.rgbwLights:
         actionsList.addEntries([
+          CommonDevicesScenesPresetsForDevices.rgbLightOrangePreset(
+            deviceEntity,
+            brokerNodeId,
+          ),
+        ]);
+        actionsList.addEntries([
+          CommonDevicesScenesPresetsForDevices.rgbLightMaxBrightnessPreset(
+            deviceEntity,
+            brokerNodeId,
+          ),
+        ]);
+        actionsList.addEntries([
           CommonDevicesScenesPresetsForDevices.rgbwLightOnPreset(
             deviceEntity,
             brokerNodeId,

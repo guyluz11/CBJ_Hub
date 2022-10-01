@@ -296,6 +296,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     for (final String deviceId in devicesId) {
       if (!scene.automationString.getOrCrash()!.contains(deviceId)) {
+        // TODO: change to List<Map<String, String> so that each type will be able to create multiple scenes
         final Either<SceneCbjFailure, Map<String, String>>
             actionForDevicesInArea = await AreaTypeWithDeviceTypePreset
                 .getPreDefineActionForDeviceInArea(
@@ -306,7 +307,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
         if (actionForDevicesInArea.isRight()) {
           actionForDevicesInArea.fold(
             (l) => null,
-            (r) {
+            (Map<String, String> r) {
               nodeActionsMap.addAll(r);
               nodeRedFuncNodesIds.addAll(r.keys);
             },
@@ -315,12 +316,28 @@ class SceneCbjRepository implements ISceneCbjRepository {
       }
     }
 
+    // Removing start and end curly braces of the map object
+
     final String sceneAutomationStringNoBrackets =
         sceneAutomationString.substring(1, sceneAutomationString.length - 1);
-    // Removing start and end curly braces of the map object
-    final String mapAutomationFixed = nodeActionsMap.values
-        .toString()
-        .substring(1, nodeActionsMap.values.toString().length - 1);
+
+    // Using nodeActionsMap.values.toString() some times creates wrong string with 3 dots that looks like that
+    //   "wires": []
+    // }, ...,     {
+    // "id": ,
+    List<String> nodActionsMapValues = [];
+    if (nodeActionsMap.values.isNotEmpty) {
+      nodActionsMapValues = nodeActionsMap.values.toList();
+    }
+
+    String mapAutomationFixed = '';
+    for (final String actionValue in nodActionsMapValues) {
+      mapAutomationFixed += actionValue;
+      if (actionValue != nodActionsMapValues.last) {
+        mapAutomationFixed += ", ";
+      }
+    }
+
     String tempNewAutomation;
     if (mapAutomationFixed.isEmpty) {
       tempNewAutomation = '[\n$sceneAutomationStringNoBrackets\n]';
@@ -330,7 +347,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
           .toString()
           .substring(1, nodeRedFuncNodesIds.toString().length - 1);
       nodeIdsToAddToMqttIn =
-          '"${nodeIdsToAddToMqttIn.replaceAll(',', '", "')}"';
+          '"${nodeIdsToAddToMqttIn.replaceAll(', ', '", "')}"';
       final String mapAutomationFixedWithNewWires =
           changePropertyValueInAutomation(
         sceneAutomationStringNoBrackets,
