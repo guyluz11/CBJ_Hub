@@ -239,6 +239,12 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
   List<String> getListOfPropertiesToChange() {
     return [
       'lightSwitchState',
+      'lightColorTemperature',
+      'lightColorAlpha',
+      'lightColorHue',
+      'lightColorSaturation',
+      'lightColorValue',
+      'lightBrightness',
     ];
   }
 }
