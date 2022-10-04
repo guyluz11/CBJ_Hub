@@ -19,7 +19,7 @@ This part is using the snap store in order to have easy way to update all the de
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/cbj-hub)
 
 
-To run the hub you will also need [MQTT broker](https://snapcraft.io/mosquitto) as well as [NodeRed](https://snapcraft.io/node-red).
+To run the Hub you will also need [MQTT broker](https://snapcraft.io/mosquitto) as well as [NodeRed](https://snapcraft.io/node-red).
 
 # Social Media Links
 
