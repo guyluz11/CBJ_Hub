@@ -4,15 +4,11 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_node_abs
 
 class NodeRedVisualNodeAbstract extends NodeRedNodeAbstract {
   NodeRedVisualNodeAbstract({
-    required String type,
-    String? id,
-    String? name,
+    required super.type,
+    super.id,
+    super.name,
     this.wires,
-  }) : super(
-          id: id,
-          type: type,
-          name: name,
-        );
+  });
 
   // Does not exists in all nodes, maybe we will move it to another abstract class
   List<List<String>>? wires = [];

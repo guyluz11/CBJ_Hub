@@ -29,9 +29,9 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
 
     getIt<ILocalDbRepository>().getRoutinesFromDb().then((value) {
       value.fold((l) => null, (r) {
-        r.forEach((element) {
+        for (final element in r) {
           addNewRoutine(element);
-        });
+        }
       });
     });
   }
@@ -62,7 +62,8 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
     /// Check if routine already exist
     if (findRoutineIfAlreadyBeenAdded(tempRoutineCbj) == null) {
       _allRoutines.addEntries(
-          [MapEntry(tempRoutineCbj.uniqueId.getOrCrash(), tempRoutineCbj)]);
+        [MapEntry(tempRoutineCbj.uniqueId.getOrCrash(), tempRoutineCbj)],
+      );
 
       final String entityId = tempRoutineCbj.uniqueId.getOrCrash();
 

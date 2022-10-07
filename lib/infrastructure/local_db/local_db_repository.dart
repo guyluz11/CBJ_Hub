@@ -644,8 +644,9 @@ class HiveRepository extends ILocalDbRepository {
   }
 
   @override
-  Future<Either<LocalDbFailures, Unit>> saveBindings(
-      {required List<BindingCbjEntity> bindingList}) async {
+  Future<Either<LocalDbFailures, Unit>> saveBindings({
+    required List<BindingCbjEntity> bindingList,
+  }) async {
     try {
       final List<BindingsHiveModel> bindingsHiveList = [];
 

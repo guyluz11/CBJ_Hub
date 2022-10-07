@@ -1,9 +1,9 @@
-# Contributing to CyBear Jinni Smart Device
+# Contributing to CyBear Jinni Hub
 
 🥳:tada: First off, thanks for taking the time to contribute! 🥳:tada:
 
 
-The following is a set of guidelines for contributing to CyBear Jinni Smart Device.
+The following is a set of guidelines for contributing to CyBear Jinni Hub.
 
 These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 

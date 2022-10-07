@@ -2,22 +2,14 @@ import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/
 
 class TuyaSwitch extends TuyaDeviceAbstract {
   TuyaSwitch({
-    required String name,
-    required String icon,
-    required String id,
-    required String devType,
-    required String haType,
-    required bool online,
-    required bool state,
-  }) : super(
-          name: name,
-          icon: icon,
-          id: id,
-          devType: devType,
-          haType: haType,
-          online: online,
-          state: state,
-        );
+    required super.name,
+    required super.icon,
+    required super.id,
+    required super.devType,
+    required super.haType,
+    required super.online,
+    required super.state,
+  });
 
   factory TuyaSwitch.fromInternalLinkedHashMap(dynamic deviceHashMap) {
     return TuyaSwitch(

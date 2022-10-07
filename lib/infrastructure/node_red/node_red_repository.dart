@@ -28,7 +28,7 @@ class NodeRedRepository extends INodeRedRepository {
           'Node-Red will not get connected until device is connected to www',
         );
       }
-      await Future.delayed(const Duration(milliseconds: 300));
+      await Future.delayed(const Duration(milliseconds: 800));
     }
     return true;
   }

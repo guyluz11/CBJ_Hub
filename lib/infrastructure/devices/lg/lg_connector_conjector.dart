@@ -13,7 +13,7 @@ import 'package:injectable/injectable.dart';
 
 @singleton
 class LgConnectorConjector implements AbstractCompanyConnectorConjector {
-  LgConnectorConjector() {}
+  LgConnectorConjector();
 
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
