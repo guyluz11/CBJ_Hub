@@ -1,26 +1,18 @@
-import 'tuya_device_abstract.dart';
+import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/tuya_device_abstract.dart';
 
 class TuyaLight extends TuyaDeviceAbstract {
   TuyaLight({
-    required String name,
-    required String icon,
-    required String id,
-    required String devType,
-    required String haType,
-    required bool online,
-    required bool state,
+    required super.name,
+    required super.icon,
+    required super.id,
+    required super.devType,
+    required super.haType,
+    required super.online,
+    required super.state,
     required this.brightness,
     required this.colorMode,
     required this.colorTemp,
-  }) : super(
-          name: name,
-          icon: icon,
-          id: id,
-          devType: devType,
-          haType: haType,
-          online: online,
-          state: state,
-        );
+  });
 
   factory TuyaLight.fromInternalLinkedHashMap(dynamic deviceHashMap) {
     return TuyaLight(

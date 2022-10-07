@@ -2,14 +2,15 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/infrastructure/devices/companys_connector_conjector.dart';
+import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
+import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/yeelight/yeelight_1se/yeelight_1se_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/yeelight/yeelight_helpers.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:multicast_dns/multicast_dns.dart';
 import 'package:yeedart/yeedart.dart';
 
 @singleton
@@ -18,7 +19,6 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
     _discoverNewDevices();
   }
 
-  @override
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> _discoverNewDevices() async {
@@ -27,30 +27,54 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
         final responses = await Yeelight.discover();
         for (final DiscoveryResponse yeelightDevice in responses) {
           bool deviceExist = false;
-          for (DeviceEntityAbstract savedDevice in companyDevices.values) {
-            savedDevice = savedDevice as Yeelight1SeEntity;
+          CoreUniqueId? tempCoreUniqueId;
 
-            if (yeelightDevice.id.toString() ==
-                savedDevice.yeelightDeviceId!.getOrCrash()) {
+          for (final DeviceEntityAbstract savedDevice
+              in companyDevices.values) {
+            if (savedDevice is Yeelight1SeEntity &&
+                yeelightDevice.id.toString() ==
+                    savedDevice.vendorUniqueId.getOrCrash()) {
               deviceExist = true;
+              break;
+            } else if (savedDevice is GenericRgbwLightDE &&
+                yeelightDevice.id.toString() ==
+                    savedDevice.vendorUniqueId.getOrCrash()) {
+              /// Device exist as generic and needs to get converted to non generic type for this vendor
+              tempCoreUniqueId = savedDevice.uniqueId;
+              break;
+            } else if (yeelightDevice.id.toString() ==
+                savedDevice.vendorUniqueId.getOrCrash()) {
+              logger.w(
+                'Yeelight Mqtt device type supported but implementation is missing here',
+              );
               break;
             }
           }
           if (!deviceExist) {
-            final DeviceEntityAbstract addDevice =
-                YeelightHelpers.addDiscoverdDevice(yeelightDevice);
-            CompanysConnectorConjector.addDiscoverdDeviceToHub(addDevice);
+            final DeviceEntityAbstract? addDevice =
+                YeelightHelpers.addDiscoverdDevice(
+              yeelightDevice: yeelightDevice,
+              uniqueDeviceId: tempCoreUniqueId,
+            );
+
+            if (addDevice == null) {
+              continue;
+            }
+
+            final DeviceEntityAbstract deviceToAdd =
+                CompaniesConnectorConjector.addDiscoverdDeviceToHub(addDevice);
+
             final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-                MapEntry(addDevice.uniqueId.getOrCrash()!, addDevice);
+                MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+
             companyDevices.addEntries([deviceAsEntry]);
 
-            CompanysConnectorConjector.addDiscoverdDeviceToHub(addDevice);
-            logger.i('New yeelight devices where add');
+            logger.i('New Yeelight device got added');
           }
         }
         await Future.delayed(const Duration(minutes: 3));
       } catch (e) {
-        logger.e('Error discover in yeelight $e');
+        logger.e('Error discover in Yeelight\n$e');
         await Future.delayed(const Duration(minutes: 5));
       }
     }
@@ -78,7 +102,7 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
         companyDevices[yeelightDE.getDeviceId()];
 
     if (device is Yeelight1SeEntity) {
-      device.executeDeviceAction(yeelightDE);
+      device.executeDeviceAction(newEntity: yeelightDE);
     } else {
       logger.w('Yeelight device type does not exist');
     }
@@ -91,34 +115,5 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
   }) async {
     // TODO: implement updateDatabase
     throw UnimplementedError();
-  }
-
-  Future<String?> getIpFromMDNS(String deviceMdnsName) async {
-    final String name = '$deviceMdnsName.local';
-    final MDnsClient client = MDnsClient();
-    // Start the client with default options.
-    await client.start();
-
-    // Get the PTR record for the service.
-    await for (final PtrResourceRecord ptr in client
-        .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
-      // Use the domainName from the PTR record to get the SRV record,
-      // which will have the port and local hostname.
-      // Note that duplicate messages may come through, especially if any
-      // other mDNS queries are running elsewhere on the machine.
-      await for (final SrvResourceRecord srv
-          in client.lookup<SrvResourceRecord>(
-        ResourceRecordQuery.service(ptr.domainName),
-      )) {
-        // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
-        final String bundleId =
-            ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-        logger.v(
-          'Dart observatory instance found at '
-          '${srv.target}:${srv.port} for "$bundleId".',
-        );
-      }
-    }
-    return null;
   }
 }

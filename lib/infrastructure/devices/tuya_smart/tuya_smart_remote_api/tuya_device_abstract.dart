@@ -1,5 +1,5 @@
-import 'tuya_light.dart';
-import 'tuya_switch.dart';
+import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/tuya_light.dart';
+import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/tuya_switch.dart';
 
 abstract class TuyaDeviceAbstract {
   TuyaDeviceAbstract({

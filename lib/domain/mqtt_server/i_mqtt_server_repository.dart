@@ -4,6 +4,20 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:mqtt_client/src/observable/src/records.dart';
 
 abstract class IMqttServerRepository {
+  // static const String hubBaseTopic = 'CBJ_Hub_Topic';
+  //
+  // static const String devicesTopicTypeName = 'Devices';
+
+  String getHubBaseTopic();
+
+  String getDevicesTopicTypeName();
+
+  String getScenesTopicTypeName();
+
+  String getRoutinesTopicTypeName();
+
+  String getBindingsTopicTypeName();
+
   ///Connecting the hub client to broker
   Future<MqttServerClient> connect();
 
@@ -39,4 +53,10 @@ abstract class IMqttServerRepository {
 
   /// Subscribe to changes in given topic
   Future<void> subscribeToTopic(String topic);
+
+  /// Post object to mqtt correctly, right path and right way to post each type
+  Future<void> postToMqtt({
+    required dynamic entityFromTheApp,
+    bool? gotFromApp,
+  });
 }

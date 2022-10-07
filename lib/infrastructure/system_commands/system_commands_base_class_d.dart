@@ -1,13 +1,15 @@
 abstract class SystemCommandsBaseClassD {
   Future<String> getCurrentUserName();
 
+  Future<String> getLocalDbPath();
+
   Future<String> getUuidOfCurrentDevice();
 
   Future<String> getDeviceHostName();
 
   Future<String> getAllEtcReleaseFilesText();
 
-  Future<String?> getFileContent(fileFullPath);
+  Future<String?> getFileContent(String fileFullPath);
 
   Future<String?> getDeviceConfiguration();
 

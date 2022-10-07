@@ -14,51 +14,31 @@ import 'package:yeedart/yeedart.dart';
 
 class XiaomiIoGpx4021GlEntity extends GenericRgbwLightDE {
   XiaomiIoGpx4021GlEntity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericRgbwLightSwitchState lightSwitchState,
-    required GenericRgbwLightColorAlpha lightColorAlpha,
-    required GenericRgbwLightColorHue lightColorHue,
-    required GenericRgbwLightColorSaturation lightColorSaturation,
-    required GenericRgbwLightColorValue lightColorValue,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericRgbwLightSwitchState super.lightSwitchState,
+    required super.lightColorAlpha,
+    required super.lightColorHue,
+    required super.lightColorSaturation,
+    required super.lightColorValue,
     required this.xiaomiIoDeviceId,
     required this.xiaomiIoPort,
+    required super.lightColorTemperature,
+    required super.lightBrightness,
     this.deviceMdnsName,
     this.lastKnownIp,
-    required GenericRgbwLightColorTemperature lightColorTemperature,
-    required GenericRgbwLightBrightness lightBrightness,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
-          lightSwitchState: lightSwitchState,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
-          // TODO: change when implementing philips hue
           deviceVendor: DeviceVendor(
-            VendorsAndServices.vendorsAndServicesNotSupported.toString(),
+            VendorsAndServices.philipsHue.toString(),
           ),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
-          lightColorTemperature: lightColorTemperature,
-          lightBrightness: lightBrightness,
-          lightColorAlpha: lightColorAlpha,
-          lightColorHue: lightColorHue,
-          lightColorSaturation: lightColorSaturation,
-          lightColorValue: lightColorValue,
         );
 
   /// XiaomiIo device unique id that came withe the device
@@ -76,9 +56,9 @@ class XiaomiIoGpx4021GlEntity extends GenericRgbwLightDE {
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     if (newEntity is! GenericRgbwLightDE) {
       return left(
         const CoreFailure.actionExcecuter(
@@ -87,31 +67,47 @@ class XiaomiIoGpx4021GlEntity extends GenericRgbwLightDE {
       );
     }
 
-    if (newEntity.lightSwitchState!.getOrCrash() !=
-        lightSwitchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.lightSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.lightSwitchState!.getOrCrash() !=
+              lightSwitchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.lightSwitchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != lightSwitchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.on) {
           (await turnOnLight()).fold(
-            (l) => logger.e('Error turning xiaomi_io light on'),
-            (r) => logger.i('Light turn on success'),
+            (l) {
+              logger.e('Error turning XiaomiIO light on');
+              throw l;
+            },
+            (r) {
+              logger.i('XiaomiIO light turn on success');
+            },
           );
         } else if (actionToPreform == DeviceActions.off) {
           (await turnOffLight()).fold(
-            (l) => logger.e('Error turning xiaomi_io light off'),
-            (r) => logger.i('Light turn off success'),
+            (l) {
+              logger.e('Error turning XiaomiIO light off');
+              throw l;
+            },
+            (r) {
+              logger.i('XiaomiIO turn off success');
+            },
           );
         } else {
-          logger
-              .e('actionToPreform is not set correctly on XiaomiIo Gpx4021Gl');
+          logger.e(
+            'The action to preform is not set correctly on XiaomiIo Gpx4021Gl',
+          );
         }
       }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
     }
-
-    return right(unit);
   }
 
   @override
@@ -136,7 +132,7 @@ class XiaomiIoGpx4021GlEntity extends GenericRgbwLightDE {
   }
 
   @override
-  Future<Either<CoreFailure, Unit>> adjustBrightness(String brightness) async {
+  Future<Either<CoreFailure, Unit>> setBrightness(String brightness) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -147,6 +143,18 @@ class XiaomiIoGpx4021GlEntity extends GenericRgbwLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> changeColorTemperature({
+    required String lightColorTemperatureNewValue,
+  }) async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> changeColorHsv({
     required String lightColorAlphaNewValue,
     required String lightColorHueNewValue,
     required String lightColorSaturationNewValue,

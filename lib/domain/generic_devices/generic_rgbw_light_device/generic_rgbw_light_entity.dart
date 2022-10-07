@@ -13,17 +13,16 @@ import 'package:dartz/dartz.dart';
 class GenericRgbwLightDE extends DeviceEntityAbstract {
   /// All public field of GenericLight entity
   GenericRgbwLightDE({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceVendor deviceVendor,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.deviceVendor,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
     required this.lightSwitchState,
     required this.lightColorTemperature,
     required this.lightColorAlpha,
@@ -33,26 +32,14 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
     required this.lightBrightness,
     DevicePowerConsumption? powerConsumption,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
           deviceTypes: DeviceType(DeviceTypes.rgbwLights.toString()),
-          deviceVendor: deviceVendor,
-          deviceStateGRPC: deviceStateGRPC,
-          compUuid: compUuid,
-          roomName: roomName,
-          senderDeviceModel: senderDeviceModel,
-          senderDeviceOs: senderDeviceOs,
-          senderId: senderId,
-          stateMassage: stateMassage,
         );
 
   /// Empty instance of GenericLightEntity
   factory GenericRgbwLightDE.empty() => GenericRgbwLightDE(
         uniqueId: CoreUniqueId(),
+        vendorUniqueId: VendorUniqueId(),
         defaultName: DeviceDefaultName(''),
-        roomId: CoreUniqueId(),
-        roomName: DeviceRoomName(''),
         deviceStateGRPC: DeviceState(''),
         senderDeviceOs: DeviceSenderDeviceOs(''),
         senderDeviceModel: DeviceSenderDeviceModel(''),
@@ -75,7 +62,7 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
   GenericRgbwLightSwitchState? lightSwitchState;
 
   /// Color temperature in int
-  GenericRgbwLightColorTemperature? lightColorTemperature;
+  GenericRgbwLightColorTemperature lightColorTemperature;
 
   /// Color alpha in double
   GenericRgbwLightColorAlpha lightColorAlpha;
@@ -91,6 +78,15 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
 
   /// Brightness 0-100%
   GenericRgbwLightBrightness lightBrightness;
+
+  int sendNewTemperatureColorEachMiliseconds = 200;
+  bool doesWaitingToSendTemperatureColorRequest = false;
+
+  int sendNewHsvColorEachMiliseconds = 200;
+  bool doesWaitingToSendHsvColorRequest = false;
+
+  int sendNewBrightnessEachMiliseconds = 200;
+  bool doesWaitingToSendBrightnessRequest = false;
 
   //
   // /// Will return failure if any of the fields failed or return unit if fields
@@ -115,7 +111,13 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
 
   @override
   String getDeviceId() {
-    return uniqueId.getOrCrash()!;
+    return uniqueId.getOrCrash();
+  }
+
+  /// Return a list of all valid actions for this device
+  @override
+  List<String> getAllValidActions() {
+    return GenericRgbwLightSwitchState.rgbwLightValidActions();
   }
 
   @override
@@ -123,9 +125,8 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
     return GenericRgbwLightDeviceDtos(
       deviceDtoClass: (GenericRgbwLightDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
+      vendorUniqueId: vendorUniqueId.getOrCrash(),
       defaultName: defaultName.getOrCrash(),
-      roomId: roomId.getOrCrash(),
-      roomName: roomName.getOrCrash(),
       deviceStateGRPC: deviceStateGRPC.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
       senderDeviceOs: senderDeviceOs.getOrCrash(),
@@ -135,7 +136,7 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
       compUuid: compUuid.getOrCrash(),
       lightSwitchState: lightSwitchState!.getOrCrash(),
       deviceVendor: deviceVendor.getOrCrash(),
-      lightColorTemperature: lightBrightness.getOrCrash(),
+      lightColorTemperature: lightColorTemperature.getOrCrash(),
       lightBrightness: lightBrightness.getOrCrash(),
       lightColorAlpha: lightColorAlpha.getOrCrash(),
       lightColorHue: lightColorHue.getOrCrash(),
@@ -147,9 +148,9 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -179,7 +180,7 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> adjustBrightness(String brightness) async {
+  Future<Either<CoreFailure, Unit>> setBrightness(String brightness) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -190,6 +191,18 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
 
   /// Please override the following methods
   Future<Either<CoreFailure, Unit>> changeColorTemperature({
+    required String lightColorTemperatureNewValue,
+  }) async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> changeColorHsv({
     required String lightColorAlphaNewValue,
     required String lightColorHueNewValue,
     required String lightColorSaturationNewValue,
@@ -201,5 +214,27 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
         failedValue: 'Action does not exist',
       ),
     );
+  }
+
+  @override
+  bool replaceActionIfExist(String action) {
+    if (GenericRgbwLightSwitchState.rgbwLightValidActions().contains(action)) {
+      lightSwitchState = GenericRgbwLightSwitchState(action);
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  List<String> getListOfPropertiesToChange() {
+    return [
+      'lightSwitchState',
+      'lightColorTemperature',
+      'lightColorAlpha',
+      'lightColorHue',
+      'lightColorSaturation',
+      'lightColorValue',
+      'lightBrightness',
+    ];
   }
 }

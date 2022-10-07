@@ -13,23 +13,21 @@ abstract class GenericLightDeviceDtos
     implements _$GenericLightDeviceDtos, DeviceEntityDtoAbstract {
   factory GenericLightDeviceDtos({
     // @JsonKey(ignore: true)
-    String? deviceDtoClass,
-    String? id,
+    required String id,
+    required String vendorUniqueId,
     required String? defaultName,
-    required String? roomId,
-    required String? roomName,
     required String? deviceStateGRPC,
-    String? stateMassage,
     required String? senderDeviceOs,
     required String? senderDeviceModel,
     required String? senderId,
     required String? lightSwitchState,
     required String? deviceTypes,
     required String? compUuid,
-    required String? deviceVendor
+    required String? deviceVendor,
+    String? deviceDtoClass,
+    String? stateMassage,
 
     // required ServerTimestampConverter() FieldValue serverTimeStamp,
-    ,
   }) = _GenericLightDeviceDtos;
 
   GenericLightDeviceDtos._();
@@ -38,9 +36,8 @@ abstract class GenericLightDeviceDtos
     return GenericLightDeviceDtos(
       deviceDtoClass: (GenericLightDeviceDtos).toString(),
       id: genericLightDE.uniqueId.getOrCrash(),
+      vendorUniqueId: genericLightDE.vendorUniqueId.getOrCrash(),
       defaultName: genericLightDE.defaultName.getOrCrash(),
-      roomId: genericLightDE.roomId.getOrCrash(),
-      roomName: genericLightDE.roomName.getOrCrash(),
       deviceStateGRPC: genericLightDE.deviceStateGRPC.getOrCrash(),
       stateMassage: genericLightDE.stateMassage.getOrCrash(),
       senderDeviceOs: genericLightDE.senderDeviceOs.getOrCrash(),
@@ -64,9 +61,8 @@ abstract class GenericLightDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericLightDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
+      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
       defaultName: DeviceDefaultName(defaultName),
-      roomId: CoreUniqueId.fromUniqueString(roomId),
-      roomName: DeviceRoomName(roomName),
       deviceStateGRPC: DeviceState(deviceStateGRPC),
       stateMassage: DeviceStateMassage(stateMassage),
       senderDeviceOs: DeviceSenderDeviceOs(senderDeviceOs),
@@ -74,19 +70,7 @@ abstract class GenericLightDeviceDtos
       senderId: DeviceSenderId.fromUniqueString(senderId),
       deviceVendor: DeviceVendor(deviceVendor),
       compUuid: DeviceCompUuid(compUuid),
-      lightSwitchState: GenericSwitchState(lightSwitchState),
+      lightSwitchState: GenericLightSwitchState(lightSwitchState),
     );
   }
 }
-
-// class ServerTimestampConverter implements JsonConverter<FieldValue, Object> {
-//   const ServerTimestampConverter();
-//
-//   @override
-//   FieldValue fromJson(Object json) {
-//     return FieldValue.serverTimestamp();
-//   }
-//
-//   @override
-//   Object toJson(FieldValue fieldValue) => fieldValue;
-// }

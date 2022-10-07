@@ -1,9 +1,8 @@
 import 'dart:convert';
 
+import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/tuya_device_abstract.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:http/http.dart';
-
-import 'tuya_device_abstract.dart';
 
 /// Tuya integration with cloud API
 class CloudTuya {
@@ -66,14 +65,16 @@ class CloudTuya {
     final String responseBody = response.body;
 
     if (responseBody.contains('error')) {
-      if (responseBody.contains('you cannot auth exceed once in 60 seconds')) {
-        logger.w('Tuya login warning: $responseBody\nWill try again in 60s');
+      if (responseBody.contains('you cannot auth exceed once in 60 seconds') ||
+          statusCode == 404) {
+        logger.w(
+          'Tuya ($bizType) login warning: $statusCode $responseBody\nWill try again in 60s',
+        );
         await Future.delayed(const Duration(seconds: 60));
         // Do not remove the await
         return await login();
       }
-      logger.e('Tuya login error: $responseBody');
-
+      logger.e('Tuya ($bizType) login error: $responseBody');
       return false;
     }
     final String accessToken =
@@ -173,17 +174,27 @@ class CloudTuya {
     required dynamic body,
     Encoding? encoding,
   }) async {
-    final Response response = await post(
-      url,
-      headers: headers,
-      body: body,
-      // encoding: encoding,
-    );
+    Response response;
+    try {
+      response = await post(
+        url,
+        headers: headers,
+        body: body,
+        // encoding: encoding,
+      );
+    } catch (e) {
+      response = Response('error', 404);
+    }
 
     return response;
   }
 
-  Future<String> setState(String deviceId, String command) async {
+  Future<String> setState({
+    required String deviceId,
+    required String action,
+    required String valueName,
+    required String newState,
+  }) async {
     if (tokens == null) {
       final bool loginSuccess = await login();
       if (!loginSuccess) {
@@ -196,14 +207,14 @@ class CloudTuya {
 
     final String data = json.encode({
       'header': {
-        'name': 'turnOnOff',
+        'name': action,
         'namespace': 'control',
         'payloadVersion': '1',
       },
       'payload': {
         'accessToken': tokens,
         'devId': deviceId,
-        'value': command,
+        valueName: newState,
       },
     });
 
@@ -219,10 +230,61 @@ class CloudTuya {
   }
 
   Future<String> turnOn(String deviceId) async {
-    return setState(deviceId, '1');
+    return setState(
+      deviceId: deviceId,
+      action: 'turnOnOff',
+      valueName: 'value',
+      newState: '1',
+    );
   }
 
   Future<String> turnOff(String deviceId) async {
-    return setState(deviceId, '0');
+    return setState(
+      deviceId: deviceId,
+      action: 'turnOnOff',
+      valueName: 'value',
+      newState: '0',
+    );
+  }
+
+  /// Set Tuya device brightness
+  Future<String> setBrightness(String deviceId, String value) async {
+    return setState(
+      deviceId: deviceId,
+      action: 'brightnessSet',
+      valueName: 'value',
+      newState: value,
+    );
+  }
+
+  /// Set device color
+  Future<String> setColorHsv({
+    required String deviceId,
+    required String hue,
+    required String saturation,
+    required String brightness,
+  }) async {
+    final String newColor =
+        '{ "hue": $hue, "saturation": $saturation, "brightness": $brightness }';
+
+    return setState(
+      deviceId: deviceId,
+      action: 'colorSet',
+      valueName: 'color',
+      newState: newColor,
+    );
+  }
+
+  /// Set device color temperature
+  Future<String> setColorTemperature({
+    required String deviceId,
+    required String newTemperature,
+  }) async {
+    return setState(
+      deviceId: deviceId,
+      action: 'colorTemperatureSet',
+      valueName: 'value',
+      newState: newTemperature,
+    );
   }
 }

@@ -15,7 +15,7 @@ enum RaspberryPiType {
   raspberryPi4ModelBRev1_4,
 }
 
-class EnumHelper {
+class EnumHelperCbj {
   static String dTToString(DeviceTypes deviceType) {
     return deviceType.toString().replaceAll('DeviceType.', '');
   }

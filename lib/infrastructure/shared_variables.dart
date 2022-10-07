@@ -17,7 +17,7 @@ class SharedVariables {
         !_projectRootDirectoryPath!.contains('/snap/')) {
       return null;
     }
-    return '/snap/cybear-jinni/current';
+    return '/snap/cbj-hub/current';
   }
 
   /// Getting snap common environment variable value of SNAP_COMMON
@@ -26,7 +26,7 @@ class SharedVariables {
         !_projectRootDirectoryPath!.contains('/snap/')) {
       return null;
     }
-    return '/var/snap/cybear-jinni/common';
+    return '/var/snap/cbj-hub/common';
   }
 
   /// Getting snap user common environment variable, value of $SNAP_USER_COMMON
@@ -35,6 +35,6 @@ class SharedVariables {
         !_projectRootDirectoryPath!.contains('/snap/')) {
       return null;
     }
-    return '/root/snap/cybear-jinni/common';
+    return '/root/snap/cbj-hub/common';
   }
 }

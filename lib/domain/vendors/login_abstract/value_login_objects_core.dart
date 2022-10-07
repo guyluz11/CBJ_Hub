@@ -43,7 +43,6 @@ class CoreLoginSenderId extends ValueObjectCoreLogin<String?> {
   }
 
   factory CoreLoginSenderId.fromUniqueString(String? uniqueId) {
-    assert(uniqueId != null);
     return CoreLoginSenderId._(right(uniqueId));
   }
 

@@ -12,20 +12,23 @@ import 'package:dartz/dartz.dart';
 class GenericTuyaLoginDE extends LoginEntityAbstract {
   /// All public field of GenericTuya entity
   GenericTuyaLoginDE({
-    required CoreLoginSenderId senderUniqueId,
+    required super.senderUniqueId,
+    required super.loginVendor,
     required this.tuyaUserName,
     required this.tuyaUserPassword,
     required this.tuyaCountryCode,
     required this.tuyaBizType,
     required this.tuyaRegion,
-  }) : super(
-          senderUniqueId: senderUniqueId,
-          loginVendor: CoreLoginVendor(VendorsAndServices.tuyaSmart.name),
-        );
+  });
 
   /// Empty instance of GenericTuyaEntity
   factory GenericTuyaLoginDE.empty() => GenericTuyaLoginDE(
         senderUniqueId: CoreLoginSenderId.fromUniqueString(''),
+        loginVendor: CoreLoginVendor(
+          /// I think this should stay vendorsAndServicesNotSupported so that
+          /// the correct tuya/smartLife/jinvooSmart to be inserted later.
+          VendorsAndServices.vendorsAndServicesNotSupported.name,
+        ),
         tuyaUserName: GenericTuyaLoginUserName(''),
         tuyaUserPassword: GenericTuyaLoginUserPassword(''),
         tuyaCountryCode: GenericTuyaLoginCountryCode(''),

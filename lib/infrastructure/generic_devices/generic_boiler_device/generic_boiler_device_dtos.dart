@@ -13,23 +13,21 @@ abstract class GenericBoilerDeviceDtos
     implements _$GenericBoilerDeviceDtos, DeviceEntityDtoAbstract {
   factory GenericBoilerDeviceDtos({
     // @JsonKey(ignore: true)
-    String? deviceDtoClass,
-    String? id,
+    required String id,
+    required String vendorUniqueId,
     required String? defaultName,
-    required String? roomId,
-    required String? roomName,
     required String? deviceStateGRPC,
-    String? stateMassage,
     required String? senderDeviceOs,
     required String? senderDeviceModel,
     required String? senderId,
     required String? boilerSwitchState,
     required String? deviceTypes,
     required String? compUuid,
-    required String? deviceVendor
+    required String? deviceVendor,
+    String? deviceDtoClass,
+    String? stateMassage,
 
     // required ServerTimestampConverter() FieldValue serverTimeStamp,
-    ,
   }) = _GenericBoilerDeviceDtos;
 
   GenericBoilerDeviceDtos._();
@@ -38,9 +36,8 @@ abstract class GenericBoilerDeviceDtos
     return GenericBoilerDeviceDtos(
       deviceDtoClass: (GenericBoilerDeviceDtos).toString(),
       id: genericBoilerDE.uniqueId.getOrCrash(),
+      vendorUniqueId: genericBoilerDE.vendorUniqueId.getOrCrash(),
       defaultName: genericBoilerDE.defaultName.getOrCrash(),
-      roomId: genericBoilerDE.roomId.getOrCrash(),
-      roomName: genericBoilerDE.roomName.getOrCrash(),
       deviceStateGRPC: genericBoilerDE.deviceStateGRPC.getOrCrash(),
       stateMassage: genericBoilerDE.stateMassage.getOrCrash(),
       senderDeviceOs: genericBoilerDE.senderDeviceOs.getOrCrash(),
@@ -64,9 +61,8 @@ abstract class GenericBoilerDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericBoilerDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
+      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
       defaultName: DeviceDefaultName(defaultName),
-      roomId: CoreUniqueId.fromUniqueString(roomId),
-      roomName: DeviceRoomName(roomName),
       deviceStateGRPC: DeviceState(deviceStateGRPC),
       stateMassage: DeviceStateMassage(stateMassage),
       senderDeviceOs: DeviceSenderDeviceOs(senderDeviceOs),
@@ -78,15 +74,3 @@ abstract class GenericBoilerDeviceDtos
     );
   }
 }
-
-// class ServerTimestampConverter implements JsonConverter<FieldValue, Object> {
-//   const ServerTimestampConverter();
-//
-//   @override
-//   FieldValue fromJson(Object json) {
-//     return FieldValue.serverTimestamp();
-//   }
-//
-//   @override
-//   Object toJson(FieldValue fieldValue) => fieldValue;
-// }

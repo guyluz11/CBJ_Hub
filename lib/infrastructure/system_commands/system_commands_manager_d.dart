@@ -30,6 +30,10 @@ class SystemCommandsManager {
     return systemCommandsBaseClassD!.getCurrentUserName();
   }
 
+  Future<String> getLocalDbPath() {
+    return systemCommandsBaseClassD!.getLocalDbPath();
+  }
+
   Future<String> getDeviceHostName() {
     return systemCommandsBaseClassD!.getDeviceHostName();
   }
@@ -38,7 +42,7 @@ class SystemCommandsManager {
     return systemCommandsBaseClassD!.getAllEtcReleaseFilesText();
   }
 
-  Future<String?> getFileContent(fileFullPath) {
+  Future<String?> getFileContent(String fileFullPath) {
     return systemCommandsBaseClassD!.getFileContent(fileFullPath);
   }
 

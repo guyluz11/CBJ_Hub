@@ -14,40 +14,23 @@ import 'package:dartz/dartz.dart';
 
 class ChromeCastEntity extends GenericSmartTvDE {
   ChromeCastEntity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericSmartTvSwitchState smartTvSwitchState,
-    required this.googleDeviceId,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericSmartTvSwitchState super.smartTvSwitchState,
     required this.googlePort,
     this.deviceMdnsName,
     this.lastKnownIp,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
-          smartTvSwitchState: smartTvSwitchState,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor: DeviceVendor(VendorsAndServices.google.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
         );
-
-  /// Google device unique id that came withe the device
-  GoogleDeviceId? googleDeviceId;
 
   /// Google communication port
   GooglePort? googlePort;
@@ -58,9 +41,9 @@ class ChromeCastEntity extends GenericSmartTvDE {
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     if (newEntity is! GenericRgbwLightDE) {
       return left(
         const CoreFailure.actionExcecuter(
@@ -69,30 +52,39 @@ class ChromeCastEntity extends GenericSmartTvDE {
       );
     }
 
-    if (newEntity.lightSwitchState!.getOrCrash() !=
-        smartTvSwitchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.lightSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.lightSwitchState!.getOrCrash() !=
+              smartTvSwitchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.lightSwitchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != smartTvSwitchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.on) {
-          (await turnOnSmartTv()).fold(
-            (l) => logger.e('Error turning chrome cast light on'),
-            (r) => logger.i('Light turn on success'),
-          );
+          (await turnOnSmartTv()).fold((l) {
+            logger.e('Error turning ChromeCast on');
+            throw l;
+          }, (r) {
+            logger.i('ChromeCast turn on success');
+          });
         } else if (actionToPreform == DeviceActions.off) {
-          (await turnOffSmartTv()).fold(
-            (l) => logger.e('Error turning chrome cast light off'),
-            (r) => logger.i('Light turn off success'),
-          );
+          (await turnOffSmartTv()).fold((l) {
+            logger.e('Error turning ChromeCast off');
+            throw l;
+          }, (r) {
+            logger.i('ChromeCast turn off success');
+          });
         } else {
           logger.e('actionToPreform is not set correctly on Chrome Cast');
         }
       }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
     }
-
-    return right(unit);
   }
 
   @override

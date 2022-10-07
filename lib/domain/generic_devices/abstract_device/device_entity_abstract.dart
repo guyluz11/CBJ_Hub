@@ -8,11 +8,10 @@ import 'package:uuid/uuid.dart';
 abstract class DeviceEntityAbstract {
   DeviceEntityAbstract({
     required this.uniqueId,
+    required this.vendorUniqueId,
     required this.deviceVendor,
     required this.deviceTypes,
     required this.defaultName,
-    required this.roomId,
-    required this.roomName,
     required this.stateMassage,
     required this.senderDeviceOs,
     required this.senderDeviceModel,
@@ -21,16 +20,14 @@ abstract class DeviceEntityAbstract {
     required this.deviceStateGRPC,
   });
 
+  /// The unique id that CyBear Jinni Hub gave the device
   CoreUniqueId uniqueId;
+
+  /// The unique id that each company gave their device
+  VendorUniqueId vendorUniqueId;
 
   /// The default name of the GenericLight
   DeviceDefaultName defaultName;
-
-  /// Room id that the smart GenericLight located in.
-  CoreUniqueId roomId;
-
-  /// Room name that the smart GenericLight located in.
-  DeviceRoomName roomName;
 
   /// Did the massage arrived or was it just sent.
   /// Will be 'set' (need change) or 'ack' for acknowledge
@@ -59,29 +56,71 @@ abstract class DeviceEntityAbstract {
 
   String getDeviceId();
 
+  /// Copy with device state to waiting or ack
+  DeviceEntityAbstract copyWithDeviceState(DeviceStateGRPC deviceStateGRPC) {
+    return this;
+  }
+
+  /// Copy with device action
+  DeviceEntityAbstract copyWithDeviceAction(DeviceActions deviceActions) {
+    return this;
+  }
+
+  /// Copy with stateMassage
+  DeviceEntityAbstract copyWithStateMassage(String stateMassage) {
+    return this;
+  }
+
+  /// Copy with senderDeviceOs
+  DeviceEntityAbstract copyWithSenderDeviceOs(String senderDeviceOs) {
+    return this;
+  }
+
+  /// Copy with deviceSenderDeviceModel
+  DeviceEntityAbstract copyWithDeviceSenderDeviceModel(
+    String deviceSenderDeviceModel,
+  ) {
+    return this;
+  }
+
+  /// Copy with currentUserId
+  DeviceEntityAbstract copyWithSenderId(String userId) {
+    return this;
+  }
+
+  /// Convert the device to the a dtos object in the infrastructure layer
   DeviceEntityDtoAbstract toInfrastructure() {
     return DeviceEntityDtoAbstract();
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  );
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  });
+
+  /// Return a list of all valid actions for this device
+  List<String> getAllValidActions();
+
+  /// Will replace action field with new action if it exists inside the object
+  bool replaceActionIfExist(String action);
+
+  /// List of all the properties that their value can be change when creating a
+  /// scene for that device
+  List<String> getListOfPropertiesToChange();
 }
 
 class DeviceEntityNotAbstract extends DeviceEntityAbstract {
   DeviceEntityNotAbstract()
       : super(
           uniqueId: CoreUniqueId(),
+          vendorUniqueId: VendorUniqueId(),
           deviceVendor: DeviceVendor(
             VendorsAndServices.vendorsAndServicesNotSupported.toString(),
           ),
           deviceStateGRPC: DeviceState(DeviceTypes.typeNotSupported.toString()),
-          compUuid: DeviceCompUuid(const Uuid().v1().toString()),
+          compUuid: DeviceCompUuid(const Uuid().v1()),
           defaultName: DeviceDefaultName('No Name'),
           deviceTypes: DeviceType(DeviceTypes.light.toString()),
-          roomId: CoreUniqueId(),
-          roomName: DeviceRoomName('No name'),
           senderDeviceModel: DeviceSenderDeviceModel('a'),
           senderDeviceOs: DeviceSenderDeviceOs('b'),
           senderId: DeviceSenderId(),
@@ -95,16 +134,31 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
 
   @override
   String getDeviceId() {
-    // TODO: implement getDeviceId
+    throw UnimplementedError();
+  }
+
+  /// Return a list of all valid actions for this device
+  @override
+  List<String> getAllValidActions() {
+    return [];
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) {
+    // TODO: implement executeDeviceAction
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) {
-    // TODO: implement executeDeviceAction
-    throw UnimplementedError();
+  bool replaceActionIfExist(String action) {
+    return false;
+  }
+
+  @override
+  List<String> getListOfPropertiesToChange() {
+    return [];
   }
 
   /// The smart device id
