@@ -14,34 +14,26 @@ import 'package:dartz/dartz.dart';
 
 class SwitcherRunnerEntity extends GenericBlindsDE {
   SwitcherRunnerEntity({
-    required CoreUniqueId uniqueId,
+    required super.uniqueId,
     required VendorUniqueId vendorUniqueId,
     required DeviceDefaultName defaultName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
     required DevicePowerConsumption powerConsumption,
-    required GenericBlindsSwitchState blindsSwitchState,
+    required GenericBlindsSwitchState super.blindsSwitchState,
     required this.switcherMacAddress,
     required this.lastKnownIp,
     this.switcherPort,
   }) : super(
-          uniqueId: uniqueId,
           vendorUniqueId: vendorUniqueId,
           defaultName: defaultName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
-          compUuid: compUuid,
           powerConsumption: powerConsumption,
-          blindsSwitchState: blindsSwitchState,
         ) {
     switcherPort ??=
         SwitcherPort(SwitcherApiObject.switcherTcpPort2.toString());

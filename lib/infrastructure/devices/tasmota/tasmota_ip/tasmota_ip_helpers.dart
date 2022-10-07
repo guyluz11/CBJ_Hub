@@ -119,5 +119,6 @@ class TasmotaIpHelpers {
     logger.i(
       'Please add new Tasmota device type ${componentInDeviceUiLabelAndComment![0]}',
     );
+    return null;
   }
 }

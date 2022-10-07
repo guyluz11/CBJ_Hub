@@ -14,31 +14,20 @@ import 'package:dartz/dartz.dart';
 
 class TuyaSmartPlugEntity extends GenericSmartPlugDE {
   TuyaSmartPlugEntity({
-    required CoreUniqueId uniqueId,
-    required VendorUniqueId vendorUniqueId,
-    required DeviceDefaultName defaultName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericSmartPlugState smartPlugState,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericSmartPlugState super.smartPlugState,
     required this.cloudTuya,
   }) : super(
-          uniqueId: uniqueId,
-          vendorUniqueId: vendorUniqueId,
-          defaultName: defaultName,
-          smartPlugState: smartPlugState,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor: DeviceVendor(VendorsAndServices.tuyaSmart.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
         );
 
   /// Will be the cloud api reference, can be Tuya or Jinvoo Smart or Smart Life

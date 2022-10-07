@@ -40,9 +40,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     getIt<ILocalDbRepository>().getScenesFromDb().then((value) {
       value.fold((l) => null, (r) {
-        r.forEach((element) {
+        for (final element in r) {
           addNewScene(element);
-        });
+        }
       });
     });
   }
@@ -88,8 +88,16 @@ class SceneCbjRepository implements ISceneCbjRepository {
     _allScenes[entityId] = tempSceneCbj;
 
     await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-    final String sceneNodeRedFlowId =
-        await getIt<INodeRedRepository>().createNewNodeRedScene(tempSceneCbj);
+
+    String sceneNodeRedFlowId = '';
+
+    if (existingScene == null ||
+        tempSceneCbj.automationString.getOrCrash() !=
+            existingScene.automationString.getOrCrash()) {
+      sceneNodeRedFlowId =
+          await getIt<INodeRedRepository>().createNewNodeRedScene(tempSceneCbj);
+    }
+
     if (sceneNodeRedFlowId.isNotEmpty) {
       tempSceneCbj = tempSceneCbj.copyWith(
         nodeRedFlowId: SceneCbjNodeRedFlowId(sceneNodeRedFlowId),
@@ -148,7 +156,8 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     if (nodeRedFlowId.isNotEmpty) {
       sceneCbjEntityTemp = sceneCbjEntityTemp.copyWith(
-          nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId));
+        nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId),
+      );
     } else {
       final SceneCbjEntity? tempScene =
           findSceneIfAlreadyBeenAdded(sceneCbjEntityTemp);
@@ -160,7 +169,8 @@ class SceneCbjRepository implements ISceneCbjRepository {
             .createNewNodeRedScene(sceneCbjEntityTemp);
 
         sceneCbjEntityTemp = sceneCbjEntityTemp.copyWith(
-            nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId));
+          nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId),
+        );
       }
     }
 

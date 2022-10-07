@@ -36,9 +36,9 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
     await Future.delayed(const Duration(milliseconds: 100));
     getIt<ILocalDbRepository>().getRoomsFromDb().then((value) {
       value.fold((l) => null, (r) {
-        r.forEach((element) {
+        for (final element in r) {
           addOrUpdateRoom(element);
-        });
+        }
       });
     });
   }
@@ -133,7 +133,8 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       tempAddRoutinesList.addAll(allRoutinesInNewRoom);
       tempAddRoutinesList.addAll(allRoutinesInExistingRoom);
       newRoomEntity = newRoomEntity.copyWith(
-          roomRoutinesId: RoomRoutinesId(List.from(tempAddRoutinesList)));
+        roomRoutinesId: RoomRoutinesId(List.from(tempAddRoutinesList)),
+      );
 
       /// For Bindings in the room
       final List<String> allBindingsInNewRoom =
@@ -429,9 +430,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
 
     final AreaPurposesTypes areaPTemp = AreaPurposesTypes.values
         .firstWhere((element) => element.name == tempString);
-    if (areaPTemp != null) {
-      return areaPTemp;
-    }
+    return areaPTemp;
     return null;
   }
 }

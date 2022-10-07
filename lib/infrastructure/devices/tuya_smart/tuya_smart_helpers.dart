@@ -104,7 +104,8 @@ class TuyaSmartHelpers {
       );
     } else {
       logger.i(
-          'Please add new Tuya device type ${tuyaSmartDevice.haType} ${tuyaSmartDevice.haType}');
+        'Please add new Tuya device type ${tuyaSmartDevice.haType} ${tuyaSmartDevice.haType}',
+      );
       return null;
     }
     return tuyaSmartDE;

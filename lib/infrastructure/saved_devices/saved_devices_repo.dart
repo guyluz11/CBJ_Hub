@@ -36,9 +36,9 @@ class SavedDevicesRepo extends ISavedDevicesRepo {
 
     getIt<ILocalDbRepository>().getSmartDevicesFromDb().then((value) {
       value.fold((l) => null, (r) {
-        r.forEach((element) {
+        for (final element in r) {
           addOrUpdateDevice(element);
-        });
+        }
       });
     });
     setUpAllFromDbAtLestOnce = true;

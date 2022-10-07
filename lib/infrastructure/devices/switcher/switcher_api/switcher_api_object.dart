@@ -32,9 +32,9 @@ class SwitcherApiObject {
     final List<String> hexSeparatedLetters = [];
 
     for (final String hexValue in messageBuffer) {
-      hexValue.runes.forEach((element) {
+      for (final element in hexValue.runes) {
         hexSeparatedLetters.add(String.fromCharCode(element));
-      });
+      }
     }
 
     if (!isSwitcherMessage(data, hexSeparatedLetters) &&

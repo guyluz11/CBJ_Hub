@@ -27,6 +27,7 @@ class SwitcherDiscover {
     }
   }
 
+  /// Blinds 20003 includes blinds for example
   static Stream<SwitcherApiObject> discover20003Devices() async* {
     try {
       final RawDatagramSocket socket20003 = await RawDatagramSocket.bind(
