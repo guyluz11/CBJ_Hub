@@ -58,7 +58,7 @@ class CompaniesConnectorConjector {
         } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
           ShellyConnectorConjector()
               .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.sonoff.toString()) {
+        } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
           SonoffDiyConnectorConjector()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
@@ -116,7 +116,7 @@ class CompaniesConnectorConjector {
       LifxConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
       ShellyConnectorConjector.companyDevices.addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.sonoff.toString()) {
+    } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
       SonoffDiyConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else {
       logger.w('Cannot add device entity to its repo, type not supported');
