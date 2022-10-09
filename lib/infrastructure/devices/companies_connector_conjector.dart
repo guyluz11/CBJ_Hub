@@ -5,6 +5,8 @@ import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
+import 'package:cbj_hub/infrastructure/cbj_smart_device_client/cbj_smart_device_client.dart';
+import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/lg/lg_connector_conjector.dart';
@@ -299,7 +301,17 @@ class CompaniesConnectorConjector {
     } else if (deviceHostNameLowerCase.contains('xiaomi') ||
         deviceHostNameLowerCase.contains('yeelink')) {
     } else {
-      // logger.i('Internet Name ${internetAddress.host}');
+      final ActiveHost? cbjSmartDeviceHost =
+          await CbjSmartDeviceClient.checkIfDeviceIsCbjSmartDevice(
+        activeHost.address,
+      );
+      if (cbjSmartDeviceHost != null) {
+        getIt<CbjDevicesConnectorConjector>()
+            .addNewDeviceByHostInfo(activeHost: cbjSmartDeviceHost);
+        logger.i('Smart Device $cbjSmartDeviceHost');
+        return;
+      }
+      logger.i('Internet Name $deviceHostNameLowerCase');
     }
   }
 }

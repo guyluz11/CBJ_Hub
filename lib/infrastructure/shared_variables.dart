@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cbj_hub/utils.dart';
 
 class SharedVariables {
@@ -36,5 +38,18 @@ class SharedVariables {
       return null;
     }
     return '/root/snap/cbj-hub/common';
+  }
+
+  ///  Get Ip info
+  static Future<String?> getIps() async {
+    for (final NetworkInterface interface in await NetworkInterface.list()) {
+//      print('== Interface: ${interface.name} ==');
+      for (final InternetAddress address in interface.addresses) {
+//        print(
+//            '${addr.address} ${addr.host} ${addr.isLoopback} ${addr.rawAddress} ${addr.type.name}');
+        return address.address;
+      }
+    }
+    return null;
   }
 }

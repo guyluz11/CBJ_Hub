@@ -1,1 +1,1 @@
-const hubAioEspHomeApiClientProtocGenDate = '09/10/22';
+const hubAioEspHomeApiClientProtocGenDate = '10/10/22';
