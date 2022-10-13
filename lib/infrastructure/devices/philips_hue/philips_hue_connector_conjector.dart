@@ -11,13 +11,7 @@ import 'package:injectable/injectable.dart';
 @singleton
 class PhilipsHueConnectorConjector
     implements AbstractCompanyConnectorConjector {
-  PhilipsHueConnectorConjector() {
-    _discoverNewDevices();
-  }
-
   static Map<String, DeviceEntityAbstract> companyDevices = {};
-
-  Future<void> _discoverNewDevices() async {}
 
   Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract philipsHue) {
     // TODO: implement create
