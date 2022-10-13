@@ -21,8 +21,14 @@ class CbjDevicesHelpers {
       final CbjDeviceTypes deviceType =
           smartDeviceInfo.deviceTypesActions.deviceType;
       final String deviceId = smartDeviceInfo.id;
-      final String deviceName = smartDeviceInfo.defaultName;
+      final String defaultName = smartDeviceInfo.defaultName;
       final String deviceState = smartDeviceInfo.state;
+      final String deviceStateMassage = smartDeviceInfo.stateMassage.isEmpty
+          ? 'ok'
+          : smartDeviceInfo.stateMassage;
+      final CbjDeviceStateGRPC deviceStateGrpc =
+          smartDeviceInfo.deviceTypesActions.deviceStateGRPC;
+
       final String deviceOs = smartDeviceInfo.senderDeviceOs;
       final String deviceModel = smartDeviceInfo.senderDeviceModel;
       final String deviceSenderId = smartDeviceInfo.senderId;
@@ -36,10 +42,10 @@ class CbjDevicesHelpers {
             VendorsAndServices.cbjDevices.toString(),
           ),
           defaultName: DeviceDefaultName(
-            deviceName.isNotEmpty ? deviceName : "Cbj Smart Computer",
+            defaultName,
           ),
-          deviceStateGRPC: DeviceState(deviceState),
-          stateMassage: DeviceStateMassage(''),
+          deviceStateGRPC: DeviceState(deviceStateGrpc.toString()),
+          stateMassage: DeviceStateMassage(deviceStateMassage),
           senderDeviceOs: DeviceSenderDeviceOs(deviceOs),
           senderDeviceModel: DeviceSenderDeviceModel(deviceModel),
           senderId: DeviceSenderId.fromUniqueString(deviceSenderId),
