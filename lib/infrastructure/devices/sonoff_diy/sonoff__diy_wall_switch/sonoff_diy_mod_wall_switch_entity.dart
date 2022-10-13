@@ -29,7 +29,7 @@ class SonoffDiyRelaySwitchEntity extends GenericSwitchDE {
     required this.lastKnownIp,
     required String hostName,
   }) : super(
-          deviceVendor: DeviceVendor(VendorsAndServices.sonoff.toString()),
+          deviceVendor: DeviceVendor(VendorsAndServices.sonoffDiy.toString()),
         ) {
     sonoffDiyRelaySwitch = SonoffDiyApiWallSwitch(
       ipAddress: lastKnownIp.getOrCrash(),
