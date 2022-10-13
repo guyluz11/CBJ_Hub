@@ -4,59 +4,40 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dar
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_value_objects.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_light_entity.dart';
-import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_connector_conjector.dart';
-import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_device_value_objects.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_value_objects.dart';
+import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_device_validators.dart';
+import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/cloudtuya.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
-import 'package:yeedart/yeedart.dart';
 
 class TuyaSmartSwitchEntity extends GenericSwitchDE {
   TuyaSmartSwitchEntity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericSwitchState switchState,
-    required this.tuyaSmartDeviceId,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericSwitchSwitchState super.switchState,
+    required this.cloudTuya,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
-          switchState: switchState,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor: DeviceVendor(VendorsAndServices.tuyaSmart.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
         );
 
-  /// TuyaSmart device unique id that came withe the device
-  TuyaSmartDeviceId? tuyaSmartDeviceId;
+  /// Will be the cloud api reference, can be Tuya or Jinvoo Smart or Smart Life
+  CloudTuya cloudTuya;
 
-  /// TuyaSmart package object require to close previews request before new one
-  Device? tuyaSmartPackageObject;
-
-  /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
-    if (newEntity is! GenericLightDE) {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
+    if (newEntity is! GenericSwitchDE) {
       return left(
         const CoreFailure.actionExcecuter(
           failedValue: 'Not the correct type',
@@ -64,55 +45,70 @@ class TuyaSmartSwitchEntity extends GenericSwitchDE {
       );
     }
 
-    if (newEntity.lightSwitchState!.getOrCrash() != switchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.lightSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.switchState!.getOrCrash() != switchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.switchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != switchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.on) {
-          (await turnOnLight()).fold(
-            (l) => logger.e('Error turning tuya_smart light on'),
-            (r) => logger.i('Light turn on success'),
+          (await turnOnSwitch()).fold(
+            (l) {
+              logger.e('Error turning Tuya switch on\n$l');
+              throw l;
+            },
+            (r) {
+              logger.i('Tuya switch turn on success');
+            },
           );
         } else if (actionToPreform == DeviceActions.off) {
-          (await turnOffLight()).fold(
-            (l) => logger.e('Error turning tuya_smart light off'),
-            (r) => logger.i('Light turn off success'),
+          (await turnOffSwitch()).fold(
+            (l) {
+              logger.e('Error turning Tuya off\n$l');
+              throw l;
+            },
+            (r) {
+              logger.i('Tuya switch turn off success');
+            },
           );
         } else {
           logger.w(
-            'actionToPreform is not set correctly on TuyaSmart JbtA70RgbcwWfEntity',
+            'actionToPreform is not set correctly on Tuya Switch',
           );
         }
       }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
     }
-
-    return right(unit);
   }
 
   @override
-  Future<Either<CoreFailure, Unit>> turnOnLight() async {
-    switchState = GenericSwitchState(DeviceActions.on.toString());
+  Future<Either<CoreFailure, Unit>> turnOnSwitch() async {
+    switchState = GenericSwitchSwitchState(DeviceActions.on.toString());
     try {
-      TuyaSmartConnectorConjector.cloudTuya.turnOn(
-        tuyaSmartDeviceId!.getOrCrash(),
+      final String requestResponse = await cloudTuya.turnOn(
+        vendorUniqueId.getOrCrash(),
       );
-      return right(unit);
+      return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
   }
 
   @override
-  Future<Either<CoreFailure, Unit>> turnOffLight() async {
-    switchState = GenericSwitchState(DeviceActions.off.toString());
+  Future<Either<CoreFailure, Unit>> turnOffSwitch() async {
+    switchState = GenericSwitchSwitchState(DeviceActions.off.toString());
 
     try {
-      TuyaSmartConnectorConjector.cloudTuya.turnOff(
-        tuyaSmartDeviceId!.getOrCrash(),
+      final String requestResponse = await cloudTuya.turnOff(
+        vendorUniqueId.getOrCrash(),
       );
-      return right(unit);
+      return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }

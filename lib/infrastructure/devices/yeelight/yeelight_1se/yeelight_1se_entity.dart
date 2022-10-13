@@ -10,58 +10,34 @@ import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic
 import 'package:cbj_hub/infrastructure/devices/yeelight/yeelight_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:collection/collection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:yeedart/yeedart.dart';
 
 class Yeelight1SeEntity extends GenericRgbwLightDE {
   Yeelight1SeEntity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericRgbwLightSwitchState lightSwitchState,
-    required GenericRgbwLightColorTemperature lightColorTemperature,
-    required GenericRgbwLightBrightness lightBrightness,
-    required GenericRgbwLightColorAlpha lightColorAlpha,
-    required GenericRgbwLightColorHue lightColorHue,
-    required GenericRgbwLightColorSaturation lightColorSaturation,
-    required GenericRgbwLightColorValue lightColorValue,
-    required this.yeelightDeviceId,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericRgbwLightSwitchState super.lightSwitchState,
+    required super.lightColorTemperature,
+    required super.lightBrightness,
+    required super.lightColorAlpha,
+    required super.lightColorHue,
+    required super.lightColorSaturation,
+    required super.lightColorValue,
     required this.yeelightPort,
     this.deviceMdnsName,
     this.lastKnownIp,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
-          lightSwitchState: lightSwitchState,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor: DeviceVendor(VendorsAndServices.yeelight.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
-          lightColorTemperature: lightColorTemperature,
-          lightBrightness: lightBrightness,
-          lightColorAlpha: lightColorAlpha,
-          lightColorHue: lightColorHue,
-          lightColorSaturation: lightColorSaturation,
-          lightColorValue: lightColorValue,
         );
-
-  /// Yeelight device unique id that came withe the device
-  YeelightDeviceId? yeelightDeviceId;
 
   /// Yeelight communication port
   YeelightPort? yeelightPort;
@@ -73,11 +49,28 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
   /// Yeelight package object require to close previews request before new one
   Device? yeelightPackageObject;
 
+  /// Timer to execute methods with min of 1 seconds between each other
+  Timer? executeStateTimer;
+
+  /// How much time to wait between execute of methods
+  // TODO: Test if we can lower this number to 1000 and requests do not
+  // get denied
+  final int sendNewRequestToDeviceEachMilliseconds = 1100;
+
+  /// Fix to differentiate what value to change
+  String? lightColorTemperatureLastValue;
+
+  /// Fix to differentiate what value to change
+  String? lightColorHueLastValue;
+
+  /// Fix to differentiate what value to change
+  String? lightColorSaturationLastValue;
+
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     if (newEntity is! GenericRgbwLightDE) {
       return left(
         const CoreFailure.actionExcecuter(
@@ -86,92 +79,111 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
       );
     }
 
-    if (newEntity.lightSwitchState!.getOrCrash() !=
-        lightSwitchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.lightSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.lightSwitchState!.getOrCrash() !=
+              lightSwitchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.lightSwitchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != lightSwitchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.on) {
           (await turnOnLight()).fold(
-            (l) => logger.e('Error turning yeelight light on'),
-            (r) => logger.i('Light turn on success'),
+            (l) {
+              logger.e('Error turning Yeelight light on\n$l');
+              throw l;
+            },
+            (r) {
+              logger.i('Yeelight light turn on success');
+            },
           );
         } else if (actionToPreform == DeviceActions.off) {
           (await turnOffLight()).fold(
-            (l) => logger.e('Error turning yeelight light off'),
-            (r) => logger.i('Light turn off success'),
+            (l) {
+              logger.e('Error turning Yeelight light off\n$l');
+              throw l;
+            },
+            (r) {
+              logger.i('Yeelight light turn off success');
+            },
           );
         } else {
           logger.i('actionToPreform is not set correctly on Yeelight 1SE');
         }
       }
-    }
 
-    if (newEntity.lightColorAlpha.getOrCrash() !=
-            lightColorAlpha.getOrCrash() ||
-        newEntity.lightColorHue.getOrCrash() != lightColorHue.getOrCrash() ||
-        newEntity.lightColorSaturation.getOrCrash() !=
-            lightColorSaturation.getOrCrash() ||
-        newEntity.lightColorValue.getOrCrash() !=
-            lightColorValue.getOrCrash()) {
-      (await changeColorTemperature(
-        lightColorAlphaNewValue: newEntity.lightColorAlpha.getOrCrash(),
-        lightColorHueNewValue: newEntity.lightColorHue.getOrCrash(),
-        lightColorSaturationNewValue:
-            newEntity.lightColorSaturation.getOrCrash(),
-        lightColorValueNewValue: newEntity.lightColorValue.getOrCrash(),
-      ))
-          .fold(
-        (l) => logger.e('Error changing yeelight light color'),
-        (r) => logger.i('Light changed color successfully'),
-      );
-    }
+      if (newEntity.lightColorTemperature.getOrCrash() !=
+              lightColorTemperature.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        (await changeColorTemperature(
+          lightColorTemperatureNewValue:
+              newEntity.lightColorTemperature.getOrCrash(),
+        ))
+            .fold(
+          (l) {
+            logger.e('Error changing Yeelight brightness\n$l');
+            throw l;
+          },
+          (r) {
+            logger.i('Yeelight changed brightness successfully');
+          },
+        );
+      }
 
-    return right(unit);
+      if (newEntity.lightColorAlpha.getOrCrash() !=
+              lightColorAlpha.getOrCrash() ||
+          newEntity.lightColorHue.getOrCrash() != lightColorHue.getOrCrash() ||
+          newEntity.lightColorSaturation.getOrCrash() !=
+              lightColorSaturation.getOrCrash() ||
+          newEntity.lightColorValue.getOrCrash() !=
+              lightColorValue.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        (await changeColorHsv(
+          lightColorAlphaNewValue: newEntity.lightColorAlpha.getOrCrash(),
+          lightColorHueNewValue: newEntity.lightColorHue.getOrCrash(),
+          lightColorSaturationNewValue:
+              newEntity.lightColorSaturation.getOrCrash(),
+          lightColorValueNewValue: newEntity.lightColorValue.getOrCrash(),
+        ))
+            .fold(
+          (l) {
+            logger.e('Error changing Yeelight light color\n$l');
+            throw l;
+          },
+          (r) {
+            logger.i('Yeelight changed color successfully');
+          },
+        );
+      }
+
+      if (newEntity.lightBrightness.getOrCrash() !=
+              lightBrightness.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        (await setBrightness(newEntity.lightBrightness.getOrCrash())).fold(
+          (l) {
+            logger.e('Error changing Yeelight brightness\n$l');
+            throw l;
+          },
+          (r) {
+            logger.i('Yeelight changed brightness successfully');
+          },
+        );
+      }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
+    }
   }
 
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
     lightSwitchState = GenericRgbwLightSwitchState(DeviceActions.on.toString());
     try {
-      try {
-        yeelightPackageObject?.disconnect();
-
-        yeelightPackageObject = Device(
-          address: InternetAddress(lastKnownIp!.getOrCrash()),
-          port: int.parse(yeelightPort!.getOrCrash()),
-        );
-
-        await yeelightPackageObject!.turnOn();
-        yeelightPackageObject!.disconnect();
-
-        return right(unit);
-      } catch (e) {
-        await Future.delayed(const Duration(milliseconds: 150));
-
-        final responses = await Yeelight.discover();
-
-        final response = responses.firstWhereOrNull(
-          (element) => element.id.toString() == yeelightDeviceId!.getOrCrash(),
-        );
-        if (response == null) {
-          logger.v('Device cant be discovered');
-          return left(const CoreFailure.unexpected());
-        }
-        yeelightPackageObject?.disconnect();
-
-        yeelightPackageObject =
-            Device(address: response.address, port: response.port!);
-        lastKnownIp = DeviceLastKnownIp(response.address.address);
-        yeelightPort = YeelightPort(response.port!.toString());
-
-        await yeelightPackageObject!.turnOn();
-        yeelightPackageObject!.disconnect();
-
-        return right(unit);
-      }
+      executeCurrentStatusWithConstDelay();
+      return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
@@ -183,100 +195,20 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
         GenericRgbwLightSwitchState(DeviceActions.off.toString());
 
     try {
-      try {
-        yeelightPackageObject?.disconnect();
-
-        yeelightPackageObject = Device(
-          address: InternetAddress(lastKnownIp!.getOrCrash()),
-          port: int.parse(yeelightPort!.getOrCrash()),
-        );
-
-        await yeelightPackageObject!.turnOff();
-        yeelightPackageObject!.disconnect();
-
-        return right(unit);
-      } catch (e) {
-        await Future.delayed(const Duration(milliseconds: 150));
-        final responses = await Yeelight.discover();
-
-        final response = responses.firstWhereOrNull(
-          (element) => element.id.toString() == yeelightDeviceId!.getOrCrash(),
-        );
-        if (response == null) {
-          logger.v('Device cant be discovered');
-
-          return left(const CoreFailure.unexpected());
-        }
-
-        yeelightPackageObject?.disconnect();
-
-        yeelightPackageObject =
-            Device(address: response.address, port: response.port!);
-
-        lastKnownIp = DeviceLastKnownIp(response.address.address);
-        yeelightPort = YeelightPort(response.port!.toString());
-
-        await yeelightPackageObject!.turnOff();
-        yeelightPackageObject!.disconnect();
-
-        return right(unit);
-      }
+      executeCurrentStatusWithConstDelay();
+      return right(unit);
     } catch (e) {
-      return left(const CoreFailure.unexpected());
+      return left(CoreFailure.actionExcecuter(failedValue: e));
     }
   }
 
-  /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> adjustBrightness(String brightness) async {
-    // lightBrightness = GenericRgbwLightBrightness();
+  Future<Either<CoreFailure, Unit>> setBrightness(String brightness) async {
+    lightBrightness = GenericRgbwLightBrightness(brightness);
 
     try {
-      try {
-        yeelightPackageObject?.disconnect();
-
-        yeelightPackageObject = Device(
-          address: InternetAddress(lastKnownIp!.getOrCrash()),
-          port: int.parse(yeelightPort!.getOrCrash()),
-        );
-
-        await yeelightPackageObject!.adjustBrightness(
-          percentage: int.parse(lightBrightness.getOrCrash()),
-          duration: const Duration(seconds: 50),
-        );
-
-        yeelightPackageObject!.disconnect();
-
-        return right(unit);
-      } catch (e) {
-        yeelightPackageObject?.disconnect();
-
-        await Future.delayed(const Duration(milliseconds: 150));
-
-        final responses = await Yeelight.discover();
-
-        final response = responses.firstWhereOrNull(
-          (element) => element.id.toString() == yeelightDeviceId!.getOrCrash(),
-        );
-        if (response == null) {
-          logger.v('Device cant be discovered');
-          return left(const CoreFailure.unexpected());
-        }
-
-        yeelightPackageObject =
-            Device(address: response.address, port: response.port!);
-        lastKnownIp = DeviceLastKnownIp(response.address.address);
-        yeelightPort = YeelightPort(response.port!.toString());
-
-        yeelightPackageObject!.adjustBrightness(
-          percentage: int.parse(lightBrightness.getOrCrash()),
-          duration: const Duration(seconds: 50),
-        );
-
-        yeelightPackageObject?.disconnect();
-
-        return right(unit);
-      }
+      executeCurrentStatusWithConstDelay();
+      return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
@@ -284,6 +216,28 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> changeColorTemperature({
+    required String lightColorTemperatureNewValue,
+  }) async {
+    try {
+      int temperatureInt = int.parse(lightColorTemperatureNewValue);
+      if (temperatureInt < 1700) {
+        temperatureInt = 1700;
+      } else if (temperatureInt > 6500) {
+        temperatureInt = 6500;
+      }
+
+      lightColorTemperature =
+          GenericRgbwLightColorTemperature(temperatureInt.toString());
+
+      executeCurrentStatusWithConstDelay();
+      return right(unit);
+    } catch (e) {
+      return left(const CoreFailure.unexpected());
+    }
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> changeColorHsv({
     required String lightColorAlphaNewValue,
     required String lightColorHueNewValue,
     required String lightColorSaturationNewValue,
@@ -296,65 +250,272 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
     lightColorValue = GenericRgbwLightColorValue(lightColorValueNewValue);
 
     try {
-      try {
-        yeelightPackageObject?.disconnect();
+      executeCurrentStatusWithConstDelay();
+      return right(unit);
+    } catch (e) {
+      return left(const CoreFailure.unexpected());
+    }
+  }
 
+  /// Yeelight connections are rate-limited to 60 per minute.
+  /// This method will take care that commends will be sent in 1 second
+  /// between each one
+  Future<void> executeCurrentStatusWithConstDelay() async {
+    executeStateTimer ??=
+        Timer(Duration(milliseconds: sendNewRequestToDeviceEachMilliseconds),
+            () async {
+      try {
+        try {
+          // TODO: probably all the discovered device if changed IP can be
+          //  written only once here and not in each device action we execute
+          if (lightSwitchState?.getOrCrash() == DeviceActions.off.toString()) {
+            await _sendTurnOffDevice();
+          } else {
+            await _sendTurnOnDevice();
+            if (lightColorTemperature.getOrCrash() !=
+                lightColorTemperatureLastValue) {
+              lightColorTemperatureLastValue =
+                  lightColorTemperature.getOrCrash();
+              _sendChangeColorTemperature();
+            } else if (lightColorHue.getOrCrash() != lightColorHueLastValue ||
+                lightColorSaturation.getOrCrash() !=
+                    lightColorSaturationLastValue) {
+              lightColorSaturationLastValue = lightColorSaturation.getOrCrash();
+              lightColorHueLastValue = lightColorHue.getOrCrash();
+
+              await _sendChangeColorHsv();
+            }
+            await _sendSetBrightness();
+          }
+        } catch (e) {
+          logger.e('Error executing Yeelight current state\n$e');
+        } finally {
+          yeelightPackageObject?.disconnect();
+        }
+      } catch (e) {
+        logger.e('Yeelight throws exception on disconnect\n$e');
+      }
+      executeStateTimer = null;
+    });
+  }
+
+  /// Will turn off the device, will not close the connection
+  Future<Either<CoreFailure, Unit>> _sendTurnOffDevice() async {
+    try {
+      yeelightPackageObject = Device(
+        address: InternetAddress(lastKnownIp!.getOrCrash()),
+        port: int.parse(yeelightPort!.getOrCrash()),
+      );
+
+      await yeelightPackageObject!.turnOff();
+      return right(unit);
+    } catch (e) {
+      await Future.delayed(const Duration(milliseconds: 150));
+      final List<DiscoveryResponse> responses = await Yeelight.discover();
+
+      final response = responses.firstWhere(
+        (element) => element.id.toString() == vendorUniqueId.getOrCrash(),
+      );
+
+      yeelightPackageObject =
+          Device(address: response.address, port: response.port!);
+
+      lastKnownIp = DeviceLastKnownIp(response.address.address);
+      yeelightPort = YeelightPort(response.port!.toString());
+
+      await yeelightPackageObject!.turnOff();
+    }
+    return right(unit);
+  }
+
+  /// Will turn on the device, will not close the connection
+  Future<Either<CoreFailure, Unit>> _sendTurnOnDevice() async {
+    try {
+      yeelightPackageObject = Device(
+        address: InternetAddress(lastKnownIp!.getOrCrash()),
+        port: int.parse(yeelightPort!.getOrCrash()),
+      );
+
+      await yeelightPackageObject!.turnOn();
+      return right(unit);
+    } catch (e) {
+      // TODO: Maybe can be removed, need testing
+      await Future.delayed(const Duration(milliseconds: 150));
+      final responses = await Yeelight.discover();
+
+      final response = responses.firstWhere(
+        (element) => element.id.toString() == vendorUniqueId.getOrCrash(),
+      );
+
+      yeelightPackageObject =
+          Device(address: response.address, port: response.port!);
+
+      lastKnownIp = DeviceLastKnownIp(response.address.address);
+      yeelightPort = YeelightPort(response.port!.toString());
+
+      await yeelightPackageObject!.turnOn();
+    }
+    return right(unit);
+  }
+
+  Future<Either<CoreFailure, Unit>> _sendSetBrightness() async {
+    try {
+      try {
         yeelightPackageObject = Device(
           address: InternetAddress(lastKnownIp!.getOrCrash()),
           port: int.parse(yeelightPort!.getOrCrash()),
         );
 
-        // await device.setColorTemperature(
-        //   colorTemperature: int.parse(
-        //     lightColorTemperature!.getOrCrash(),
-        //   ),
-        // );
-        await yeelightPackageObject!.setHSV(
-          hue: double.parse(lightColorHueNewValue).toInt(),
-          saturation: int.parse(
-            lightColorSaturationNewValue.substring(2, 4),
+        await yeelightPackageObject!.turnOn();
+
+        await yeelightPackageObject!.setBrightness(
+          brightness: int.parse(
+            lightBrightness.getOrCrash(),
           ),
+          duration: const Duration(milliseconds: 200),
         );
+
         yeelightPackageObject!.disconnect();
 
         return right(unit);
       } catch (e) {
-        yeelightPackageObject?.disconnect();
-
         await Future.delayed(const Duration(milliseconds: 150));
 
         final responses = await Yeelight.discover();
 
-        final response = responses.firstWhereOrNull(
-          (element) => element.id.toString() == yeelightDeviceId!.getOrCrash(),
+        final response = responses.firstWhere(
+          (element) => element.id.toString() == vendorUniqueId.getOrCrash(),
         );
-        if (response == null) {
-          logger.v('Device cant be discovered');
-          return left(const CoreFailure.unexpected());
-        }
 
         yeelightPackageObject =
             Device(address: response.address, port: response.port!);
         lastKnownIp = DeviceLastKnownIp(response.address.address);
         yeelightPort = YeelightPort(response.port!.toString());
 
-        // await device.setColorTemperature(
-        //   colorTemperature: int.parse(
-        //     lightColorTemperature!.getOrCrash(),
-        //   ),
-        // );
+        await yeelightPackageObject!.turnOn();
 
-        await yeelightPackageObject!.setHSV(
-          hue: int.parse(lightColorHueNewValue),
-          saturation: int.parse(lightColorSaturationNewValue),
+        await yeelightPackageObject!.setBrightness(
+          brightness: int.parse(
+            lightBrightness.getOrCrash(),
+          ),
+          duration: const Duration(milliseconds: 200),
         );
 
-        yeelightPackageObject?.disconnect();
+        return right(unit);
+      }
+    } catch (error) {
+      logger.e('Error in Yeelight Device\n$error');
+      return left(const CoreFailure.unexpected());
+    }
+  }
+
+  Future<Either<CoreFailure, Unit>> _sendChangeColorTemperature() async {
+    try {
+      try {
+        yeelightPackageObject = Device(
+          address: InternetAddress(lastKnownIp!.getOrCrash()),
+          port: int.parse(yeelightPort!.getOrCrash()),
+        );
+
+        await yeelightPackageObject!.setColorTemperature(
+          colorTemperature: int.parse(lightColorTemperature.getOrCrash()),
+          duration: const Duration(
+            milliseconds: 100,
+          ),
+        );
+
+        return right(unit);
+      } catch (e) {
+        await Future.delayed(const Duration(milliseconds: 150));
+
+        final responses = await Yeelight.discover();
+
+        final response = responses.firstWhere(
+          (element) => element.id.toString() == vendorUniqueId.getOrCrash(),
+        );
+
+        yeelightPackageObject =
+            Device(address: response.address, port: response.port!);
+        lastKnownIp = DeviceLastKnownIp(response.address.address);
+        yeelightPort = YeelightPort(response.port!.toString());
+
+        await yeelightPackageObject!.setColorTemperature(
+          colorTemperature: int.parse(lightColorTemperature.getOrCrash()),
+          duration: const Duration(
+            milliseconds: 100,
+          ),
+        );
+        return right(unit);
+      }
+    } catch (e) {
+      return left(CoreFailure.actionExcecuter(failedValue: e));
+    }
+  }
+
+  Future<Either<CoreFailure, Unit>> _sendChangeColorHsv() async {
+    try {
+      try {
+        yeelightPackageObject = Device(
+          address: InternetAddress(lastKnownIp!.getOrCrash()),
+          port: int.parse(yeelightPort!.getOrCrash()),
+        );
+        int saturationValue;
+        if (lightColorSaturation.getOrCrash().length <= 3 &&
+            lightColorSaturation.getOrCrash() == '0.0') {
+          saturationValue = 0;
+        } else if (lightColorSaturation.getOrCrash().length <= 3) {
+          saturationValue = 100;
+        } else {
+          saturationValue =
+              int.parse(lightColorSaturation.getOrCrash().substring(2, 4));
+        }
+
+        await yeelightPackageObject!.setHSV(
+          hue: double.parse(lightColorHue.getOrCrash()).toInt(),
+          saturation: saturationValue,
+          duration: const Duration(
+            milliseconds: 100,
+          ),
+        );
+
+        return right(unit);
+      } catch (e) {
+        await Future.delayed(const Duration(milliseconds: 150));
+
+        final responses = await Yeelight.discover();
+
+        final response = responses.firstWhere(
+          (element) => element.id.toString() == vendorUniqueId.getOrCrash(),
+        );
+
+        yeelightPackageObject =
+            Device(address: response.address, port: response.port!);
+        lastKnownIp = DeviceLastKnownIp(response.address.address);
+        yeelightPort = YeelightPort(response.port!.toString());
+
+        int saturationValue;
+        if (lightColorSaturation.getOrCrash().length <= 3 &&
+            lightColorSaturation.getOrCrash() == '0.0') {
+          saturationValue = 0;
+        } else if (lightColorSaturation.getOrCrash().length <= 3) {
+          saturationValue = 100;
+        } else {
+          saturationValue =
+              int.parse(lightColorSaturation.getOrCrash().substring(2, 4));
+        }
+
+        await yeelightPackageObject!.setHSV(
+          hue: double.parse(lightColorHue.getOrCrash()).toInt(),
+          saturation: saturationValue,
+          duration: const Duration(
+            milliseconds: 100,
+          ),
+        );
 
         return right(unit);
       }
     } catch (e) {
-      return left(const CoreFailure.unexpected());
+      return left(CoreFailure.actionExcecuter(failedValue: e));
     }
   }
 }

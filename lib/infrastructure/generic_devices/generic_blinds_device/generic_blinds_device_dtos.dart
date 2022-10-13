@@ -13,23 +13,21 @@ abstract class GenericBlindsDeviceDtos
     implements _$GenericBlindsDeviceDtos, DeviceEntityDtoAbstract {
   factory GenericBlindsDeviceDtos({
     // @JsonKey(ignore: true)
-    String? deviceDtoClass,
-    String? id,
+    required String id,
+    required String vendorUniqueId,
     required String? defaultName,
-    required String? roomId,
-    required String? roomName,
     required String? deviceStateGRPC,
-    String? stateMassage,
     required String? senderDeviceOs,
     required String? senderDeviceModel,
     required String? senderId,
     required String? blindsSwitchState,
     required String? deviceTypes,
     required String? compUuid,
-    required String? deviceVendor
+    required String? deviceVendor,
+    String? deviceDtoClass,
+    String? stateMassage,
 
     // required ServerTimestampConverter() FieldValue serverTimeStamp,
-    ,
   }) = _GenericBlindsDeviceDtos;
 
   GenericBlindsDeviceDtos._();
@@ -38,9 +36,8 @@ abstract class GenericBlindsDeviceDtos
     return GenericBlindsDeviceDtos(
       deviceDtoClass: (GenericBlindsDeviceDtos).toString(),
       id: genericBlindsDE.uniqueId.getOrCrash(),
+      vendorUniqueId: genericBlindsDE.vendorUniqueId.getOrCrash(),
       defaultName: genericBlindsDE.defaultName.getOrCrash(),
-      roomId: genericBlindsDE.roomId.getOrCrash(),
-      roomName: genericBlindsDE.roomName.getOrCrash(),
       deviceStateGRPC: genericBlindsDE.deviceStateGRPC.getOrCrash(),
       stateMassage: genericBlindsDE.stateMassage.getOrCrash(),
       senderDeviceOs: genericBlindsDE.senderDeviceOs.getOrCrash(),
@@ -64,9 +61,8 @@ abstract class GenericBlindsDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericBlindsDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
+      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
       defaultName: DeviceDefaultName(defaultName),
-      roomId: CoreUniqueId.fromUniqueString(roomId),
-      roomName: DeviceRoomName(roomName),
       deviceStateGRPC: DeviceState(deviceStateGRPC),
       stateMassage: DeviceStateMassage(stateMassage),
       senderDeviceOs: DeviceSenderDeviceOs(senderDeviceOs),
@@ -78,15 +74,3 @@ abstract class GenericBlindsDeviceDtos
     );
   }
 }
-
-// class ServerTimestampConverter implements JsonConverter<FieldValue, Object> {
-//   const ServerTimestampConverter();
-//
-//   @override
-//   FieldValue fromJson(Object json) {
-//     return FieldValue.serverTimestamp();
-//   }
-//
-//   @override
-//   Object toJson(FieldValue fieldValue) => fieldValue;
-// }

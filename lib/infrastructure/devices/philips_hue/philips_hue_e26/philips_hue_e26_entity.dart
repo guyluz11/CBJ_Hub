@@ -14,55 +14,31 @@ import 'package:yeedart/yeedart.dart';
 
 class PhilipsHueE26Entity extends GenericRgbwLightDE {
   PhilipsHueE26Entity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericRgbwLightSwitchState lightSwitchState,
-    required GenericRgbwLightColorAlpha lightColorAlpha,
-    required GenericRgbwLightColorHue lightColorHue,
-    required GenericRgbwLightColorSaturation lightColorSaturation,
-    required GenericRgbwLightColorValue lightColorValue,
-    required this.philipsHueDeviceId,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericRgbwLightSwitchState super.lightSwitchState,
+    required super.lightColorAlpha,
+    required super.lightColorHue,
+    required super.lightColorSaturation,
+    required super.lightColorValue,
+    required super.lightColorTemperature,
+    required super.lightBrightness,
     required this.philipsHuePort,
     this.deviceMdnsName,
     this.lastKnownIp,
-    required GenericRgbwLightColorTemperature lightColorTemperature,
-    required GenericRgbwLightBrightness lightBrightness,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
-          lightSwitchState: lightSwitchState,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
-          // TODO: change when implementing philips hue
           deviceVendor: DeviceVendor(
-            VendorsAndServices.vendorsAndServicesNotSupported.toString(),
+            VendorsAndServices.philipsHue.toString(),
           ),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
-          lightColorTemperature: lightColorTemperature,
-          lightBrightness: lightBrightness,
-          lightColorAlpha: lightColorAlpha,
-          lightColorHue: lightColorHue,
-          lightColorSaturation: lightColorSaturation,
-          lightColorValue: lightColorValue,
         );
-
-  /// PhilipsHue device unique id that came withe the device
-  PhilipsHueDeviceId? philipsHueDeviceId;
 
   /// PhilipsHue communication port
   PhilipsHuePort? philipsHuePort;
@@ -76,9 +52,9 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     if (newEntity is! GenericRgbwLightDE) {
       return left(
         const CoreFailure.actionExcecuter(
@@ -87,30 +63,45 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
       );
     }
 
-    if (newEntity.lightSwitchState!.getOrCrash() !=
-        lightSwitchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.lightSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.lightSwitchState!.getOrCrash() !=
+              lightSwitchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.lightSwitchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != lightSwitchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.on) {
           (await turnOnLight()).fold(
-            (l) => logger.e('Error turning philips_hue light on'),
-            (r) => logger.i('Light turn on success'),
+            (l) {
+              logger.e('Error turning philips_hue light on');
+              throw l;
+            },
+            (r) {
+              logger.i('Philips Hue light turn on success');
+            },
           );
         } else if (actionToPreform == DeviceActions.off) {
           (await turnOffLight()).fold(
-            (l) => logger.e('Error turning philips_hue light off'),
-            (r) => logger.i('Light turn off success'),
+            (l) {
+              logger.e('Error turning philips_hue light off');
+              throw l;
+            },
+            (r) {
+              logger.i('Philips Hue light turn off success');
+            },
           );
         } else {
           logger.w('actionToPreform is not set correctly on PhilipsHue E26');
         }
       }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
     }
-
-    return right(unit);
   }
 
   @override
@@ -135,7 +126,7 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
   }
 
   @override
-  Future<Either<CoreFailure, Unit>> adjustBrightness(String brightness) async {
+  Future<Either<CoreFailure, Unit>> setBrightness(String brightness) async {
     logger.w('Philips adjust brightness method is not implemented yet');
     return left(
       const CoreFailure.actionExcecuter(
@@ -146,6 +137,18 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> changeColorTemperature({
+    required String lightColorTemperatureNewValue,
+  }) async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> changeColorHsv({
     required String lightColorAlphaNewValue,
     required String lightColorHueNewValue,
     required String lightColorSaturationNewValue,

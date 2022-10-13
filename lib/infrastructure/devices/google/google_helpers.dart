@@ -4,33 +4,41 @@ import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv
 import 'package:cbj_hub/infrastructure/devices/google/chrome_cast/chrome_cast_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:yeedart/yeedart.dart';
 
 class GoogleHelpers {
-  static DeviceEntityAbstract addDiscoverdDevice(
-    DiscoveryResponse yeelightDevice,
-  ) {
-    final ChromeCastEntity yeelightDE = ChromeCastEntity(
-      uniqueId: CoreUniqueId(),
-      defaultName: DeviceDefaultName('Google test 2'),
-      roomId: CoreUniqueId.newDevicesRoom(),
-      roomName: DeviceRoomName(' '),
+  static List<DeviceEntityAbstract> addDiscoverdDevice({
+    required String mDnsName,
+    required String ip,
+    required String port,
+    required CoreUniqueId? uniqueDeviceId,
+  }) {
+    CoreUniqueId uniqueDeviceIdTemp;
+
+    if (uniqueDeviceId != null) {
+      uniqueDeviceIdTemp = uniqueDeviceId;
+    } else {
+      uniqueDeviceIdTemp = CoreUniqueId();
+    }
+
+    final ChromeCastEntity googleDE = ChromeCastEntity(
+      uniqueId: uniqueDeviceIdTemp,
+      vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
+      defaultName: DeviceDefaultName('Chromecast'),
       deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
-      senderDeviceOs: DeviceSenderDeviceOs('yeelight'),
+      senderDeviceOs: DeviceSenderDeviceOs('Android'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),
       senderId: DeviceSenderId(),
       compUuid: DeviceCompUuid('34asdfrsd23gggg'),
-      deviceMdnsName: DeviceMdnsName('yeelink-light-colora_miap9C52'),
-      lastKnownIp: DeviceLastKnownIp(yeelightDevice.address.address),
+      deviceMdnsName: DeviceMdnsName(mDnsName),
+      lastKnownIp: DeviceLastKnownIp(ip),
       stateMassage: DeviceStateMassage('Hello World'),
       powerConsumption: DevicePowerConsumption('0'),
-      googleDeviceId: GoogleDeviceId(yeelightDevice.id.toString()),
-      googlePort: GooglePort(yeelightDevice.port.toString()),
+      googlePort: GooglePort(port),
       smartTvSwitchState: GenericSmartTvSwitchState(
         DeviceActions.actionNotSupported.toString(),
       ),
     );
 
-    return yeelightDE;
+    return [googleDE];
   }
 }

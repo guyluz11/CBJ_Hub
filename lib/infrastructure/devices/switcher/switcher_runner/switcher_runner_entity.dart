@@ -14,45 +14,32 @@ import 'package:dartz/dartz.dart';
 
 class SwitcherRunnerEntity extends GenericBlindsDE {
   SwitcherRunnerEntity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
+    required super.uniqueId,
+    required VendorUniqueId vendorUniqueId,
     required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
     required DevicePowerConsumption powerConsumption,
-    required GenericBlindsSwitchState blindsSwitchState,
+    required GenericBlindsSwitchState super.blindsSwitchState,
     required this.switcherMacAddress,
-    required this.switcherDeviceId,
     required this.lastKnownIp,
     this.switcherPort,
   }) : super(
-          uniqueId: uniqueId,
+          vendorUniqueId: vendorUniqueId,
           defaultName: defaultName,
-          roomId: roomId,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
-          compUuid: compUuid,
           powerConsumption: powerConsumption,
-          blindsSwitchState: blindsSwitchState,
         ) {
-    if (switcherPort == null) {
-      switcherPort =
-          SwitcherPort(SwitcherApiObject.switcherTcpPort2.toString());
-    }
+    switcherPort ??=
+        SwitcherPort(SwitcherApiObject.switcherTcpPort2.toString());
     switcherObject = SwitcherApiObject(
       deviceType: SwitcherDevicesTypes.switcherRunner,
-      deviceId: switcherDeviceId.getOrCrash(),
+      deviceId: vendorUniqueId.getOrCrash(),
       switcherIp: lastKnownIp.getOrCrash(),
       switcherName: defaultName.getOrCrash()!,
       macAddress: switcherMacAddress.getOrCrash(),
@@ -61,8 +48,6 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     );
   }
 
-  /// Switcher device unique id that came withe the device
-  SwitcherDeviceId switcherDeviceId;
   SwitcherMacAddress switcherMacAddress;
 
   /// Switcher communication port
@@ -81,44 +66,55 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     if (newEntity is! GenericBlindsDE) {
       return left(
         const CoreFailure.actionExcecuter(failedValue: 'Not the correct type'),
       );
     }
 
-    if (newEntity.blindsSwitchState!.getOrCrash() !=
-        blindsSwitchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.blindsSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.blindsSwitchState!.getOrCrash() !=
+              blindsSwitchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.blindsSwitchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != blindsSwitchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.moveUp) {
-          (await moveUpBlinds()).fold(
-            (l) => logger.e('Error turning blinds up'),
-            (r) => logger.i('Blinds up success'),
-          );
+          (await moveUpBlinds()).fold((l) {
+            logger.e('Error turning blinds up');
+            throw l;
+          }, (r) {
+            logger.i('Blinds up success');
+          });
         } else if (actionToPreform == DeviceActions.stop) {
-          (await stopBlinds()).fold(
-            (l) => logger.e('Error stopping blinds '),
-            (r) => logger.i('Blinds stop success'),
-          );
+          (await stopBlinds()).fold((l) {
+            logger.e('Error stopping blinds');
+            throw l;
+          }, (r) {
+            logger.i('Blinds stop success');
+          });
         } else if (actionToPreform == DeviceActions.moveDown) {
-          (await moveDownBlinds()).fold(
-            (l) => logger.e('Error turning blinds down'),
-            (r) => logger.i('Blinds down success'),
-          );
+          (await moveDownBlinds()).fold((l) {
+            logger.e('Error turning blinds down');
+            throw l;
+          }, (r) {
+            logger.i('Blinds down success');
+          });
         } else {
           logger.e('actionToPreform is not set correctly on Switcher Runner');
         }
       }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
     }
-
-    return right(unit);
   }
 
   @override
@@ -138,10 +134,8 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
   Future<Either<CoreFailure, Unit>> stopBlinds() async {
     blindsSwitchState = GenericBlindsSwitchState(DeviceActions.stop.toString());
 
-    // TODO: Implement stop function for switcher blinds
-
     try {
-      // await switcherObject!.stopBlinds();
+      await switcherObject!.stopBlinds();
       return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());

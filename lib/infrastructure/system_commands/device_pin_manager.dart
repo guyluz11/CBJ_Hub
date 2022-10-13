@@ -31,6 +31,9 @@ class DevicePinListManager extends DevicePinListManagerAbstract {
 
   @override
   Future setPhysicalDeviceType() async {
+    // TODO: check if this can be done using
+    // https://pub.dev/packages/flutter_gpiod or by using
+    // https://pub.dev/packages/linux_system_info
     final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
     final String etcReleaseOutput =
         await systemCommandsManager.getAllEtcReleaseFilesText();
@@ -68,7 +71,7 @@ class DevicePinListManager extends DevicePinListManagerAbstract {
     }
     logger.i(
       'This device is of type:'
-      ' ${EnumHelper.physicalDeviceTypeToString(physicalDeviceType)}',
+      ' ${EnumHelperCbj.physicalDeviceTypeToString(physicalDeviceType)}',
     );
   }
 
@@ -81,7 +84,7 @@ class DevicePinListManager extends DevicePinListManagerAbstract {
     //  Loop through all the physical devices types
     for (final PhysicalDeviceType physicalDeviceTypeTemp
         in PhysicalDeviceType.values) {
-      if (EnumHelper.physicalDeviceTypeToString(physicalDeviceTypeTemp)
+      if (EnumHelperCbj.physicalDeviceTypeToString(physicalDeviceTypeTemp)
               .toLowerCase() ==
           physicalDeviceType.toLowerCase()) {
         return physicalDeviceTypeTemp; //  If physicalDeviceType string exist

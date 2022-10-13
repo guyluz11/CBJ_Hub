@@ -7,9 +7,7 @@ import 'package:cbj_hub/utils.dart';
 class LoginEntityDtoAbstract {
   LoginEntityDtoAbstract();
 
-  factory LoginEntityDtoAbstract.fromDomain(
-    LoginEntityAbstract loginEntityDtoAbstract,
-  ) {
+  factory LoginEntityDtoAbstract.fromDomain() {
     logger.v('LoginEntityDtoAbstract.fromDomain');
     return LoginEntityDtoAbstract();
   }
@@ -20,7 +18,9 @@ class LoginEntityDtoAbstract {
 
     if (jsonLoginDtoClass == VendorsAndServices.lifx.toString()) {
       loginEntityDtoAbstract = GenericLifxLoginDtos.fromJson(json);
-    } else if (jsonLoginDtoClass == VendorsAndServices.tuyaSmart.toString()) {
+    } else if (jsonLoginDtoClass == VendorsAndServices.tuyaSmart.toString() ||
+        jsonLoginDtoClass == VendorsAndServices.smartLife.toString() ||
+        jsonLoginDtoClass == VendorsAndServices.jinvooSmart.toString()) {
       loginEntityDtoAbstract = GenericTuyaLoginDtos.fromJson(json);
     } else {
       throw 'DtoClassTypeDoesNotExist';

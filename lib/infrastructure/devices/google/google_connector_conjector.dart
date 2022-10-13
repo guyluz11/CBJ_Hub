@@ -2,23 +2,75 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/google/chrome_cast/chrome_cast_entity.dart';
+import 'package:cbj_hub/infrastructure/devices/google/google_helpers.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:multicast_dns/multicast_dns.dart';
 
 @singleton
 class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
-  GoogleConnectorConjector() {
-    _discoverNewDevices();
-  }
-
-  @override
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  Future<void> _discoverNewDevices() async {}
+  static const List<String> mdnsTypes = [
+    '_googlecast._tcp',
+    '_androidtvremote2._tcp',
+    '_rc._tcp',
+  ];
+
+  /// Add new devices to [companyDevices] if not exist
+  Future<void> addNewDeviceByMdnsName({
+    required String mDnsName,
+    required String ip,
+    required String port,
+  }) async {
+    CoreUniqueId? tempCoreUniqueId;
+
+    for (final DeviceEntityAbstract device in companyDevices.values) {
+      if (device is ChromeCastEntity &&
+          (mDnsName == device.vendorUniqueId.getOrCrash() ||
+              ip == device.lastKnownIp!.getOrCrash())) {
+        return;
+      } // Same tv can have multiple mDns names so we can't compere it without ip in the object
+      // else if (device is GenericSmartTvDE &&
+      //     (mDnsName == device.vendorUniqueId.getOrCrash() ||
+      //         ip == device.lastKnownIp!.getOrCrash())) {
+      //   return;
+      // }
+      else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+        logger.w(
+          'Google device type supported but implementation is missing here',
+        );
+        return;
+      }
+    }
+
+    final List<DeviceEntityAbstract> googleDevice =
+        GoogleHelpers.addDiscoverdDevice(
+      mDnsName: mDnsName,
+      ip: ip,
+      port: port,
+      uniqueDeviceId: tempCoreUniqueId,
+    );
+
+    if (googleDevice.isEmpty) {
+      return;
+    }
+
+    for (final DeviceEntityAbstract entityAsDevice in googleDevice) {
+      final DeviceEntityAbstract deviceToAdd =
+          CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
+
+      final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
+          MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+
+      companyDevices.addEntries([deviceAsEntry]);
+    }
+    logger.i('New Chromecast device got added');
+  }
 
   Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract google) {
     // TODO: implement create
@@ -39,9 +91,11 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
     final DeviceEntityAbstract? device = companyDevices[googleDE.getDeviceId()];
 
     if (device is ChromeCastEntity) {
-      device.executeDeviceAction(googleDE);
+      device.executeDeviceAction(newEntity: googleDE);
     } else {
-      logger.i('Google device type does not exist');
+      logger.w(
+        'Google device type does not exist ${device?.deviceTypes.getOrCrash()}',
+      );
     }
   }
 
@@ -52,34 +106,5 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
   }) async {
     // TODO: implement updateDatabase
     throw UnimplementedError();
-  }
-
-  Future<String?> getIpFromMDNS(String deviceMdnsName) async {
-    final String name = '$deviceMdnsName.local';
-    final MDnsClient client = MDnsClient();
-    // Start the client with default options.
-    await client.start();
-
-    // Get the PTR record for the service.
-    await for (final PtrResourceRecord ptr in client
-        .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
-      // Use the domainName from the PTR record to get the SRV record,
-      // which will have the port and local hostname.
-      // Note that duplicate messages may come through, especially if any
-      // other mDNS queries are running elsewhere on the machine.
-      await for (final SrvResourceRecord srv
-          in client.lookup<SrvResourceRecord>(
-        ResourceRecordQuery.service(ptr.domainName),
-      )) {
-        // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
-        final String bundleId =
-            ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-        logger.v(
-          'Dart observatory instance found at '
-          '${srv.target}:${srv.port} for "$bundleId".',
-        );
-      }
-    }
-    return null;
   }
 }

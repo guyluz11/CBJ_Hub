@@ -14,43 +14,28 @@ import 'package:dartz/dartz.dart';
 
 class LifxWhiteEntity extends GenericLightDE {
   LifxWhiteEntity({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericSwitchState lightSwitchState,
-    required this.lifxDeviceId,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required DevicePowerConsumption super.powerConsumption,
+    required GenericLightSwitchState super.lightSwitchState,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
-          lightSwitchState: lightSwitchState,
-          roomName: roomName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor: DeviceVendor(VendorsAndServices.lifx.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
         );
 
-  /// Lifx device unique id that came withe the device
-  LifxDeviceId? lifxDeviceId;
+  LifxPort? lifxPort;
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     if (newEntity is! GenericLightDE) {
       return left(
         const CoreFailure.actionExcecuter(
@@ -59,38 +44,47 @@ class LifxWhiteEntity extends GenericLightDE {
       );
     }
 
-    if (newEntity.lightSwitchState!.getOrCrash() !=
-        lightSwitchState!.getOrCrash()) {
-      final DeviceActions? actionToPreform = EnumHelper.stringToDeviceAction(
-        newEntity.lightSwitchState!.getOrCrash(),
-      );
+    try {
+      if (newEntity.lightSwitchState!.getOrCrash() !=
+              lightSwitchState!.getOrCrash() ||
+          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.lightSwitchState!.getOrCrash(),
+        );
 
-      if (actionToPreform.toString() != lightSwitchState!.getOrCrash()) {
         if (actionToPreform == DeviceActions.on) {
-          (await turnOnLight()).fold(
-            (l) => logger.e('Error turning lifx light on'),
-            (r) => logger.i('Light turn on success'),
-          );
+          (await turnOnLight()).fold((l) {
+            logger.e('Error turning Lifx light on');
+            throw l;
+          }, (r) {
+            logger.i('Lifx light turn on success');
+          });
         } else if (actionToPreform == DeviceActions.off) {
-          (await turnOffLight()).fold(
-            (l) => logger.e('Error turning lifx light off'),
-            (r) => logger.i('Light turn off success'),
-          );
+          (await turnOffLight()).fold((l) {
+            logger.e('Error turning Lifx light off');
+            throw l;
+          }, (r) {
+            logger.i('Lifx light turn off success');
+          });
         } else {
           logger.w('actionToPreform is not set correctly on Lifx White');
         }
       }
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      return right(unit);
+    } catch (e) {
+      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      return left(const CoreFailure.unexpected());
     }
-
-    return right(unit);
   }
 
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
-    lightSwitchState = GenericSwitchState(DeviceActions.on.toString());
+    lightSwitchState = GenericLightSwitchState(DeviceActions.on.toString());
     try {
       final setStateBodyResponse = await LifxConnectorConjector.lifxClient
-          ?.setState(lifxDeviceId!.getOrCrash(), power: 'on', fast: true);
+          ?.setState(vendorUniqueId.getOrCrash(), power: 'on', fast: true);
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }
@@ -106,11 +100,11 @@ class LifxWhiteEntity extends GenericLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
-    lightSwitchState = GenericSwitchState(DeviceActions.off.toString());
+    lightSwitchState = GenericLightSwitchState(DeviceActions.off.toString());
 
     try {
       final setStateBodyResponse = await LifxConnectorConjector.lifxClient
-          ?.setState(lifxDeviceId!.getOrCrash(), power: 'off', fast: true);
+          ?.setState(vendorUniqueId.getOrCrash(), power: 'off', fast: true);
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }

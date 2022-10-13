@@ -13,21 +13,19 @@ abstract class GenericSmartTvDeviceDtos
     implements _$GenericSmartTvDeviceDtos, DeviceEntityDtoAbstract {
   factory GenericSmartTvDeviceDtos({
     // @JsonKey(ignore: true)
-    String? deviceDtoClass,
-    String? id,
+    required String id,
+    required String vendorUniqueId,
     required String? defaultName,
-    required String? roomId,
-    required String? roomName,
     required String? deviceStateGRPC,
-    String? stateMassage,
     required String? senderDeviceOs,
     required String? senderDeviceModel,
     required String? senderId,
     required String? smartTvSwitchState,
     required String? deviceTypes,
     required String? compUuid,
-    required String? deviceVendor
-
+    required String? deviceVendor,
+    String? deviceDtoClass,
+    String? stateMassage
     // required ServerTimestampConverter() FieldValue serverTimeStamp,
     ,
   }) = _GenericSmartTvDeviceDtos;
@@ -40,9 +38,8 @@ abstract class GenericSmartTvDeviceDtos
     return GenericSmartTvDeviceDtos(
       deviceDtoClass: (GenericSmartTvDeviceDtos).toString(),
       id: genericSmartTvDE.uniqueId.getOrCrash(),
+      vendorUniqueId: genericSmartTvDE.vendorUniqueId.getOrCrash(),
       defaultName: genericSmartTvDE.defaultName.getOrCrash(),
-      roomId: genericSmartTvDE.roomId.getOrCrash(),
-      roomName: genericSmartTvDE.roomName.getOrCrash(),
       deviceStateGRPC: genericSmartTvDE.deviceStateGRPC.getOrCrash(),
       stateMassage: genericSmartTvDE.stateMassage.getOrCrash(),
       senderDeviceOs: genericSmartTvDE.senderDeviceOs.getOrCrash(),
@@ -66,9 +63,8 @@ abstract class GenericSmartTvDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSmartTvDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
+      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
       defaultName: DeviceDefaultName(defaultName),
-      roomId: CoreUniqueId.fromUniqueString(roomId),
-      roomName: DeviceRoomName(roomName),
       deviceStateGRPC: DeviceState(deviceStateGRPC),
       stateMassage: DeviceStateMassage(stateMassage),
       senderDeviceOs: DeviceSenderDeviceOs(senderDeviceOs),
@@ -80,15 +76,3 @@ abstract class GenericSmartTvDeviceDtos
     );
   }
 }
-
-// class ServerTimestampConverter implements JsonConverter<FieldValue, Object> {
-//   const ServerTimestampConverter();
-//
-//   @override
-//   FieldValue fromJson(Object json) {
-//     return FieldValue.serverTimestamp();
-//   }
-//
-//   @override
-//   Object toJson(FieldValue fieldValue) => fieldValue;
-// }

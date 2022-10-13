@@ -10,16 +10,17 @@ import 'package:cbj_hub/utils.dart';
 class SystemCommandsManager {
   SystemCommandsManager() {
     if (Platform.isLinux) {
-      logger.v('Linux platform detected');
+      logger.v('Linux platform detected in SystemCommandsManager');
       systemCommandsBaseClassD = CommonBashCommandsD();
     } else if (Platform.isWindows) {
-      logger.v('Windows platform detected');
+      logger.v('Windows platform detected in SystemCommandsManager');
       systemCommandsBaseClassD = CommonBatchCommandsD();
     } else if (Platform.isMacOS) {
-      logger.w('Mac os is currently not supported');
+      logger.w('Mac os is currently not supported in SystemCommandsManager');
       throw 'Mac os is currently not supported';
     } else {
-      logger.w('${Platform.operatingSystem} os is not supported');
+      logger.e(
+          '${Platform.operatingSystem} os is not supported in SystemCommandsManager');
       throw '${Platform.operatingSystem} os is not supported';
     }
   }
@@ -30,6 +31,10 @@ class SystemCommandsManager {
     return systemCommandsBaseClassD!.getCurrentUserName();
   }
 
+  Future<String> getLocalDbPath() {
+    return systemCommandsBaseClassD!.getLocalDbPath();
+  }
+
   Future<String> getDeviceHostName() {
     return systemCommandsBaseClassD!.getDeviceHostName();
   }
@@ -38,7 +43,7 @@ class SystemCommandsManager {
     return systemCommandsBaseClassD!.getAllEtcReleaseFilesText();
   }
 
-  Future<String?> getFileContent(fileFullPath) {
+  Future<String?> getFileContent(String fileFullPath) {
     return systemCommandsBaseClassD!.getFileContent(fileFullPath);
   }
 

@@ -13,13 +13,10 @@ abstract class GenericRgbwLightDeviceDtos
     implements _$GenericRgbwLightDeviceDtos, DeviceEntityDtoAbstract {
   factory GenericRgbwLightDeviceDtos({
     // @JsonKey(ignore: true)
-    String? deviceDtoClass,
-    String? id,
+    required String id,
+    required String vendorUniqueId,
     required String? defaultName,
-    required String? roomId,
-    required String? roomName,
     required String? deviceStateGRPC,
-    String? stateMassage,
     required String? senderDeviceOs,
     required String? senderDeviceModel,
     required String? senderId,
@@ -33,6 +30,8 @@ abstract class GenericRgbwLightDeviceDtos
     required String? lightColorHue,
     required String? lightColorSaturation,
     required String? lightColorValue,
+    String? deviceDtoClass,
+    String? stateMassage,
 
     // required ServerTimestampConverter() FieldValue serverTimeStamp,
   }) = _GenericRgbwLightDeviceDtos;
@@ -45,9 +44,8 @@ abstract class GenericRgbwLightDeviceDtos
     return GenericRgbwLightDeviceDtos(
       deviceDtoClass: (GenericRgbwLightDeviceDtos).toString(),
       id: genericRgbwLightDE.uniqueId.getOrCrash(),
+      vendorUniqueId: genericRgbwLightDE.vendorUniqueId.getOrCrash(),
       defaultName: genericRgbwLightDE.defaultName.getOrCrash(),
-      roomId: genericRgbwLightDE.roomId.getOrCrash(),
-      roomName: genericRgbwLightDE.roomName.getOrCrash(),
       deviceStateGRPC: genericRgbwLightDE.deviceStateGRPC.getOrCrash(),
       stateMassage: genericRgbwLightDE.stateMassage.getOrCrash(),
       senderDeviceOs: genericRgbwLightDE.senderDeviceOs.getOrCrash(),
@@ -58,7 +56,7 @@ abstract class GenericRgbwLightDeviceDtos
       compUuid: genericRgbwLightDE.compUuid.getOrCrash(),
       deviceVendor: genericRgbwLightDE.deviceVendor.getOrCrash(),
       lightColorTemperature:
-          genericRgbwLightDE.lightColorTemperature!.getOrCrash(),
+          genericRgbwLightDE.lightColorTemperature.getOrCrash(),
       lightBrightness: genericRgbwLightDE.lightBrightness.getOrCrash(),
       lightColorAlpha: genericRgbwLightDE.lightColorAlpha.getOrCrash(),
       lightColorHue: genericRgbwLightDE.lightColorHue.getOrCrash(),
@@ -79,9 +77,8 @@ abstract class GenericRgbwLightDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericRgbwLightDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
+      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
       defaultName: DeviceDefaultName(defaultName),
-      roomId: CoreUniqueId.fromUniqueString(roomId),
-      roomName: DeviceRoomName(roomName),
       deviceStateGRPC: DeviceState(deviceStateGRPC),
       stateMassage: DeviceStateMassage(stateMassage),
       senderDeviceOs: DeviceSenderDeviceOs(senderDeviceOs),
@@ -101,15 +98,3 @@ abstract class GenericRgbwLightDeviceDtos
     );
   }
 }
-
-// class ServerTimestampConverter implements JsonConverter<FieldValue, Object> {
-//   const ServerTimestampConverter();
-//
-//   @override
-//   FieldValue fromJson(Object json) {
-//     return FieldValue.serverTimestamp();
-//   }
-//
-//   @override
-//   Object toJson(FieldValue fieldValue) => fieldValue;
-// }

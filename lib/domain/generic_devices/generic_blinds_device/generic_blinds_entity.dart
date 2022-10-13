@@ -13,40 +13,27 @@ import 'package:dartz/dartz.dart';
 class GenericBlindsDE extends DeviceEntityAbstract {
   /// All public field of GenericBlinds entity
   GenericBlindsDE({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceVendor deviceVendor,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    DevicePowerConsumption? powerConsumption,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.deviceVendor,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
     required this.blindsSwitchState,
+    DevicePowerConsumption? powerConsumption,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
           deviceTypes: DeviceType(DeviceTypes.blinds.toString()),
-          deviceVendor: deviceVendor,
-          deviceStateGRPC: deviceStateGRPC,
-          compUuid: compUuid,
-          roomName: roomName,
-          senderDeviceModel: senderDeviceModel,
-          senderDeviceOs: senderDeviceOs,
-          senderId: senderId,
-          stateMassage: stateMassage,
         );
 
   /// Empty instance of GenericBlindsEntity
   factory GenericBlindsDE.empty() => GenericBlindsDE(
         uniqueId: CoreUniqueId(),
+        vendorUniqueId: VendorUniqueId(),
         defaultName: DeviceDefaultName(''),
-        roomId: CoreUniqueId(),
-        roomName: DeviceRoomName(''),
         deviceStateGRPC: DeviceState(''),
         senderDeviceOs: DeviceSenderDeviceOs(''),
         senderDeviceModel: DeviceSenderDeviceModel(''),
@@ -85,7 +72,13 @@ class GenericBlindsDE extends DeviceEntityAbstract {
 
   @override
   String getDeviceId() {
-    return uniqueId.getOrCrash()!;
+    return uniqueId.getOrCrash();
+  }
+
+  /// Return a list of all valid actions for this device
+  @override
+  List<String> getAllValidActions() {
+    return GenericBlindsSwitchState.blindsValidActions();
   }
 
   @override
@@ -93,9 +86,8 @@ class GenericBlindsDE extends DeviceEntityAbstract {
     return GenericBlindsDeviceDtos(
       deviceDtoClass: (GenericBlindsDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
+      vendorUniqueId: vendorUniqueId.getOrCrash(),
       defaultName: defaultName.getOrCrash(),
-      roomId: roomId.getOrCrash(),
-      roomName: roomName.getOrCrash(),
       deviceStateGRPC: deviceStateGRPC.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
       senderDeviceOs: senderDeviceOs.getOrCrash(),
@@ -110,9 +102,10 @@ class GenericBlindsDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  @override
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -149,5 +142,21 @@ class GenericBlindsDE extends DeviceEntityAbstract {
         failedValue: 'Action does not exist',
       ),
     );
+  }
+
+  @override
+  bool replaceActionIfExist(String action) {
+    if (GenericBlindsSwitchState.blindsValidActions().contains(action)) {
+      blindsSwitchState = GenericBlindsSwitchState(action);
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  List<String> getListOfPropertiesToChange() {
+    return [
+      'blindsSwitchState',
+    ];
   }
 }

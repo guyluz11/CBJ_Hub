@@ -37,27 +37,19 @@ Either<CoreFailure<String>, String> validatePowerConsumptionNotEmpty(
 }
 
 Either<CoreFailure<String>, String> validateRoomNameNotEmpty(String input) {
-  if (input != null) {
-    return right(input);
-  } else {
-    return left(CoreFailure.empty(failedValue: input));
-  }
+  return right(input);
 }
 
 Either<CoreFailure<String>, String> validateMdnsNameNotEmpty(String input) {
-  if (input != null) {
-    return right(input);
-  } else {
-    return left(CoreFailure.empty(failedValue: input));
-  }
+  return right(input);
 }
 
 Either<CoreFailure<String>, String> validateWiFiNameNotEmpty(String input) {
-  if (input != null) {
-    return right(input);
-  } else {
-    return left(CoreFailure.empty(failedValue: input));
-  }
+  return right(input);
+}
+
+Either<CoreFailure<String>, String> validatePortNotEmpty(String input) {
+  return right(input);
 }
 
 Either<CoreFailure<String>, String> validateDeviceMaxNameLength(
@@ -77,28 +69,28 @@ Either<CoreFailure<String>, String> validateDeviceMaxNameLength(
 }
 
 Either<CoreFailure<String>, String> validateDeviceStateExist(String input) {
-  if (EnumHelper.stringToDeviceState(input) != null) {
+  if (EnumHelperCbj.stringToDeviceState(input) != null) {
     return right(input);
   }
   return left(const CoreFailure.deviceActionDoesNotExist());
 }
 
 Either<CoreFailure<String>, String> validateDeviceActionExist(String input) {
-  if (EnumHelper.stringToDeviceAction(input) != null) {
+  if (EnumHelperCbj.stringToDeviceAction(input) != null) {
     return right(input);
   }
   return left(const CoreFailure.deviceActionDoesNotExist());
 }
 
 Either<CoreFailure<String>, String> validateDeviceTypeExist(String input) {
-  if (EnumHelper.stringToDt(input) != null) {
+  if (EnumHelperCbj.stringToDt(input) != null) {
     return right(input);
   }
   return left(const CoreFailure.deviceTypeDoesNotExist());
 }
 
 Either<CoreFailure<String>, String> validateDeviceVendorExist(String input) {
-  if (EnumHelper.stringToDeviceVendor(input) != null) {
+  if (EnumHelperCbj.stringToDeviceVendor(input) != null) {
     return right(input);
   }
   return left(const CoreFailure.deviceTypeDoesNotExist());

@@ -2,17 +2,90 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
+import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/esphome/esphome_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_light/esphome_light_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:multicast_dns/multicast_dns.dart';
 
 @singleton
-class ESPHomeConnectorConjector implements AbstractCompanyConnectorConjector {
-  @override
+class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
+  static const List<String> mdnsTypes = ['_esphomelib._tcp'];
+
   static Map<String, DeviceEntityAbstract> companyDevices = {};
+
+  /// Add new devices to [companyDevices] if not exist
+  Future<void> addNewDeviceByMdnsName({
+    required String mDnsName,
+    required String ip,
+    required String port,
+  }) async {
+    CoreUniqueId? tempCoreUniqueId;
+
+    for (final DeviceEntityAbstract device in companyDevices.values) {
+      if (device is EspHomeLightEntity &&
+          mDnsName == device.vendorUniqueId.getOrCrash()) {
+        return;
+      } else if (device is GenericLightDE &&
+          mDnsName == device.vendorUniqueId.getOrCrash()) {
+        tempCoreUniqueId = device.uniqueId;
+        break;
+      } else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+        logger.w(
+          'ESPHome device type supported but implementation is missing here',
+        );
+        return;
+      }
+    }
+
+    final List<DeviceEntityAbstract> espDevice =
+        await EspHomeHelpers.addDiscoverdDevice(
+      mDnsName: mDnsName,
+      port: port,
+      uniqueDeviceId: tempCoreUniqueId,
+    );
+
+    if (espDevice.isEmpty) {
+      return;
+    }
+
+    for (final DeviceEntityAbstract entityAsDevice in espDevice) {
+      final DeviceEntityAbstract deviceToAdd =
+          CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
+
+      final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
+          MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+
+      companyDevices.addEntries([deviceAsEntry]);
+    }
+    logger.v('New espHome devices name:$mDnsName');
+  }
+
+  Future<void> manageHubRequestsForDevice(
+    DeviceEntityAbstract espHomeDE,
+  ) async {
+    final DeviceEntityAbstract? device =
+        companyDevices[espHomeDE.getDeviceId()];
+
+    if (device is EspHomeLightEntity) {
+      device.executeDeviceAction(newEntity: espHomeDE);
+    } else {
+      logger.w('ESPHome device type does not exist');
+    }
+  }
+
+  Future<Either<CoreFailure, Unit>> updateDatabase({
+    required String pathOfField,
+    required Map<String, dynamic> fieldsToUpdate,
+    String? forceUpdateLocation,
+  }) async {
+    // TODO: implement updateDatabase
+    throw UnimplementedError();
+  }
 
   Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract espHome) {
     // TODO: implement create
@@ -27,58 +100,5 @@ class ESPHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<void> initiateHubConnection() {
     // TODO: implement initiateHubConnection
     throw UnimplementedError();
-  }
-
-  Future<void> manageHubRequestsForDevice(
-    DeviceEntityAbstract espHomeDE,
-  ) async {
-    final DeviceEntityAbstract? device =
-        companyDevices[espHomeDE.getDeviceId()];
-
-    if (device is ESPHomeLightEntity) {
-      device.executeDeviceAction(espHomeDE);
-    } else {
-      logger.w('ESPHome device type does not exist');
-    }
-
-    logger.v('manageHubRequestsForDevice in ESPHome');
-  }
-
-  Future<Either<CoreFailure, Unit>> updateDatabase({
-    required String pathOfField,
-    required Map<String, dynamic> fieldsToUpdate,
-    String? forceUpdateLocation,
-  }) async {
-    // TODO: implement updateDatabase
-    throw UnimplementedError();
-  }
-
-  Future<String?> getIpFromMDNS(String deviceMdnsName) async {
-    final String name = '$deviceMdnsName.local';
-    final MDnsClient client = MDnsClient();
-    // Start the client with default options.
-    await client.start();
-
-    // Get the PTR record for the service.
-    await for (final PtrResourceRecord ptr in client
-        .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
-      // Use the domainName from the PTR record to get the SRV record,
-      // which will have the port and local hostname.
-      // Note that duplicate messages may come through, especially if any
-      // other mDNS queries are running elsewhere on the machine.
-      await for (final SrvResourceRecord srv
-          in client.lookup<SrvResourceRecord>(
-        ResourceRecordQuery.service(ptr.domainName),
-      )) {
-        // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
-        final String bundleId =
-            ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-        logger.v(
-          'Dart observatory instance found at '
-          '${srv.target}:${srv.port} for "$bundleId".',
-        );
-      }
-    }
-    return null;
   }
 }

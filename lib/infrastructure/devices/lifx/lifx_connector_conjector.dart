@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
-import 'package:cbj_hub/infrastructure/devices/companys_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/lifx/lifx_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/lifx/lifx_white/lifx_white_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
@@ -20,7 +22,6 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
     return 'Success';
   }
 
-  @override
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
   static lifx.Client? lifxClient;
@@ -31,30 +32,51 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
         final Iterable<lifx.Bulb> lights = await lifxClient!.listLights();
 
         for (final lifx.Bulb lifxDevice in lights) {
+          CoreUniqueId? tempCoreUniqueId;
           bool deviceExist = false;
-          for (DeviceEntityAbstract savedDevice in companyDevices.values) {
-            savedDevice = savedDevice as LifxWhiteEntity;
-
-            if (lifxDevice.id == savedDevice.lifxDeviceId!.getOrCrash()) {
+          for (final DeviceEntityAbstract savedDevice
+              in companyDevices.values) {
+            if (savedDevice is LifxWhiteEntity &&
+                lifxDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
               deviceExist = true;
+              break;
+            } else if (savedDevice is GenericLightDE &&
+                lifxDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+              tempCoreUniqueId = savedDevice.uniqueId;
+              break;
+            } else if (lifxDevice.id ==
+                savedDevice.vendorUniqueId.getOrCrash()) {
+              logger.w(
+                'Lifx device type supported but implementation is missing here',
+              );
               break;
             }
           }
           if (!deviceExist) {
-            final DeviceEntityAbstract addDevice =
-                LifxHelpers.addDiscoverdDevice(lifxDevice);
-            CompanysConnectorConjector.addDiscoverdDeviceToHub(addDevice);
+            final DeviceEntityAbstract? addDevice =
+                LifxHelpers.addDiscoverdDevice(
+              lifxDevice: lifxDevice,
+              uniqueDeviceId: tempCoreUniqueId,
+            );
+
+            if (addDevice == null) {
+              continue;
+            }
+
+            final DeviceEntityAbstract deviceToAdd =
+                CompaniesConnectorConjector.addDiscoverdDeviceToHub(addDevice);
+
             final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-                MapEntry(addDevice.uniqueId.getOrCrash()!, addDevice);
+                MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+
             companyDevices.addEntries([deviceAsEntry]);
 
-            CompanysConnectorConjector.addDiscoverdDeviceToHub(addDevice);
-            logger.i('New Lifx device got add');
+            logger.i('New Lifx device got added');
           }
         }
         await Future.delayed(const Duration(minutes: 3));
       } catch (e) {
-        logger.e('Error discover in Lifx $e');
+        logger.e('Error discover in Lifx\n$e');
         await Future.delayed(const Duration(minutes: 1));
       }
     }
@@ -81,7 +103,7 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
     final DeviceEntityAbstract? device = companyDevices[lifxDE.getDeviceId()];
 
     if (device is LifxWhiteEntity) {
-      device.executeDeviceAction(lifxDE);
+      device.executeDeviceAction(newEntity: lifxDE);
     } else {
       logger.w('Lifx device type does not exist');
     }

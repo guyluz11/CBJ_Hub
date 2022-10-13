@@ -4,14 +4,21 @@ import 'package:cbj_hub/infrastructure/system_commands/system_commands_base_clas
 import 'package:cbj_hub/utils.dart';
 
 class CommonBatchCommandsD implements SystemCommandsBaseClassD {
+  String? currentUserName;
+  String? currentDriveLetter;
+
   @override
   Future<String> getCurrentUserName() async {
-    final String whoami =
+    if (currentUserName != null) {
+      return currentUserName!;
+    }
+    final String whoAmI =
         await Process.run('cmd', <String>['/C', 'echo', '%username%'])
             .then((ProcessResult result) {
       return result.stdout.toString();
     });
-    return whoami.substring(0, whoami.indexOf('\r'));
+    currentUserName = whoAmI.substring(0, whoAmI.indexOf('\r'));
+    return currentUserName!;
   }
 
   @override
@@ -49,10 +56,10 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
   }
 
   @override
-  Future<String> getFileContent(fileFullPath) async {
+  Future<String> getFileContent(String fileFullPath) async {
     final String fileText = await Process.run(
       'cmd',
-      <String>['/C', 'more', fileFullPath.toString()],
+      <String>['/C', 'more', fileFullPath],
     ).then((ProcessResult result) {
       return result.stdout.toString();
     });
@@ -82,12 +89,21 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
   }
 
   Future<String> getCurrentDriveLetter() async {
-    final String driveLetter =
-        await Process.run('cmd', <String>['/C', 'echo', '%cd:~0,2%'])
-            .then((ProcessResult result) {
+    if (currentDriveLetter != null) {
+      return currentDriveLetter!;
+    }
+
+    final String driveLetter;
+    driveLetter = await Process.run(
+      'cmd',
+      <String>['/C', 'echo', '%cd:~0,2%'],
+    ).then((ProcessResult result) {
       return result.stdout.toString();
     });
-    return driveLetter.substring(0, driveLetter.indexOf('\r'));
+
+    currentDriveLetter = driveLetter.substring(0, driveLetter.indexOf('\r'));
+
+    return currentDriveLetter!;
   }
 
   //TODO: Currently does not work as echo %~dp0 will not work at the command
@@ -99,5 +115,14 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
       return result.stdout.toString();
     });
     return driveLetter.substring(0, driveLetter.indexOf('\r'));
+  }
+
+  @override
+  Future<String> getLocalDbPath() async {
+    final String cbjFullPath = (await getCurrentDriveLetter()) +
+        r'\Users\' +
+        (await getCurrentUserName()) +
+        r'\Documents\cbjinni\'; // Will only work if the program located in the os driver
+    return cbjFullPath;
   }
 }

@@ -13,40 +13,27 @@ import 'package:dartz/dartz.dart';
 class GenericBoilerDE extends DeviceEntityAbstract {
   /// All public field of GenericBoiler entity
   GenericBoilerDE({
-    required CoreUniqueId uniqueId,
-    required CoreUniqueId roomId,
-    required DeviceVendor deviceVendor,
-    required DeviceDefaultName defaultName,
-    required DeviceRoomName roomName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    DevicePowerConsumption? powerConsumption,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceVendor,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
     required this.boilerSwitchState,
+    DevicePowerConsumption? powerConsumption,
   }) : super(
-          uniqueId: uniqueId,
-          defaultName: defaultName,
-          roomId: roomId,
           deviceTypes: DeviceType(DeviceTypes.boiler.toString()),
-          deviceVendor: deviceVendor,
-          deviceStateGRPC: deviceStateGRPC,
-          compUuid: compUuid,
-          roomName: roomName,
-          senderDeviceModel: senderDeviceModel,
-          senderDeviceOs: senderDeviceOs,
-          senderId: senderId,
-          stateMassage: stateMassage,
         );
 
   /// Empty instance of GenericBoilerEntity
   factory GenericBoilerDE.empty() => GenericBoilerDE(
         uniqueId: CoreUniqueId(),
+        vendorUniqueId: VendorUniqueId(),
         defaultName: DeviceDefaultName(''),
-        roomId: CoreUniqueId(),
-        roomName: DeviceRoomName(''),
         deviceStateGRPC: DeviceState(''),
         senderDeviceOs: DeviceSenderDeviceOs(''),
         senderDeviceModel: DeviceSenderDeviceModel(''),
@@ -86,7 +73,13 @@ class GenericBoilerDE extends DeviceEntityAbstract {
 
   @override
   String getDeviceId() {
-    return uniqueId.getOrCrash()!;
+    return uniqueId.getOrCrash();
+  }
+
+  /// Return a list of all valid actions for this device
+  @override
+  List<String> getAllValidActions() {
+    return GenericBoilerSwitchState.boilerValidActions();
   }
 
   @override
@@ -94,9 +87,9 @@ class GenericBoilerDE extends DeviceEntityAbstract {
     return GenericBoilerDeviceDtos(
       deviceDtoClass: (GenericBoilerDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
+      vendorUniqueId: vendorUniqueId.getOrCrash(),
+
       defaultName: defaultName.getOrCrash(),
-      roomId: roomId.getOrCrash(),
-      roomName: roomName.getOrCrash(),
       deviceStateGRPC: deviceStateGRPC.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
       senderDeviceOs: senderDeviceOs.getOrCrash(),
@@ -112,9 +105,9 @@ class GenericBoilerDE extends DeviceEntityAbstract {
 
   /// Please override the following methods
   @override
-  Future<Either<CoreFailure, Unit>> executeDeviceAction(
-    DeviceEntityAbstract newEntity,
-  ) async {
+  Future<Either<CoreFailure, Unit>> executeDeviceAction({
+    required DeviceEntityAbstract newEntity,
+  }) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -141,5 +134,21 @@ class GenericBoilerDE extends DeviceEntityAbstract {
         failedValue: 'Action does not exist',
       ),
     );
+  }
+
+  @override
+  bool replaceActionIfExist(String action) {
+    if (GenericBoilerSwitchState.boilerValidActions().contains(action)) {
+      boilerSwitchState = GenericBoilerSwitchState(action);
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  List<String> getListOfPropertiesToChange() {
+    return [
+      'boilerSwitchState',
+    ];
   }
 }
