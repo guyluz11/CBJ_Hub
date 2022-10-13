@@ -46,6 +46,7 @@ class CbjDevicesConnectorConjector
     final List<DeviceEntityAbstract> devicesList =
         CbjDevicesHelpers.addDiscoverdDevice(
       componentsInDevice: componentsInDevice,
+      deviceAddress: activeHost.address,
     );
     if (devicesList.isEmpty) {
       return;
@@ -65,6 +66,7 @@ class CbjDevicesConnectorConjector
       );
     }
   }
+
   //
   // Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract cbjDevices) {
   //   // TODO: implement create
@@ -81,25 +83,24 @@ class CbjDevicesConnectorConjector
   //   throw UnimplementedError();
   // }
   //
-  // Future<void> manageHubRequestsForDevice(
-  //   DeviceEntityAbstract cbjDevicesDE,
-  // ) async {
-  //   final DeviceEntityAbstract? device =
-  //       companyDevices[cbjDevicesDE.getDeviceId()];
-  //
-  //   // if (device == null) {
-  //   //   setTheSameDeviceFromAllDevices(cbjDevicesDE);
-  //   //   device =
-  //   //   companyDevices[cbjDevicesDE.getDeviceId()];
-  //   // }
-  //
-  //   if (device != null &&
-  //       (device is CbjDevicesV2Entity || device is CbjDevicesRunnerEntity)) {
-  //     device.executeDeviceAction(newEntity: cbjDevicesDE);
-  //   } else {
-  //     logger.w('CbjDevices device type ${device.runtimeType} does not exist');
-  //   }
-  // }
+  Future<void> manageHubRequestsForDevice(
+    DeviceEntityAbstract cbjDevicesDE,
+  ) async {
+    final DeviceEntityAbstract? device =
+        companyDevices[cbjDevicesDE.getDeviceId()];
+
+    // if (device == null) {
+    //   setTheSameDeviceFromAllDevices(cbjDevicesDE);
+    //   device =
+    //   companyDevices[cbjDevicesDE.getDeviceId()];
+    // }
+
+    if (device != null && (device is CbjSmartComputerEntity)) {
+      device.executeDeviceAction(newEntity: cbjDevicesDE);
+    } else {
+      logger.w('CbjDevices device type ${device.runtimeType} does not exist');
+    }
+  }
   //
   // // Future<void> setTheSameDeviceFromAllDevices(
   // //   DeviceEntityAbstract cbjDevicesDE,

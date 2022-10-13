@@ -9,7 +9,7 @@ import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 
 Future<void> main(List<String> arguments) async {
-  configureInjection(Env.prod);
+  configureInjection(Env.devPc);
 
   try {
     SharedVariables(arguments[0]);

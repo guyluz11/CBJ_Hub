@@ -63,6 +63,9 @@ class CompaniesConnectorConjector {
         } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
           SonoffDiyConnectorConjector()
               .manageHubRequestsForDevice(deviceEntityAbstract);
+        } else if (deviceVendor == VendorsAndServices.cbjDevices.toString()) {
+          CbjDevicesConnectorConjector()
+              .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
           logger.w(
             'Cannot send device changes to its repo, company not supported $deviceVendor',

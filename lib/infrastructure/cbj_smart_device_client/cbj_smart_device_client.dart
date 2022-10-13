@@ -77,4 +77,26 @@ class CbjSmartDeviceClient {
     );
     return activeHost;
   }
+
+  static Future<CbjCommendStatus?> suspendCbjSmartDeviceHostDevice(
+    String address,
+    String cbjDeviceId,
+  ) async {
+    await channel?.terminate();
+
+    channel = await _createCbjSmartDeviceClient(address, smartDevicePort);
+
+    smartDeviceClient = CbjSmartDeviceConnectionsClient(channel!);
+
+    try {
+      final CbjCommendStatus response = await smartDeviceClient!
+          .suspendComputer(CbjSmartDeviceInfo(id: cbjDeviceId));
+
+      return response;
+    } catch (e) {
+      logger.e('Caught error while stream with cbj smart device\n$e');
+      await channel?.shutdown();
+    }
+    return null;
+  }
 }
