@@ -133,6 +133,16 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
     );
   }
 
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> shutDownSmartComputer() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
   @override
   bool replaceActionIfExist(String action) {
     if (GenericSmartComputerSuspendState.smartComputerValidActions()
