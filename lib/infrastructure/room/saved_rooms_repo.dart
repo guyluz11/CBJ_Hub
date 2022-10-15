@@ -12,6 +12,7 @@ import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -278,9 +279,13 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       areaTypes: _allRooms[roomId]!.roomTypes.getOrCrash(),
     );
 
-    return getIt<ILocalDbRepository>().saveRoomsToDb(
+    final Future<Either<LocalDbFailures, Unit>> saveRoomToDbResponse =
+        getIt<ILocalDbRepository>().saveRoomsToDb(
       roomsList: List<RoomEntity>.from(_allRooms.values),
     );
+
+    AppCommunicationRepository.sendAllRoomsFromHubRequestsStream();
+    return saveRoomToDbResponse;
   }
 
   @override

@@ -12,6 +12,7 @@ import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_converter.dart';
 import 'package:cbj_hub/infrastructure/room/saved_rooms_repo.dart';
@@ -174,6 +175,8 @@ class SceneCbjRepository implements ISceneCbjRepository {
     _allScenes[sceneId] = sceneCbjEntityTemp;
 
     saveAndActivateScenesToDb();
+
+    AppCommunicationRepository.sendAllScenesFromHubRequestsStream();
 
     return right(sceneCbjEntityTemp);
   }
