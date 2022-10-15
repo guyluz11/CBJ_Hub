@@ -182,6 +182,14 @@ class BedRoomAreaAction {
       case DeviceTypes.washingMachine:
         // TODO: Turn off.
         break;
+      case DeviceTypes.smartComputer:
+        actionsList.addEntries([
+          CommonDevicesScenesPresetsForDevices.smartComputerSuspend(
+            deviceEntity,
+            brokerNodeId,
+          ),
+        ]);
+        break;
     }
     return right(actionsList);
   }

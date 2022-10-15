@@ -108,9 +108,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     await saveAndActivateScenesToDb();
     return right(sceneNodeRedFlowId);
-
-    /// Scene already got added
-    return left(const SceneCbjFailure.unexpected());
   }
 
   @override
@@ -187,10 +184,15 @@ class SceneCbjRepository implements ISceneCbjRepository {
     String sceneName,
     List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         smartDevicesWithActionToAdd,
+    AreaPurposesTypes areaPurposesTypes,
   ) async {
+    final String colorForArea =
+        AreaTypeWithDeviceTypePreset.getColorForAreaType(areaPurposesTypes);
+
     final SceneCbjEntity newCbjScene = NodeRedConverter.convertToSceneNodes(
       nodeName: sceneName,
       devicesPropertyAction: smartDevicesWithActionToAdd,
+      sceneColor: colorForArea,
     );
     return addOrUpdateNewSceneInHub(newCbjScene);
   }
@@ -326,6 +328,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
       }
     }
 
+    final String colorForArea =
+        AreaTypeWithDeviceTypePreset.getColorForAreaType(areaType);
+
     // Removing start and end curly braces of the map object
 
     final String sceneAutomationStringNoBrackets =
@@ -370,6 +375,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
     }
     scene = scene.copyWith(
       automationString: SceneCbjAutomationString(tempNewAutomation),
+      backgroundColor: SceneCbjBackgroundColor(colorForArea),
     );
 
     String nodeRedFlowId = '';
@@ -408,7 +414,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
     String keyToGetFromNode,
   ) {
     try {
-      String brokerNodeId;
       final List<Map<String, dynamic>> sceneAutomationJson =
           (jsonDecode(sceneAutomationString) as List)
               .map((e) => e as Map<String, dynamic>)

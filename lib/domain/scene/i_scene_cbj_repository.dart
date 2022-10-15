@@ -44,6 +44,7 @@ abstract class ISceneCbjRepository {
     String sceneName,
     List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         smartDevicesWithActionToAdd,
+    AreaPurposesTypes areaPurposesTypes,
   );
 
   /// Will add all the devices to area scene, for each device will use the preselected

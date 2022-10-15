@@ -3,6 +3,7 @@ import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_bli
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_switch_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
@@ -359,6 +360,22 @@ class CommonDevicesScenesPresetsForDevices {
     final String property =
         GenericSmartPlugDE.empty().getListOfPropertiesToChange()[0];
     final String action = DeviceActions.off.toString();
+
+    return NodeRedConverter.convertToNodeString(
+      device: deviceEntity,
+      brokerNodeId: brokerNodeId,
+      property: property,
+      action: action,
+    );
+  }
+
+  static MapEntry<String, String> smartComputerSuspend(
+    DeviceEntityAbstract deviceEntity,
+    String brokerNodeId,
+  ) {
+    final String property =
+        GenericSmartComputerDE.empty().getListOfPropertiesToChange()[0];
+    final String action = DeviceActions.suspend.toString();
 
     return NodeRedConverter.convertToNodeString(
       device: deviceEntity,

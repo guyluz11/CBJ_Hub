@@ -26,6 +26,7 @@ class NodeRedConverter {
     required String nodeName,
     required List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         devicesPropertyAction,
+    required String sceneColor,
   }) {
     final NodeRedMqttBrokerNode brokerNode =
         NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
@@ -55,7 +56,7 @@ class NodeRedConverter {
     return SceneCbjEntity(
       uniqueId: UniqueId(),
       name: SceneCbjName(nodeName),
-      backgroundColor: SceneCbjBackgroundColor('0xFFFF9800'),
+      backgroundColor: SceneCbjBackgroundColor(sceneColor),
       automationString: SceneCbjAutomationString(nodes),
       nodeRedFlowId: SceneCbjNodeRedFlowId(null),
       firstNodeId: SceneCbjFirstNodeId(startingSceneNode.key),
@@ -80,6 +81,7 @@ class NodeRedConverter {
     required RoutineCbjRepeatDateDays daysToRepeat,
     required RoutineCbjRepeatDateHour hourToRepeat,
     required RoutineCbjRepeatDateMinute minutesToRepeat,
+    required String routineColor,
   }) {
     final NodeRedMqttBrokerNode brokerNode =
         NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
@@ -109,7 +111,7 @@ class NodeRedConverter {
     return RoutineCbjEntity(
       uniqueId: UniqueId(),
       name: RoutineCbjName(nodeName),
-      backgroundColor: RoutineCbjBackgroundColor('0xFFFF9800'),
+      backgroundColor: RoutineCbjBackgroundColor(routineColor),
       automationString: RoutineCbjAutomationString(nodes),
       nodeRedFlowId: RoutineCbjNodeRedFlowId(null),
       firstNodeId: RoutineCbjFirstNodeId(startingRoutineNode.key),
@@ -137,6 +139,7 @@ class NodeRedConverter {
     required String nodeName,
     required List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         devicesPropertyAction,
+    required String bindingColor,
   }) {
     final NodeRedMqttBrokerNode brokerNode =
         NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
@@ -164,7 +167,7 @@ class NodeRedConverter {
     return BindingCbjEntity(
       uniqueId: UniqueId(),
       name: BindingCbjName(nodeName),
-      backgroundColor: BindingCbjBackgroundColor('0xFFFF9800'),
+      backgroundColor: BindingCbjBackgroundColor(bindingColor),
       automationString: BindingCbjAutomationString(nodes),
       nodeRedFlowId: BindingCbjNodeRedFlowId(null),
       firstNodeId: BindingCbjFirstNodeId(startingBindingNode.key),

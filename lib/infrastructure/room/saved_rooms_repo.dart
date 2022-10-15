@@ -334,6 +334,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
                 .addOrUpdateNewSceneInHubFromDevicesPropertyActionList(
           areaNameEdited,
           [],
+          areaPurposeType,
         );
         sceneOrFailure.fold(
           (l) => logger.e('Error creating scene from room type'),
@@ -431,6 +432,5 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
     final AreaPurposesTypes areaPTemp = AreaPurposesTypes.values
         .firstWhere((element) => element.name == tempString);
     return areaPTemp;
-    return null;
   }
 }
