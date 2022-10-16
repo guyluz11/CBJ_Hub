@@ -12,6 +12,7 @@ abstract class RoomEntity implements _$RoomEntity {
   const factory RoomEntity({
     required RoomUniqueId uniqueId,
     required RoomDefaultName defaultName,
+    required RoomBackground background,
     required RoomTypes roomTypes,
     required RoomDevicesId roomDevicesId,
     required RoomScenesId roomScenesId,
@@ -30,13 +31,16 @@ abstract class RoomEntity implements _$RoomEntity {
   factory RoomEntity.empty() => RoomEntity(
         uniqueId: RoomUniqueId(),
         defaultName: RoomDefaultName(''),
-        roomDevicesId: RoomDevicesId(const []), // Do not add const
-        roomScenesId: RoomScenesId(const []), // Do not add const
-        roomRoutinesId: RoomRoutinesId(const []), // Do not add const
-        roomBindingsId: RoomBindingsId(const []), // Do not add const
-        roomMostUsedBy: RoomMostUsedBy(const []), // Do not add const
-        roomPermissions: RoomPermissions(const []), // Do not add const
-        roomTypes: RoomTypes(const []), // Do not add const
+        background: RoomBackground(
+          'https://live.staticflickr.com/5220/5486044345_f67abff3e9_h.jpg',
+        ),
+        roomDevicesId: RoomDevicesId([]), // Do not add const
+        roomScenesId: RoomScenesId([]), // Do not add const
+        roomRoutinesId: RoomRoutinesId([]), // Do not add const
+        roomBindingsId: RoomBindingsId([]), // Do not add const
+        roomMostUsedBy: RoomMostUsedBy([]), // Do not add const
+        roomPermissions: RoomPermissions([]), // Do not add const
+        roomTypes: RoomTypes([]), // Do not add const
       );
 
   /// Will add new device id to the devices in the room list
@@ -95,6 +99,7 @@ abstract class RoomEntity implements _$RoomEntity {
     return RoomEntityDtos(
       uniqueId: uniqueId.getOrCrash(),
       defaultName: defaultName.getOrCrash(),
+      background: background.getOrCrash(),
       roomTypes: roomTypes.getOrCrash(),
       roomDevicesId: roomDevicesId.getOrCrash(),
       roomScenesId: roomScenesId.getOrCrash(),
