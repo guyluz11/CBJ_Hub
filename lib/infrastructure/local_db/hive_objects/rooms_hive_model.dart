@@ -22,4 +22,6 @@ class RoomsHiveModel extends HiveObject {
   late List<String> roomPermissions;
   @HiveField(8)
   late List<String> roomTypes;
+  @HiveField(9)
+  late String roomBackground;
 }

@@ -60,8 +60,28 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
         }
       }
 
+      if (newEntity.smartComputerShutDownState!.getOrCrash() !=
+          smartComputerShutDownState!.getOrCrash()) {
+        final DeviceActions? actionToPreform =
+            EnumHelperCbj.stringToDeviceAction(
+          newEntity.smartComputerShutDownState!.getOrCrash(),
+        );
+        if (actionToPreform == DeviceActions.shutdown) {
+          (await shutDownSmartComputer()).fold((l) {
+            logger.e('Error shutdown Cbj Computer');
+            throw l;
+          }, (r) {
+            logger.i('Cbj Computer shutdown success');
+          });
+        } else {
+          logger.e('actionToPreform is not set correctly Cbj Computer');
+        }
+      }
+
       smartComputerSuspendState =
           GenericSmartComputerSuspendState(DeviceActions.itIsFalse.toString());
+      smartComputerShutDownState =
+          GenericSmartComputerShutdownState(DeviceActions.itIsFalse.toString());
 
       return right(unit);
     } catch (e) {
@@ -77,6 +97,24 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
         GenericSmartComputerSuspendState(DeviceActions.itIsFalse.toString());
 
     await CbjSmartDeviceClient.suspendCbjSmartDeviceHostDevice(
+      lastKnownIp.getOrCrash(),
+      vendorUniqueId.getOrCrash(),
+    );
+
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  @override
+  Future<Either<CoreFailure, Unit>> shutDownSmartComputer() async {
+    smartComputerShutDownState =
+        GenericSmartComputerShutdownState(DeviceActions.itIsFalse.toString());
+
+    await CbjSmartDeviceClient.shutDownCbjSmartDeviceHostDevice(
       lastKnownIp.getOrCrash(),
       vendorUniqueId.getOrCrash(),
     );

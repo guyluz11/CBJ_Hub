@@ -12,6 +12,7 @@ import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_converter.dart';
 import 'package:cbj_hub/infrastructure/room/saved_rooms_repo.dart';
@@ -108,9 +109,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     await saveAndActivateScenesToDb();
     return right(sceneNodeRedFlowId);
-
-    /// Scene already got added
-    return left(const SceneCbjFailure.unexpected());
   }
 
   @override
@@ -178,6 +176,8 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     saveAndActivateScenesToDb();
 
+    AppCommunicationRepository.sendAllScenesFromHubRequestsStream();
+
     return right(sceneCbjEntityTemp);
   }
 
@@ -187,10 +187,15 @@ class SceneCbjRepository implements ISceneCbjRepository {
     String sceneName,
     List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         smartDevicesWithActionToAdd,
+    AreaPurposesTypes areaPurposesTypes,
   ) async {
+    final String colorForArea =
+        AreaTypeWithDeviceTypePreset.getColorForAreaType(areaPurposesTypes);
+
     final SceneCbjEntity newCbjScene = NodeRedConverter.convertToSceneNodes(
       nodeName: sceneName,
       devicesPropertyAction: smartDevicesWithActionToAdd,
+      sceneColor: colorForArea,
     );
     return addOrUpdateNewSceneInHub(newCbjScene);
   }
@@ -326,6 +331,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
       }
     }
 
+    final String colorForArea =
+        AreaTypeWithDeviceTypePreset.getColorForAreaType(areaType);
+
     // Removing start and end curly braces of the map object
 
     final String sceneAutomationStringNoBrackets =
@@ -370,6 +378,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
     }
     scene = scene.copyWith(
       automationString: SceneCbjAutomationString(tempNewAutomation),
+      backgroundColor: SceneCbjBackgroundColor(colorForArea),
     );
 
     String nodeRedFlowId = '';
@@ -408,7 +417,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
     String keyToGetFromNode,
   ) {
     try {
-      String brokerNodeId;
       final List<Map<String, dynamic>> sceneAutomationJson =
           (jsonDecode(sceneAutomationString) as List)
               .map((e) => e as Map<String, dynamic>)

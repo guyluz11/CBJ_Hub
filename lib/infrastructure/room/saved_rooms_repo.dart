@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
@@ -12,6 +13,7 @@ import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -227,39 +229,46 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
   Future<Either<LocalDbFailures, Unit>> saveAndActiveRoomToDb({
     required RoomEntity roomEntity,
   }) async {
-    final String roomId = roomEntity.uniqueId.getOrCrash();
+    RoomEntity roomEntityTemp = roomEntity;
+    final String roomId = roomEntityTemp.uniqueId.getOrCrash();
 
-    await removeSameDevicesFromOtherRooms(roomEntity);
+    await removeSameDevicesFromOtherRooms(roomEntityTemp);
 
-    List<String> newDevicesList = roomEntity.roomDevicesId.getOrCrash();
+    List<String> newDevicesList = roomEntityTemp.roomDevicesId.getOrCrash();
 
     bool newRoom = false;
     if (_allRooms[roomId] == null) {
-      _allRooms.addEntries([MapEntry(roomId, roomEntity)]);
+      final String roomImage = pickRoomImage();
+      roomEntityTemp =
+          roomEntityTemp.copyWith(background: RoomBackground(roomImage));
+
+      _allRooms.addEntries([MapEntry(roomId, roomEntityTemp)]);
       newRoom = true;
     } else {
+      RoomEntity savedRoom = _allRooms[roomId]!;
       newDevicesList = getOnlyWhatOnlyExistInFirsList(
-        roomEntity.roomDevicesId.getOrCrash(),
-        _allRooms[roomId]!.roomDevicesId.getOrCrash(),
+        roomEntityTemp.roomDevicesId.getOrCrash(),
+        savedRoom.roomDevicesId.getOrCrash(),
       );
 
-      final RoomEntity roomEntityCombinedDevices = roomEntity.copyWith(
+      final RoomEntity roomEntityCombinedDevices = roomEntityTemp.copyWith(
         roomDevicesId: RoomDevicesId(
           combineNoDuplicateListOfString(
-            _allRooms[roomId]!.roomDevicesId.getOrCrash(),
-            roomEntity.roomDevicesId.getOrCrash(),
+            savedRoom.roomDevicesId.getOrCrash(),
+            roomEntityTemp.roomDevicesId.getOrCrash(),
           ),
         ),
         roomTypes: RoomTypes(
           // Getting handled in createScenesForAllSelectedRoomTypes
-          _allRooms[roomId]!.roomTypes.getOrCrash(),
+          savedRoom.roomTypes.getOrCrash(),
         ),
         roomScenesId: RoomScenesId(
           combineNoDuplicateListOfString(
-            _allRooms[roomId]!.roomScenesId.getOrCrash(),
-            roomEntity.roomScenesId.getOrCrash(),
+            savedRoom.roomScenesId.getOrCrash(),
+            roomEntityTemp.roomScenesId.getOrCrash(),
           ),
         ),
+        background: savedRoom.background,
       );
       _allRooms[roomId] = roomEntityCombinedDevices;
     }
@@ -267,7 +276,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
     await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
 
     await createScenesForAllSelectedRoomTypes(
-      roomEntity: roomEntity,
+      roomEntity: roomEntityTemp,
       newRoom: newRoom,
     );
 
@@ -278,9 +287,13 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       areaTypes: _allRooms[roomId]!.roomTypes.getOrCrash(),
     );
 
-    return getIt<ILocalDbRepository>().saveRoomsToDb(
+    final Future<Either<LocalDbFailures, Unit>> saveRoomToDbResponse =
+        getIt<ILocalDbRepository>().saveRoomsToDb(
       roomsList: List<RoomEntity>.from(_allRooms.values),
     );
+
+    AppCommunicationRepository.sendAllRoomsFromHubRequestsStream();
+    return saveRoomToDbResponse;
   }
 
   @override
@@ -334,6 +347,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
                 .addOrUpdateNewSceneInHubFromDevicesPropertyActionList(
           areaNameEdited,
           [],
+          areaPurposeType,
         );
         sceneOrFailure.fold(
           (l) => logger.e('Error creating scene from room type'),
@@ -431,6 +445,27 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
     final AreaPurposesTypes areaPTemp = AreaPurposesTypes.values
         .firstWhere((element) => element.name == tempString);
     return areaPTemp;
-    return null;
+  }
+
+  static String pickRoomImage() {
+    final List<String> roomImages = [
+      'https://live.staticflickr.com/5220/5486044345_f67abff3e9_h.jpg',
+      'https://live.staticflickr.com/7850/31597166847_486557e555_h.jpg',
+      'https://images.unsplash.com/photo-1598546720078-8659863bc47d?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80',
+      'https://live.staticflickr.com/7034/13522716673_1e13298046_h.jpg',
+      'https://live.staticflickr.com/8430/7731774826_7c1627cfcd_h.jpg',
+      'https://images.pexels.com/photos/2343475/pexels-photo-2343475.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      'https://live.staticflickr.com/8430/7731774826_7c1627cfcd_h.jpg',
+      'https://live.staticflickr.com/7160/6470998009_b7107d55fe_h.jpg',
+      'https://live.staticflickr.com/1256/1471268812_c73d690f26_h.jpg',
+      'https://live.staticflickr.com/1415/4592575839_15ca3982b7_c.jpg',
+      'https://images.pexels.com/photos/459654/pexels-photo-459654.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      'https://images.unsplash.com/photo-1598546720078-8659863bc47d?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80',
+      'https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      'https://images.unsplash.com/photo-1564829439675-0eec72f0b695?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=700&q=80',
+    ];
+
+    return roomImages[Random().nextInt(roomImages.length - 1)];
   }
 }

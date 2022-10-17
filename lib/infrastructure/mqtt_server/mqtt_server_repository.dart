@@ -396,6 +396,9 @@ class MqttServerRepository extends IMqttServerRepository {
         savedDeviceEntity.smartComputerSuspendState =
             entityFromTheApp.smartComputerSuspendState;
 
+        savedDeviceEntity.smartComputerShutDownState =
+            entityFromTheApp.smartComputerShutDownState;
+
         deviceFromApp = MapEntry(
           savedDeviceEntity.uniqueId.getOrCrash(),
           savedDeviceEntity,

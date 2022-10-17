@@ -125,6 +125,7 @@ class HiveRepository extends ILocalDbRepository {
         final RoomEntity roomEntity = RoomEntity(
           uniqueId: RoomUniqueId.fromUniqueString(roomHive.roomUniqueId),
           defaultName: RoomDefaultName(roomHive.roomDefaultName),
+          background: RoomBackground(roomHive.roomBackground),
           roomTypes: RoomTypes(roomHive.roomTypes),
           roomDevicesId: RoomDevicesId(roomHive.roomDevicesId),
           roomScenesId: RoomScenesId(roomHive.roomScenesId),
@@ -336,6 +337,7 @@ class HiveRepository extends ILocalDbRepository {
         final RoomsHiveModel roomsHiveModel = RoomsHiveModel()
           ..roomUniqueId = roomEntityDtos.uniqueId
           ..roomDefaultName = roomEntityDtos.defaultName
+          ..roomBackground = roomEntityDtos.background
           ..roomDevicesId = roomEntityDtos.roomDevicesId
           ..roomScenesId = roomEntityDtos.roomScenesId
           ..roomRoutinesId = roomEntityDtos.roomRoutinesId
