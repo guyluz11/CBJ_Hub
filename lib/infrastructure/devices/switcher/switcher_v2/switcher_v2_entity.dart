@@ -23,8 +23,8 @@ class SwitcherV2Entity extends GenericBoilerDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericBoilerSwitchState super.boilerSwitchState,
+    required super.powerConsumption,
+    required super.boilerSwitchState,
     required this.switcherMacAddress,
     required this.lastKnownIp,
     required this.switcherPort,
@@ -33,7 +33,6 @@ class SwitcherV2Entity extends GenericBoilerDE {
           defaultName: defaultName,
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
-          powerConsumption: powerConsumption,
         ) {
     switcherObject = SwitcherApiObject(
       deviceType: SwitcherDevicesTypes.switcherV2Esp,
@@ -41,7 +40,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
       switcherIp: lastKnownIp.getOrCrash(),
       switcherName: defaultName.getOrCrash()!,
       macAddress: switcherMacAddress.getOrCrash(),
-      powerConsumption: powerConsumption.getOrCrash(),
+      powerConsumption: powerConsumption?.getOrCrash() ?? '0',
     );
   }
 

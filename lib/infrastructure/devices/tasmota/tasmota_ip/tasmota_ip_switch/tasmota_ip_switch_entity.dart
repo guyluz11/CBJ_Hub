@@ -35,8 +35,8 @@ class TasmotaIpSwitchEntity extends GenericSwitchDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericSwitchSwitchState super.switchState,
+    required super.powerConsumption,
+    required super.switchState,
     required this.tasmotaIpDeviceHostName,
     required this.tasmotaIpLastIp,
   }) : super(

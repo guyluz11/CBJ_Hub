@@ -24,7 +24,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     required super.senderId,
     required super.compUuid,
     required DevicePowerConsumption powerConsumption,
-    required GenericBlindsSwitchState super.blindsSwitchState,
+    required super.blindsSwitchState,
     required this.switcherMacAddress,
     required this.lastKnownIp,
     this.switcherPort,
@@ -43,8 +43,8 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
       switcherIp: lastKnownIp.getOrCrash(),
       switcherName: defaultName.getOrCrash()!,
       macAddress: switcherMacAddress.getOrCrash(),
-      powerConsumption: powerConsumption.getOrCrash(),
       port: int.parse(switcherPort!.getOrCrash()),
+      powerConsumption: powerConsumption.getOrCrash(),
     );
   }
 

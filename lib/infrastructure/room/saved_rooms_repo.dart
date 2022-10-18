@@ -245,7 +245,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       _allRooms.addEntries([MapEntry(roomId, roomEntityTemp)]);
       newRoom = true;
     } else {
-      RoomEntity savedRoom = _allRooms[roomId]!;
+      final RoomEntity savedRoom = _allRooms[roomId]!;
       newDevicesList = getOnlyWhatOnlyExistInFirsList(
         roomEntityTemp.roomDevicesId.getOrCrash(),
         savedRoom.roomDevicesId.getOrCrash(),
