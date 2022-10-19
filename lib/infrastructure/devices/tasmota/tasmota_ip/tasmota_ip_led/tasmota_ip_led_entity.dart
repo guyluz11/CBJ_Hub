@@ -34,8 +34,8 @@ class TasmotaIpLedEntity extends GenericLightDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericLightSwitchState super.lightSwitchState,
+    required super.powerConsumption,
+    required super.lightSwitchState,
     required this.tasmotaIpDeviceHostName,
     required this.tasmotaIpLastIp,
   }) : super(

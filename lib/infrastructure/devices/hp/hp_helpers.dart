@@ -1,10 +1,10 @@
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/lg/lg_webos_tv/lg_webos_tv_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_printer_device/generic_printer_value_objects.dart';
+import 'package:cbj_hub/infrastructure/devices/hp/hp_printer/hp_printer_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 
-class LgHelpers {
+class HpHelpers {
   static List<DeviceEntityAbstract> addDiscoverdDevice({
     required String mDnsName,
     required String ip,
@@ -18,8 +18,7 @@ class LgHelpers {
     } else {
       uniqueDeviceIdTemp = CoreUniqueId();
     }
-
-    final LgWebosTvEntity lgDE = LgWebosTvEntity(
+    final HpPrinterEntity lgDE = HpPrinterEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
       defaultName: DeviceDefaultName('LG TV'),
@@ -32,10 +31,10 @@ class LgHelpers {
       lastKnownIp: DeviceLastKnownIp(ip),
       stateMassage: DeviceStateMassage('Hello World'),
       powerConsumption: DevicePowerConsumption('0'),
-      port: DevicePort(port),
-      smartTvSwitchState: GenericSmartTvSwitchState(
+      printerSwitchState: GenericPrinterSwitchState(
         DeviceActions.actionNotSupported.toString(),
       ),
+      devicePort: DevicePort(port),
     );
 
     return [lgDE];

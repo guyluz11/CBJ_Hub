@@ -23,8 +23,8 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericSmartPlugState super.smartPlugState,
+    required super.powerConsumption,
+    required super.smartPlugState,
     required this.cloudTuya,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.tuyaSmart.toString()),

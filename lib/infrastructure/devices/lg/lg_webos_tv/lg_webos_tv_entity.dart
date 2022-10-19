@@ -6,8 +6,6 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/lg/lg_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
@@ -23,9 +21,9 @@ class LgWebosTvEntity extends GenericSmartTvDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericSmartTvSwitchState super.smartTvSwitchState,
-    required this.lgPort,
+    required super.powerConsumption,
+    required super.smartTvSwitchState,
+    required this.port,
     this.deviceMdnsName,
     this.lastKnownIp,
   }) : super(
@@ -33,7 +31,7 @@ class LgWebosTvEntity extends GenericSmartTvDE {
         );
 
   /// Lg communication port
-  LgPort? lgPort;
+  DevicePort? port;
 
   DeviceLastKnownIp? lastKnownIp;
 

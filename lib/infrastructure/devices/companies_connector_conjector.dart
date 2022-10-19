@@ -9,6 +9,8 @@ import 'package:cbj_hub/infrastructure/cbj_smart_device_client/cbj_smart_device_
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/hp/hp_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/hp/hp_printer/hp_printer_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/lg/lg_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/lifx/lifx_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/shelly/shelly_connector_conjector.dart';
@@ -231,6 +233,14 @@ class CompaniesConnectorConjector {
         (startOfMdnsNameLower.contains('lg') ||
             startOfMdnsNameLower.contains('webos'))) {
       getIt<LgConnectorConjector>().addNewDeviceByMdnsName(
+        mDnsName: startOfMdnsName,
+        ip: mdnsDeviceIp,
+        port: mdnsPort,
+      );
+    } else if (HpPrinterEntity.mdnsTypes
+            .contains(hostMdnsInfo.mdnsServiceType) &&
+        (startOfMdnsNameLower.contains('hp'))) {
+      getIt<HpConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
         port: mdnsPort,
