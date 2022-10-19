@@ -21,7 +21,7 @@ class HpPrinterEntity extends GenericPrinterDE {
     required super.printerSwitchState,
     required this.deviceMdnsName,
     required this.devicePort,
-    this.lastKnownIp,
+    required super.lastKnownIp,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.hp.toString()),
         );
@@ -29,8 +29,6 @@ class HpPrinterEntity extends GenericPrinterDE {
   static const List<String> mdnsTypes = [
     '_ipp._tcp',
   ];
-
-  DeviceLastKnownIp? lastKnownIp;
 
   DeviceMdnsName deviceMdnsName;
 
