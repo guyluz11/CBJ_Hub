@@ -7,6 +7,7 @@ import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_ligh
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_switch_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
@@ -398,6 +399,17 @@ class MqttServerRepository extends IMqttServerRepository {
 
         savedDeviceEntity.smartComputerShutDownState =
             entityFromTheApp.smartComputerShutDownState;
+
+        deviceFromApp = MapEntry(
+          savedDeviceEntity.uniqueId.getOrCrash(),
+          savedDeviceEntity,
+        );
+      } else if (savedDeviceEntity is GenericSmartTvDE &&
+          entityFromTheApp is GenericSmartTvDE) {
+        savedDeviceEntity.openUrl = entityFromTheApp.openUrl;
+        savedDeviceEntity.volume = entityFromTheApp.volume;
+        savedDeviceEntity.skip = entityFromTheApp.skip;
+        savedDeviceEntity.pausePlayState = entityFromTheApp.pausePlayState;
 
         deviceFromApp = MapEntry(
           savedDeviceEntity.uniqueId.getOrCrash(),
