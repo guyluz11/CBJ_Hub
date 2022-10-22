@@ -95,3 +95,6 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+
+# Spesific files
+saved_cast_state.json
