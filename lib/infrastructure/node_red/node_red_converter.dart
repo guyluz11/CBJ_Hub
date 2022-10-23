@@ -21,6 +21,7 @@ class NodeRedConverter {
   static const String scenesTopicTypeName = 'Scenes';
   static const String routinesTopicTypeName = 'Routines';
   static const String bindingsTopicTypeName = 'bindings';
+  static const String nodeRedPluginsApi = 'nodeRedPluginsApi';
 
   static SceneCbjEntity convertToSceneNodes({
     required String nodeName,

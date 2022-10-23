@@ -68,7 +68,7 @@ class ChromeCastEntity extends GenericSmartTvDE {
         openUrl = null;
       }
       if (newEntity.pausePlayState!.getOrCrash() !=
-              pausePlayState!.getOrCrash() ||
+              pausePlayState?.getOrCrash() ||
           deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         (await togglePause()).fold((l) {
           logger.e('Error toggle pause on ChromeCast');

@@ -15,4 +15,13 @@ abstract class INodeRedRepository {
 
   /// Function to create new binding in Node-RED
   Future<String> createNewNodeRedBinding(BindingCbjEntity bindingCbj);
+
+  /// Install node module if not exist and set a new flow for that api
+  /// Label is name of the flow
+  Future<String> setFlowWithModule({
+    required String moduleToUse,
+    required String label,
+    required String nodes,
+    required String flowId,
+  });
 }

@@ -57,7 +57,7 @@ dependencies:
   # Simple, fast generation of RFC4122 UUIDs.
   uuid: ^3.0.6
   # Dart library for controlling Yeelight products over LAN.
-  yeedart: ^0.3.1+2
+  yeedart: ^0.3.2
 
 dev_dependencies:
   # A build system for Dart code generation and modular compilation.
