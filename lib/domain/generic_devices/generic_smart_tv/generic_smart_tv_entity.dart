@@ -147,7 +147,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> sendUrlToDevice() async {
+  Future<Either<CoreFailure, Unit>> sendUrlToDevice(String newUrl) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -157,7 +157,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> togglePause() async {
+  Future<Either<CoreFailure, Unit>> togglePause(String toggleNewState) async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(

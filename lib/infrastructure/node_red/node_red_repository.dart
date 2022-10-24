@@ -181,7 +181,8 @@ class NodeRedRepository extends INodeRedRepository {
 
     try {
       /// Install the new node module
-      await nodeRedApi.postNodes(module: moduleToUse);
+      final Response postNodesResponse =
+          await nodeRedApi.postNodes(module: moduleToUse);
 
       final Response response = await nodeRedApi.postFlow(
         label: label,

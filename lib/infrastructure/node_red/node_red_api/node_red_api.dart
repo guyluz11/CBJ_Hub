@@ -174,7 +174,7 @@ class NodeRedAPI {
           "id": "$flowId",
           "label": "$label",
           "nodes": $nodes,
-          "configs": $configsList,
+          "configs": $configsList
         }
         ''';
     } else {
@@ -182,7 +182,7 @@ class NodeRedAPI {
         {
           "id": "$flowId",
           "configs": $configsList,
-          "subflows": $subFlows,
+          "subflows": $subFlows
         }
         ''';
     }
@@ -212,10 +212,9 @@ class NodeRedAPI {
   Future<Response> postNodes({
     required String module,
   }) async {
-    logger.e('postNodes Not tested yet');
     final String jsonStringWithFields = '''
     {
-      "module": "$module",
+      "module": "$module"
     }
     ''';
     return post(
