@@ -30,7 +30,11 @@ class MqttServerRepository extends IMqttServerRepository {
 
   static const String hubBaseTopic = 'CBJ_Hub_Topic';
 
+  static const String nodeRedApiBaseTopic = 'NodeRed_Api_Topic';
+
   static const String devicesTopicTypeName = 'Devices';
+
+  static const String nodeRedDevicesTopic = 'Node_Red_Devices';
 
   static const String scenesTopicTypeName = 'Scenes';
 
@@ -44,8 +48,18 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
+  String getNodeRedApiBaseTopic() {
+    return nodeRedApiBaseTopic;
+  }
+
+  @override
   String getDevicesTopicTypeName() {
     return devicesTopicTypeName;
+  }
+
+  @override
+  String getNodeRedDevicesTopicTypeName() {
+    return nodeRedDevicesTopic;
   }
 
   @override

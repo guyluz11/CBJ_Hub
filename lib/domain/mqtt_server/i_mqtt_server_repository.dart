@@ -10,7 +10,11 @@ abstract class IMqttServerRepository {
 
   String getHubBaseTopic();
 
+  String getNodeRedApiBaseTopic();
+
   String getDevicesTopicTypeName();
+
+  String getNodeRedDevicesTopicTypeName();
 
   String getScenesTopicTypeName();
 

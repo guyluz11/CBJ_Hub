@@ -2,37 +2,40 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_visual_n
 
 /// Class for Node-Red castv2 node
 /// https://nodered.org/docs/user-guide/writing-castv2s
-class NodeRedCastv2Node extends NodeRedVisualNodeAbstract {
-  NodeRedCastv2Node({
-    required this.funcString,
+class NodeRedCastV2ConnectionNode extends NodeRedVisualNodeAbstract {
+  NodeRedCastV2ConnectionNode({
     super.wires,
     super.name,
+    required this.host,
   }) : super(
           type: 'castv2-connection',
         );
 
   /// Take action and pass it down as property for the next node
-  factory NodeRedCastv2Node.passOnlyNewAction({
-    required String action,
+  factory NodeRedCastV2ConnectionNode.passOnlyNewAction({
     List<List<String>>? wires,
     String? name,
+    required String host,
   }) {
-    final String castV2 = '''msg.payload=\\"$action\\"; return msg;''';
-    return NodeRedCastv2Node(funcString: castV2, wires: wires, name: name);
+    return NodeRedCastV2ConnectionNode(
+      wires: wires,
+      name: name,
+      host: host,
+    );
   }
 
-  String funcString;
+  String host;
 
   @override
   String toString() {
     return '''
     {
-       "id": "$id",
-        "type": "$type",
-        "name": "$name",
-        "target": "",
-        "host": "192.168.31.84",
-        "port": "8009"
+      "id": "$id",
+      "type": "$type",
+      "name": "$name",
+      "target": "",
+      "host": "$host",
+      "port": "8009"
     }
 ''';
   }

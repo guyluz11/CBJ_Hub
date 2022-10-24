@@ -4,11 +4,13 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dar
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
-import 'package:cbj_hub/infrastructure/devices/google/chrome_cast_api/chrome_cast_api.dart';
+import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_hub/infrastructure/devices/google/chromecast_api_node_red/chromecast_api_node_red.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:dart_chromecast/casting/cast.dart';
+// import 'package:dart_chromecast/casting/cast.dart';
 import 'package:dartz/dartz.dart';
 
 class ChromeCastEntity extends GenericSmartTvDE {
@@ -33,7 +35,9 @@ class ChromeCastEntity extends GenericSmartTvDE {
     this.lastKnownIp,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.google.toString()),
-        );
+        ) {
+    setUpNodeRedApi();
+  }
 
   /// Google communication port 8009 for chromecast
   GooglePort? googlePort;
@@ -41,6 +45,18 @@ class ChromeCastEntity extends GenericSmartTvDE {
   DeviceLastKnownIp? lastKnownIp;
 
   DeviceMdnsName? deviceMdnsName;
+
+  late ChromecastApiNodeRed chromecastApiNodeRed;
+
+  void setUpNodeRedApi() async {
+    // TODO: add check to add  uniqueId + action as flow in node read only if missing
+    chromecastApiNodeRed = ChromecastApiNodeRed();
+    chromecastApiNodeRed.setNewYoutubeVideo(
+      uniqueId.getOrCrash(),
+      lastKnownIp!.getOrCrash(),
+      'I9rc23oxvsw',
+    );
+  }
 
   /// Please override the following methods
   @override
@@ -106,17 +122,33 @@ class ChromeCastEntity extends GenericSmartTvDE {
   @override
   Future<Either<CoreFailure, Unit>> sendUrlToDevice() async {
     try {
-      final CastMedia castMedia = CastMedia(
-        contentId: openUrl!.getOrCrash(),
-        images: [],
-      );
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
 
-      startCasting(
-        [castMedia],
-        lastKnownIp!.getOrCrash(),
-        8009,
-        false,
-      );
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoProperty}/${chromecastApiNodeRed.playingVideoProperty}';
+
+      String validYoutubeVidId = openUrl!.getOrCrash();
+      if (validYoutubeVidId.contains('http')) {
+        validYoutubeVidId =
+            validYoutubeVidId.substring(validYoutubeVidId.indexOf('v=') + 2);
+      }
+      getIt<IMqttServerRepository>().publishMessage(topic, validYoutubeVidId);
+
+      // final CastMedia castMedia = CastMedia(
+      //   contentId: openUrl!.getOrCrash(),
+      //   images: [],
+      // );
+      //
+      // startCasting(
+      //   [castMedia],
+      //   lastKnownIp!.getOrCrash(),
+      //   8009,
+      //   false,
+      // );
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
@@ -127,18 +159,18 @@ class ChromeCastEntity extends GenericSmartTvDE {
   Future<Either<CoreFailure, Unit>> togglePause() async {
     try {
       // create the chromecast device with the passed in host and port
-      final CastDevice device = CastDevice(
-        host: lastKnownIp!.getOrCrash(),
-        port: 8009,
-        // port: int.parse(googlePort!.getOrCrash()),
-        type: '_googlecast._tcp',
-      );
-      // instantiate the chromecast sender class
-      final CastSender castSender = CastSender(
-        device,
-      );
-
-      castSender.togglePause();
+      // final CastDevice device = CastDevice(
+      //   host: lastKnownIp!.getOrCrash(),
+      //   port: 8009,
+      //   // port: int.parse(googlePort!.getOrCrash()),
+      //   type: '_googlecast._tcp',
+      // );
+      // // instantiate the chromecast sender class
+      // final CastSender castSender = CastSender(
+      //   device,
+      // );
+      //
+      // castSender.togglePause();
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }

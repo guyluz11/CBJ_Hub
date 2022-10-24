@@ -161,7 +161,7 @@ class CompaniesConnectorConjector {
         if (result) {
           break;
         }
-        await Future.delayed(const Duration(minutes: 2));
+        await Future.delayed(const Duration(seconds: 500));
       }
       for (final ActiveHost activeHost in await MdnsScanner.searchMdnsDevices(
         forceUseOfSavedSrvRecordList: true,
@@ -172,7 +172,7 @@ class CompaniesConnectorConjector {
           setMdnsDeviceByCompany(activeHost);
         }
       }
-      await Future.delayed(const Duration(minutes: 2));
+      await Future.delayed(const Duration(seconds: 500));
     }
   }
 

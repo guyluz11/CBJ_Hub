@@ -3,8 +3,8 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_visual_n
 //TODO: Test that this node works
 /// Class for Node-Red change node
 /// https://nodered.org/docs/user-guide/nodes#change
-class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
-  NodeRedFunctionNode({
+class NodeRedChangeNode extends NodeRedVisualNodeAbstract {
+  NodeRedChangeNode({
     super.wires,
     super.name,
   }) : super(
@@ -24,7 +24,7 @@ class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
             "t": "set",
             "p": "payload",
             "pt": "msg",
-            "to": "{"app":"YouTube","type":"MEDIA","videoId":"I9rc23oxvsw"}",
+            "to": "{\\"app\\":\\"YouTube\\",\\"type\\":\\"MEDIA\\",\\"videoId\\":\\"I9rc23oxvsw\\"}",
             "tot": "json"
         }
     ],
