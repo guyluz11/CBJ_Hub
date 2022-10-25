@@ -6,14 +6,20 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_castv2_s
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_function_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_broker_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_in_node.dart';
+import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_out_node.dart';
 import 'package:cbj_hub/injection.dart';
 
 class ChromecastApiNodeRed {
   final String module = 'node-red-contrib-castv2';
 
-  final String youtubeVideoProperty = 'youtubeVideo';
-  final String playingVideoProperty = 'playingVideo';
-  final String pauseVideoProperty = ' pauseVideo';
+  final String youtubeVideoTopicProperty = 'youtubeVideo';
+  final String playingVideoTopicProperty = 'playingVideo';
+  final String pauseVideoTopicProperty = 'pauseVideo';
+  final String stopVideoTopicProperty = 'stopVideo';
+  final String playVideoTopicProperty = 'playVideo';
+  final String queuePrevVideoTopicProperty = 'queuePrevVideo';
+  final String queueNextVideoTopicProperty = 'queueNextVideo';
+  final String outputVideoTopicProperty = 'outputVideo';
 
   Future<String> setNewYoutubeVideoNodes(
     String deviceUniqueId,
@@ -32,7 +38,7 @@ class ChromecastApiNodeRed {
     const String mqttNodeName = 'Chromecast';
 
     final String topic =
-        '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/$deviceUniqueId/$youtubeVideoProperty';
+        '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/$deviceUniqueId/$youtubeVideoTopicProperty';
 
     /// Mqtt broker
     final NodeRedMqttBrokerNode mqttBrokerNode =
@@ -42,12 +48,12 @@ class ChromecastApiNodeRed {
 
     /// Mqtt out
 
-    // final NodeRedMqttOutNode mqttNode = NodeRedMqttOutNode(
-    //   brokerNodeId: mqttBrokerNode.id,
-    //   topic: topic,
-    //   name: '$mqttNodeName - $playingVideoProperty',
-    // );
-    // nodes += ', ${mqttNode.toString()}';
+    final NodeRedMqttOutNode mqttNode = NodeRedMqttOutNode(
+      brokerNodeId: mqttBrokerNode.id,
+      topic: '$topic/$outputVideoTopicProperty',
+      name: '$mqttNodeName - $outputVideoTopicProperty',
+    );
+    nodes += ', ${mqttNode.toString()}';
 
     /// Cast v2 connection
     final NodeRedCastV2ConnectionNode nodeRedCastV2ConnectionNode =
@@ -60,7 +66,7 @@ class ChromecastApiNodeRed {
       connectionId: nodeRedCastV2ConnectionNode.id,
       wires: [
         [
-          // mqttNode.id
+          mqttNode.id,
         ]
       ],
     );
@@ -70,14 +76,42 @@ class ChromecastApiNodeRed {
       mqttBrokerNode,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
-      '$topic/$playingVideoProperty',
+      topic,
+    )}';
+
+    nodes += ', ${stopVideoNodesString(
+      mqttBrokerNode,
+      nodeRedCastV2SenderNode.id,
+      mqttNodeName,
+      topic,
     )}';
 
     nodes += ', ${pauseVideoNodesString(
       mqttBrokerNode,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
-      '$topic/$pauseVideoProperty',
+      topic,
+    )}';
+
+    nodes += ', ${playVideoNodesString(
+      mqttBrokerNode,
+      nodeRedCastV2SenderNode.id,
+      mqttNodeName,
+      topic,
+    )}';
+
+    nodes += ', ${queuePrevVideoNodesString(
+      mqttBrokerNode,
+      nodeRedCastV2SenderNode.id,
+      mqttNodeName,
+      topic,
+    )}';
+
+    nodes += ', ${queueNextVideoNodesString(
+      mqttBrokerNode,
+      nodeRedCastV2SenderNode.id,
+      mqttNodeName,
+      topic,
     )}';
 
     nodes += '\n]';
@@ -114,9 +148,9 @@ class ChromecastApiNodeRed {
 
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $playingVideoProperty',
+      name: '$mqttNodeName - $playingVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
-      topic: topic,
+      topic: '$topic/$playingVideoTopicProperty',
       wires: [
         [nodeRedFunctionNode.id]
       ],
@@ -124,7 +158,7 @@ class ChromecastApiNodeRed {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String pauseVideoNodesString(
+  String stopVideoNodesString(
     NodeRedMqttBrokerNode mqttBrokerNode,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
@@ -145,9 +179,133 @@ class ChromecastApiNodeRed {
 
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $pauseVideoProperty',
+      name: '$mqttNodeName - $stopVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
-      topic: topic,
+      topic: '$topic/$stopVideoTopicProperty',
+      wires: [
+        [nodeRedFunctionNode.id]
+      ],
+    );
+    return '$nodes,\n$nodeRedMqttInNode';
+  }
+
+  String pauseVideoNodesString(
+    NodeRedMqttBrokerNode mqttBrokerNode,
+    String nextNodeIdToConnectToo,
+    String mqttNodeName,
+    String topic,
+  ) {
+    String nodes = '';
+
+    /// Function node
+    const String functionString =
+        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"PAUSE\\\\\\"}\\"); return msg;''';
+    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
+      funcString: functionString,
+      wires: [
+        [nextNodeIdToConnectToo]
+      ],
+    );
+    nodes += nodeRedFunctionNode.toString();
+
+    /// Mqtt in
+    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+      name: '$mqttNodeName - $pauseVideoTopicProperty',
+      brokerNodeId: mqttBrokerNode.id,
+      topic: '$topic/$pauseVideoTopicProperty',
+      wires: [
+        [nodeRedFunctionNode.id]
+      ],
+    );
+    return '$nodes,\n$nodeRedMqttInNode';
+  }
+
+  String playVideoNodesString(
+    NodeRedMqttBrokerNode mqttBrokerNode,
+    String nextNodeIdToConnectToo,
+    String mqttNodeName,
+    String topic,
+  ) {
+    String nodes = '';
+
+    /// Function node
+    const String functionString =
+        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"PLAY\\\\\\"}\\"); return msg;''';
+    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
+      funcString: functionString,
+      wires: [
+        [nextNodeIdToConnectToo]
+      ],
+    );
+    nodes += nodeRedFunctionNode.toString();
+
+    /// Mqtt in
+    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+      name: '$mqttNodeName - $playVideoTopicProperty',
+      brokerNodeId: mqttBrokerNode.id,
+      topic: '$topic/$playVideoTopicProperty',
+      wires: [
+        [nodeRedFunctionNode.id]
+      ],
+    );
+    return '$nodes,\n$nodeRedMqttInNode';
+  }
+
+  String queuePrevVideoNodesString(
+    NodeRedMqttBrokerNode mqttBrokerNode,
+    String nextNodeIdToConnectToo,
+    String mqttNodeName,
+    String topic,
+  ) {
+    String nodes = '';
+
+    /// Function node
+    const String functionString =
+        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"QUEUE_PREV\\\\\\"}\\"); return msg;''';
+    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
+      funcString: functionString,
+      wires: [
+        [nextNodeIdToConnectToo]
+      ],
+    );
+    nodes += nodeRedFunctionNode.toString();
+
+    /// Mqtt in
+    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+      name: '$mqttNodeName - $queuePrevVideoTopicProperty',
+      brokerNodeId: mqttBrokerNode.id,
+      topic: '$topic/$queuePrevVideoTopicProperty',
+      wires: [
+        [nodeRedFunctionNode.id]
+      ],
+    );
+    return '$nodes,\n$nodeRedMqttInNode';
+  }
+
+  String queueNextVideoNodesString(
+    NodeRedMqttBrokerNode mqttBrokerNode,
+    String nextNodeIdToConnectToo,
+    String mqttNodeName,
+    String topic,
+  ) {
+    String nodes = '';
+
+    /// Function node
+    const String functionString =
+        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"QUEUE_NEXT\\\\\\"}\\"); return msg;''';
+    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
+      funcString: functionString,
+      wires: [
+        [nextNodeIdToConnectToo]
+      ],
+    );
+    nodes += nodeRedFunctionNode.toString();
+
+    /// Mqtt in
+    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+      name: '$mqttNodeName - $queueNextVideoTopicProperty',
+      brokerNodeId: mqttBrokerNode.id,
+      topic: '$topic/$queueNextVideoTopicProperty',
       wires: [
         [nodeRedFunctionNode.id]
       ],

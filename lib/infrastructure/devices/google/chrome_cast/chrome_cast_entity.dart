@@ -72,7 +72,7 @@ class ChromeCastEntity extends GenericSmartTvDE {
 
     try {
       if (newEntity.openUrl?.getOrCrash() != null &&
-          (newEntity.openUrl?.getOrCrash() != openUrl?.getOrCrash() ||
+          (newEntity.openUrl?.getOrCrash() != openUrl?.getOrCrash() &&
               deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString())) {
         (await sendUrlToDevice(newEntity.openUrl!.getOrCrash())).fold((l) {
           logger.e('Error opening url on ChromeCast');
@@ -84,13 +84,14 @@ class ChromeCastEntity extends GenericSmartTvDE {
 
       if (newEntity.pausePlayState?.getOrCrash() != null &&
           (newEntity.pausePlayState?.getOrCrash() !=
-                  pausePlayState?.getOrCrash() ||
+                  pausePlayState?.getOrCrash() &&
               deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString())) {
-        (await togglePause(newEntity.pausePlayState!.getOrCrash())).fold((l) {
-          logger.e('Error toggle pause on ChromeCast');
+        (await togglePausePlay(newEntity.pausePlayState!.getOrCrash())).fold(
+            (l) {
+          logger.e('Error toggle pause or play on ChromeCast');
           throw l;
         }, (r) {
-          logger.i('ChromeCast toggle pause success');
+          logger.i('ChromeCast toggle pause or play success');
         });
       }
 
@@ -125,11 +126,14 @@ class ChromeCastEntity extends GenericSmartTvDE {
       final String nodeRedApiBaseTopic =
           getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
 
+      pausePlayState =
+          GenericSmartTvPausePlayState(DeviceActions.play.toString());
+
       final String nodeRedDevicesTopic =
           getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
 
       final String topic =
-          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoProperty}/${chromecastApiNodeRed.playingVideoProperty}';
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoTopicProperty}/${chromecastApiNodeRed.playingVideoTopicProperty}';
 
       String validYoutubeVidId = openUrl!.getOrCrash();
       if (validYoutubeVidId.contains('?v=')) {
@@ -158,9 +162,28 @@ class ChromeCastEntity extends GenericSmartTvDE {
   }
 
   @override
-  Future<Either<CoreFailure, Unit>> togglePause(String toggleNewState) async {
+  Future<Either<CoreFailure, Unit>> togglePausePlay(
+    String toggleNewState,
+  ) async {
+    if (toggleNewState == DeviceActions.pause.toString()) {
+      return togglePause();
+    } else if (toggleNewState == DeviceActions.play.toString()) {
+      return togglePlay();
+    } else if (toggleNewState == DeviceActions.stop.toString()) {
+      return toggleStop();
+    } else if (toggleNewState == DeviceActions.skipPreviousVid.toString()) {
+      return queuePrev();
+    } else if (toggleNewState == DeviceActions.skipNextVid.toString()) {
+      return queueNext();
+    }
+    return left(const CoreFailure.unexpected());
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> togglePause() async {
     try {
-      pausePlayState = GenericSmartTvPausePlayState(toggleNewState);
+      pausePlayState =
+          GenericSmartTvPausePlayState(DeviceActions.pause.toString());
 
       final String nodeRedApiBaseTopic =
           getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
@@ -169,10 +192,104 @@ class ChromeCastEntity extends GenericSmartTvDE {
           getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
 
       final String topic =
-          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoProperty}/${chromecastApiNodeRed.pauseVideoProperty}';
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoTopicProperty}/${chromecastApiNodeRed.pauseVideoTopicProperty}';
 
       getIt<IMqttServerRepository>()
-          .publishMessage(topic, 'Media Command PAUSE');
+          .publishMessage(topic, 'Media Command Pause');
+    } catch (e) {
+      return left(const CoreFailure.unexpected());
+    }
+    return right(unit);
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> togglePlay() async {
+    try {
+      pausePlayState =
+          GenericSmartTvPausePlayState(DeviceActions.play.toString());
+
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
+
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoTopicProperty}/${chromecastApiNodeRed.playVideoTopicProperty}';
+
+      getIt<IMqttServerRepository>()
+          .publishMessage(topic, 'Media Command Play');
+    } catch (e) {
+      return left(const CoreFailure.unexpected());
+    }
+    return right(unit);
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> toggleStop() async {
+    try {
+      pausePlayState =
+          GenericSmartTvPausePlayState(DeviceActions.stop.toString());
+      openUrl = null;
+
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
+
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoTopicProperty}/${chromecastApiNodeRed.stopVideoTopicProperty}';
+
+      getIt<IMqttServerRepository>()
+          .publishMessage(topic, 'Media Command Stop');
+    } catch (e) {
+      return left(const CoreFailure.unexpected());
+    }
+    return right(unit);
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> queuePrev() async {
+    try {
+      pausePlayState = GenericSmartTvPausePlayState(
+        DeviceActions.skipPreviousVid.toString(),
+      );
+
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
+
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoTopicProperty}/${chromecastApiNodeRed.queuePrevVideoTopicProperty}';
+
+      getIt<IMqttServerRepository>()
+          .publishMessage(topic, 'Media Command Pause');
+    } catch (e) {
+      return left(const CoreFailure.unexpected());
+    }
+    return right(unit);
+  }
+
+  @override
+  Future<Either<CoreFailure, Unit>> queueNext() async {
+    try {
+      pausePlayState =
+          GenericSmartTvPausePlayState(DeviceActions.skipNextVid.toString());
+
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
+
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${uniqueId.getOrCrash()}/${chromecastApiNodeRed.youtubeVideoTopicProperty}/${chromecastApiNodeRed.queueNextVideoTopicProperty}';
+
+      getIt<IMqttServerRepository>()
+          .publishMessage(topic, 'Media Command Pause');
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }

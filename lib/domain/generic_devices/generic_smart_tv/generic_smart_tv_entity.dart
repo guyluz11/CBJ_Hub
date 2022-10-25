@@ -157,7 +157,59 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> togglePause(String toggleNewState) async {
+  Future<Either<CoreFailure, Unit>> togglePausePlay(
+    String toggleNewState,
+  ) async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> togglePause() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> togglePlay() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> toggleStop() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> queueNext() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> queuePrev() async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
