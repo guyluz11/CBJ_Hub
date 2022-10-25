@@ -19,6 +19,7 @@ class ChromecastApiNodeRed {
   final String playVideoTopicProperty = 'playVideo';
   final String queuePrevVideoTopicProperty = 'queuePrevVideo';
   final String queueNextVideoTopicProperty = 'queueNextVideo';
+  final String closeAppTopicProperty = 'closeApp';
   final String outputVideoTopicProperty = 'outputVideo';
 
   Future<String> setNewYoutubeVideoNodes(
@@ -108,6 +109,13 @@ class ChromecastApiNodeRed {
     )}';
 
     nodes += ', ${queueNextVideoNodesString(
+      mqttBrokerNode,
+      nodeRedCastV2SenderNode.id,
+      mqttNodeName,
+      topic,
+    )}';
+
+    nodes += ', ${closeVideoNodesString(
       mqttBrokerNode,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
@@ -306,6 +314,37 @@ class ChromecastApiNodeRed {
       name: '$mqttNodeName - $queueNextVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$queueNextVideoTopicProperty',
+      wires: [
+        [nodeRedFunctionNode.id]
+      ],
+    );
+    return '$nodes,\n$nodeRedMqttInNode';
+  }
+
+  String closeVideoNodesString(
+    NodeRedMqttBrokerNode mqttBrokerNode,
+    String nextNodeIdToConnectToo,
+    String mqttNodeName,
+    String topic,
+  ) {
+    String nodes = '';
+
+    /// Function node
+    const String functionString =
+        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"CLOSE\\\\\\"}\\"); return msg;''';
+    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
+      funcString: functionString,
+      wires: [
+        [nextNodeIdToConnectToo]
+      ],
+    );
+    nodes += nodeRedFunctionNode.toString();
+
+    /// Mqtt in
+    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+      name: '$mqttNodeName - $closeAppTopicProperty',
+      brokerNodeId: mqttBrokerNode.id,
+      topic: '$topic/$closeAppTopicProperty',
       wires: [
         [nodeRedFunctionNode.id]
       ],
