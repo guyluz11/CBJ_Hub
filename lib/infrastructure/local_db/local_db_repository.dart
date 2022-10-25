@@ -45,6 +45,8 @@ class IsarRepository extends ILocalDbRepository {
     asyncConstractor();
   }
 
+  late Isar isar;
+
   Future<void> asyncConstractor() async {
     String? localDbPath = await MySingleton.getLocalDbPath();
 
@@ -52,6 +54,17 @@ class IsarRepository extends ILocalDbRepository {
       logger.e('Cant find local DB path');
       localDbPath = '/';
     }
+
+    await Isar.initializeIsarCore(download: true);
+    isar = await Isar.open([
+      BindingsIsarModelSchema,
+      RoomsIsarModelSchema,
+      DevicesIsarModelSchema,
+      TuyaVendorCredentialsIsarModelSchema,
+      RemotePipesIsarModelSchema,
+      ScenesIsarModelSchema,
+      RoutinesIsarModelSchema,
+    ]);
 
     loadFromDb();
   }
@@ -103,12 +116,8 @@ class IsarRepository extends ILocalDbRepository {
     final List<RoomEntity> rooms = <RoomEntity>[];
 
     try {
-      final Isar roomsBox = await Isar.open([RoomsIsarModelSchema]);
-
       final List<RoomsIsarModel> roomsIsarModelFromDb =
-          await roomsBox.roomsIsarModels.where().findAll();
-
-      await roomsBox.close();
+          await isar.roomsIsarModels.where().findAll();
 
       for (final RoomsIsarModel roomIsar in roomsIsarModelFromDb) {
         final RoomEntity roomEntity = RoomEntity(
@@ -127,7 +136,6 @@ class IsarRepository extends ILocalDbRepository {
       }
     } catch (e) {
       logger.e('Local DB isar error while getting rooms: $e');
-      // TODO: Check why isar crash stop this from working
       await deleteAllSavedRooms();
     }
 
@@ -149,12 +157,8 @@ class IsarRepository extends ILocalDbRepository {
     final List<DeviceEntityAbstract> devices = <DeviceEntityAbstract>[];
 
     try {
-      final Isar devicesBox = await Isar.open([DevicesIsarModelSchema]);
-
       final List<DevicesIsarModel> devicesIsarModelFromDb =
-          await devicesBox.devicesIsarModels.where().findAll();
-
-      await devicesBox.close();
+          await isar.devicesIsarModels.where().findAll();
 
       for (final DevicesIsarModel deviceIsar in devicesIsarModelFromDb) {
         final DeviceEntityAbstract deviceEntity =
@@ -197,14 +201,9 @@ class IsarRepository extends ILocalDbRepository {
     required String vendorBoxName,
   }) async {
     try {
-      final Isar tuyaVendorCredentialsBox =
-          await Isar.open([TuyaVendorCredentialsIsarModelSchema]);
-
       final List<TuyaVendorCredentialsIsarModel>
-          tuyaVendorCredentialsModelFromDb = await tuyaVendorCredentialsBox
-              .tuyaVendorCredentialsIsarModels
-              .where()
-              .findAll();
+          tuyaVendorCredentialsModelFromDb =
+          await isar.tuyaVendorCredentialsIsarModels.where().findAll();
 
       if (tuyaVendorCredentialsModelFromDb.isNotEmpty) {
         final TuyaVendorCredentialsIsarModel firstTuyaVendorFromDB =
@@ -217,8 +216,6 @@ class IsarRepository extends ILocalDbRepository {
         final String tuyaBizType = firstTuyaVendorFromDB.tuyaBizType;
         final String tuyaRegion = firstTuyaVendorFromDB.tuyaRegion;
         final String loginVendor = firstTuyaVendorFromDB.loginVendor;
-
-        await tuyaVendorCredentialsBox.close();
 
         final GenericTuyaLoginDE genericTuyaLoginDE = GenericTuyaLoginDE(
           senderUniqueId: CoreLoginSenderId.fromUniqueString(senderUniqueId),
@@ -236,7 +233,6 @@ class IsarRepository extends ILocalDbRepository {
         );
         return right(genericTuyaLoginDE);
       }
-      await tuyaVendorCredentialsBox.close();
       logger.i(
         "Didn't find any Tuya in the local DB for box name $vendorBoxName",
       );
@@ -249,15 +245,12 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, String>> getRemotePipesDnsName() async {
     try {
-      final Isar remotePipesBox = await Isar.open([RemotePipesIsarModelSchema]);
-
       final List<RemotePipesIsarModel> remotePipesIsarModelFromDb =
-          await remotePipesBox.remotePipesIsarModels.where().findAll();
+          await isar.remotePipesIsarModels.where().findAll();
 
       if (remotePipesIsarModelFromDb.isNotEmpty) {
         final String remotePipesDnsName =
             remotePipesIsarModelFromDb[0].domainName;
-        await remotePipesBox.close();
 
         logger.i(
           'Remote pipes domain name is: '
@@ -265,10 +258,10 @@ class IsarRepository extends ILocalDbRepository {
         );
         return right(remotePipesDnsName);
       }
-      await remotePipesBox.close();
       logger.i("Didn't find any remote pipes in the local DB");
     } catch (e) {
       logger.e('Local DB isar error while getting Remote Pipes: $e');
+      isar.close();
     }
     return left(const LocalDbFailures.unexpected());
   }
@@ -290,17 +283,15 @@ class IsarRepository extends ILocalDbRepository {
         devicesIsarList.add(devicesIsarModel);
       }
 
-      final Isar devicesBox = await Isar.open([DevicesIsarModelSchema]);
-
-      await devicesBox.writeTxn(() async {
-        await devicesBox.devicesIsarModels.clear();
-        await devicesBox.devicesIsarModels.putAll(devicesIsarList);
+      await isar.writeTxn(() async {
+        await isar.devicesIsarModels.clear();
+        await isar.devicesIsarModels.putAll(devicesIsarList);
       });
 
-      await devicesBox.close();
       logger.i('Devices got saved to local storage');
     } catch (e) {
       logger.e('Error saving Devices to local storage\n$e');
+
       return left(const LocalDbFailures.unexpected());
     }
 
@@ -312,8 +303,6 @@ class IsarRepository extends ILocalDbRepository {
     required List<RoomEntity> roomsList,
   }) async {
     try {
-      final Isar roomsBox = await Isar.open([RoomsIsarModelSchema]);
-
       final List<RoomsIsarModel> roomsIsarList = [];
 
       final List<RoomEntityDtos> roomsListDto =
@@ -334,15 +323,15 @@ class IsarRepository extends ILocalDbRepository {
         roomsIsarList.add(roomsIsarModel);
       }
 
-      await roomsBox.writeTxn(() async {
-        await roomsBox.roomsIsarModels.clear();
-        await roomsBox.roomsIsarModels.putAll(roomsIsarList); // insert & update
+      await isar.writeTxn(() async {
+        await isar.roomsIsarModels.clear();
+        await isar.roomsIsarModels.putAll(roomsIsarList);
       });
 
-      await roomsBox.close();
       logger.i('Rooms got saved to local storage');
     } catch (e) {
       logger.e('Error saving Rooms to local storage\n$e');
+
       return left(const LocalDbFailures.unexpected());
     }
 
@@ -397,23 +386,21 @@ class IsarRepository extends ILocalDbRepository {
     required String remotePipesDomainName,
   }) async {
     try {
-      final Isar remotePipesBox = await Isar.open([RemotePipesIsarModelSchema]);
-
       final RemotePipesIsarModel remotePipesIsarModel = RemotePipesIsarModel()
         ..domainName = remotePipesDomainName;
 
-      await remotePipesBox.writeTxn(() async {
-        await remotePipesBox.remotePipesIsarModels.clear();
-        await remotePipesBox.remotePipesIsarModels.put(remotePipesIsarModel);
+      await isar.writeTxn(() async {
+        await isar.remotePipesIsarModels.clear();
+        await isar.remotePipesIsarModels.put(remotePipesIsarModel);
       });
 
-      await remotePipesBox.close();
       logger.i(
         'Remote Pipes got saved to local storage with domain name is: '
         '$remotePipesDomainName',
       );
     } catch (e) {
       logger.e('Error saving Remote Pipes to local storage');
+
       return left(const LocalDbFailures.unexpected());
     }
 
@@ -425,9 +412,6 @@ class IsarRepository extends ILocalDbRepository {
     required String vendorCredentialsBoxName,
   }) async {
     try {
-      final Isar tuyaVendorCredentialsBox =
-          await Isar.open([TuyaVendorCredentialsIsarModelSchema]);
-
       final TuyaVendorCredentialsIsarModel tuyaVendorCredentialsModel =
           TuyaVendorCredentialsIsarModel()
             ..senderUniqueId = tuyaLoginDE.senderUniqueId.getOrCrash()
@@ -438,19 +422,19 @@ class IsarRepository extends ILocalDbRepository {
             ..tuyaRegion = tuyaLoginDE.tuyaRegion.getOrCrash()
             ..loginVendor = tuyaLoginDE.loginVendor.getOrCrash();
 
-      await tuyaVendorCredentialsBox.writeTxn(() async {
-        await tuyaVendorCredentialsBox.tuyaVendorCredentialsIsarModels.clear();
-        await tuyaVendorCredentialsBox.tuyaVendorCredentialsIsarModels
+      await isar.writeTxn(() async {
+        await isar.tuyaVendorCredentialsIsarModels.clear();
+        await isar.tuyaVendorCredentialsIsarModels
             .put(tuyaVendorCredentialsModel);
       });
 
-      await tuyaVendorCredentialsBox.close();
       logger.i(
         'Tuya vendor credentials saved to local storage with the user name: '
         '${tuyaLoginDE.tuyaUserName.getOrCrash()}',
       );
     } catch (e) {
       logger.e('Error saving Remote Pipes to local storage');
+
       return left(const LocalDbFailures.unexpected());
     }
     return right(unit);
@@ -466,12 +450,8 @@ class IsarRepository extends ILocalDbRepository {
     final List<SceneCbjEntity> scenes = <SceneCbjEntity>[];
 
     try {
-      final Isar scenesBox = await Isar.open([ScenesIsarModelSchema]);
-
       final List<ScenesIsarModel> scenesIsarModelFromDb =
-          await scenesBox.scenesIsarModels.where().findAll();
-
-      await scenesBox.close();
+          await isar.scenesIsarModels.where().findAll();
 
       for (final ScenesIsarModel sceneIsar in scenesIsarModelFromDb) {
         final SceneCbjEntity sceneEntity = SceneCbjDtos.fromJson(
@@ -488,7 +468,7 @@ class IsarRepository extends ILocalDbRepository {
       }
       return right(scenes);
     } catch (e) {
-      logger.e('Local DB isar error while getting devices: $e');
+      logger.e('Local DB isar error while getting scenes: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }
@@ -499,12 +479,8 @@ class IsarRepository extends ILocalDbRepository {
     final List<RoutineCbjEntity> routines = <RoutineCbjEntity>[];
 
     try {
-      final Isar routinesBox = await Isar.open([RoutinesIsarModelSchema]);
-
       final List<RoutinesIsarModel> routinesIsarModelFromDb =
-          await routinesBox.routinesIsarModels.where().findAll();
-
-      await routinesBox.close();
+          await isar.routinesIsarModels.where().findAll();
 
       for (final RoutinesIsarModel routineIsar in routinesIsarModelFromDb) {
         final RoutineCbjEntity routineEntity = RoutineCbjDtos.fromJson(
@@ -521,7 +497,7 @@ class IsarRepository extends ILocalDbRepository {
       }
       return right(routines);
     } catch (e) {
-      logger.e('Local DB isar error while getting devices: $e');
+      logger.e('Local DB isar error while getting routines: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }
@@ -532,12 +508,8 @@ class IsarRepository extends ILocalDbRepository {
     final List<BindingCbjEntity> bindings = <BindingCbjEntity>[];
 
     try {
-      final Isar bindingsBox = await Isar.open([BindingsIsarModelSchema]);
-
       final List<BindingsIsarModel> bindingsIsarModelFromDb =
-          await bindingsBox.bindingsIsarModels.where().findAll();
-
-      await bindingsBox.close();
+          await isar.bindingsIsarModels.where().findAll();
 
       for (final BindingsIsarModel bindingIsar in bindingsIsarModelFromDb) {
         final BindingCbjEntity bindingEntity = BindingCbjDtos.fromJson(
@@ -554,7 +526,7 @@ class IsarRepository extends ILocalDbRepository {
       }
       return right(bindings);
     } catch (e) {
-      logger.e('Local DB isar error while getting devices: $e');
+      logger.e('Local DB isar error while getting bindings: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }
@@ -576,17 +548,15 @@ class IsarRepository extends ILocalDbRepository {
         scenesIsarList.add(scenesIsarModel);
       }
 
-      final Isar scenesBox = await Isar.open([ScenesIsarModelSchema]);
-
-      await scenesBox.writeTxn(() async {
-        await scenesBox.scenesIsarModels.clear();
-        await scenesBox.scenesIsarModels.putAll(scenesIsarList);
+      await isar.writeTxn(() async {
+        await isar.scenesIsarModels.clear();
+        await isar.scenesIsarModels.putAll(scenesIsarList);
       });
 
-      await scenesBox.close();
       logger.i('Scenes got saved to local storage');
     } catch (e) {
       logger.e('Error saving Scenes to local storage\n$e');
+
       return left(const LocalDbFailures.unexpected());
     }
 
@@ -611,18 +581,15 @@ class IsarRepository extends ILocalDbRepository {
         routinesIsarList.add(routinesIsarModel);
       }
 
-      final Isar routinesBox = await Isar.open([RoutinesIsarModelSchema]);
-
-      await routinesBox.writeTxn(() async {
-        await routinesBox.routinesIsarModels.clear();
-        await routinesBox.routinesIsarModels
-            .putAll(routinesIsarList); // insert & update
+      await isar.writeTxn(() async {
+        await isar.routinesIsarModels.clear();
+        await isar.routinesIsarModels.putAll(routinesIsarList);
       });
 
-      await routinesBox.close();
       logger.i('Routines got saved to local storage');
     } catch (e) {
       logger.e('Error saving Routines to local storage\n$e');
+
       return left(const LocalDbFailures.unexpected());
     }
 
@@ -647,17 +614,15 @@ class IsarRepository extends ILocalDbRepository {
         bindingsIsarList.add(bindingsIsarModel);
       }
 
-      final Isar bindingsBox = await Isar.open([BindingsIsarModelSchema]);
-
-      await bindingsBox.writeTxn(() async {
-        await bindingsBox.bindingsIsarModels.clear();
-        await bindingsBox.bindingsIsarModels.putAll(bindingsIsarList);
+      await isar.writeTxn(() async {
+        await isar.bindingsIsarModels.clear();
+        await isar.bindingsIsarModels.putAll(bindingsIsarList);
       });
 
-      await bindingsBox.close();
       logger.i('Bindings got saved to local storage');
     } catch (e) {
       logger.e('Error saving Bindings to local storage\n$e');
+
       return left(const LocalDbFailures.unexpected());
     }
 

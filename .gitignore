@@ -53,10 +53,6 @@ app.*.map.json
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 
-
-
-
-
 # Visual Studio Code related
 .classpath
 .project
@@ -95,6 +91,8 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+# For Isar database
+libisar.so
 
 # Spesific files
 saved_cast_state.json
