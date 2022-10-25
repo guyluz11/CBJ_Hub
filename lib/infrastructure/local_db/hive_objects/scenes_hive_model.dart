@@ -1,9 +1,9 @@
-import 'package:hive/hive.dart';
+import 'package:isar/isar.dart';
 
 part 'scenes_hive_model.g.dart';
 
-@HiveType(typeId: 5)
-class ScenesHiveModel extends HiveObject {
-  @HiveField(0)
+@collection
+class ScenesHiveModel {
+  Id id = Isar.autoIncrement;
   late String scenesStringJson;
 }

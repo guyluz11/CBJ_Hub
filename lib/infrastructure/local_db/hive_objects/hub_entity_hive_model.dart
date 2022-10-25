@@ -1,15 +1,12 @@
-import 'package:hive/hive.dart';
+import 'package:isar/isar.dart';
 
 part 'hub_entity_hive_model.g.dart';
 
-@HiveType(typeId: 1)
-class HubEntityHiveModel extends HiveObject {
-  @HiveField(0)
+@collection
+class HubEntityHiveModel {
+  Id id = Isar.autoIncrement;
+
   late String hubNetworkBssid;
-
-  @HiveField(1)
   late String networkName;
-
-  @HiveField(2)
   late String lastKnownIp;
 }

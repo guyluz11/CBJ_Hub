@@ -1,9 +1,9 @@
-import 'package:hive/hive.dart';
+import 'package:isar/isar.dart';
 
 part 'devices_hive_model.g.dart';
 
-@HiveType(typeId: 4)
-class DevicesHiveModel extends HiveObject {
-  @HiveField(0)
+@collection
+class DevicesHiveModel {
+  Id id = Isar.autoIncrement;
   late String deviceStringJson;
 }

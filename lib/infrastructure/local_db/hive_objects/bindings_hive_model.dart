@@ -1,9 +1,9 @@
-import 'package:hive/hive.dart';
+import 'package:isar/isar.dart';
 
 part 'bindings_hive_model.g.dart';
 
-@HiveType(typeId: 7)
-class BindingsHiveModel extends HiveObject {
-  @HiveField(0)
+@collection
+class BindingsHiveModel {
+  Id id = Isar.autoIncrement;
   late String bindingsStringJson;
 }

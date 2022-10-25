@@ -1,9 +1,10 @@
-import 'package:hive/hive.dart';
+import 'package:isar/isar.dart';
 
 part 'remote_pipes_hive_model.g.dart';
 
-@HiveType(typeId: 0)
-class RemotePipesHiveModel extends HiveObject {
-  @HiveField(0)
+@collection
+class RemotePipesHiveModel {
+  Id id = Isar.autoIncrement;
+
   late String domainName;
 }

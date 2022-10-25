@@ -24,7 +24,6 @@ import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart'
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/bindings_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/devices_hive_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/hive_objects/hub_entity_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/remote_pipes_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/rooms_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/routines_hive_model.dart';
@@ -36,8 +35,8 @@ import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
-import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
+import 'package:isar/isar.dart';
 
 /// Only ISavedDevicesRepo need to call functions here
 @LazySingleton(as: ILocalDbRepository)
@@ -54,15 +53,6 @@ class HiveRepository extends ILocalDbRepository {
       localDbPath = '/';
     }
 
-    Hive.init(localDbPath);
-    Hive.registerAdapter(RemotePipesHiveModelAdapter());
-    Hive.registerAdapter(RoomsHiveModelAdapter());
-    Hive.registerAdapter(DevicesHiveModelAdapter());
-    Hive.registerAdapter(ScenesHiveModelAdapter());
-    Hive.registerAdapter(RoutinesHiveModelAdapter());
-    Hive.registerAdapter(BindingsHiveModelAdapter());
-    Hive.registerAdapter(HubEntityHiveModelAdapter());
-    Hive.registerAdapter(TuyaVendorCredentialsHiveModelAdapter());
     loadFromDb();
   }
 
@@ -113,26 +103,25 @@ class HiveRepository extends ILocalDbRepository {
     final List<RoomEntity> rooms = <RoomEntity>[];
 
     try {
-      final Box<RoomsHiveModel> roomsBox =
-          await Hive.openBox<RoomsHiveModel>(roomsBoxName);
+      final Isar roomsBox = await Isar.open([RoomsHiveModelSchema]);
 
       final List<RoomsHiveModel> roomsHiveModelFromDb =
-          roomsBox.values.toList().cast<RoomsHiveModel>();
+          await roomsBox.roomsHiveModels.where().findAll();
 
       await roomsBox.close();
 
-      for (final RoomsHiveModel roomHive in roomsHiveModelFromDb) {
+      for (final RoomsHiveModel roomIsar in roomsHiveModelFromDb) {
         final RoomEntity roomEntity = RoomEntity(
-          uniqueId: RoomUniqueId.fromUniqueString(roomHive.roomUniqueId),
-          defaultName: RoomDefaultName(roomHive.roomDefaultName),
-          background: RoomBackground(roomHive.roomBackground),
-          roomTypes: RoomTypes(roomHive.roomTypes),
-          roomDevicesId: RoomDevicesId(roomHive.roomDevicesId),
-          roomScenesId: RoomScenesId(roomHive.roomScenesId),
-          roomRoutinesId: RoomRoutinesId(roomHive.roomRoutinesId),
-          roomBindingsId: RoomBindingsId(roomHive.roomBindingsId),
-          roomMostUsedBy: RoomMostUsedBy(roomHive.roomMostUsedBy),
-          roomPermissions: RoomPermissions(roomHive.roomPermissions),
+          uniqueId: RoomUniqueId.fromUniqueString(roomIsar.roomUniqueId),
+          defaultName: RoomDefaultName(roomIsar.roomDefaultName),
+          background: RoomBackground(roomIsar.roomBackground),
+          roomTypes: RoomTypes(roomIsar.roomTypes),
+          roomDevicesId: RoomDevicesId(roomIsar.roomDevicesId),
+          roomScenesId: RoomScenesId(roomIsar.roomScenesId),
+          roomRoutinesId: RoomRoutinesId(roomIsar.roomRoutinesId),
+          roomBindingsId: RoomBindingsId(roomIsar.roomBindingsId),
+          roomMostUsedBy: RoomMostUsedBy(roomIsar.roomMostUsedBy),
+          roomPermissions: RoomPermissions(roomIsar.roomPermissions),
         );
         rooms.add(roomEntity);
       }
@@ -160,17 +149,16 @@ class HiveRepository extends ILocalDbRepository {
     final List<DeviceEntityAbstract> devices = <DeviceEntityAbstract>[];
 
     try {
-      final Box<DevicesHiveModel> devicesBox =
-          await Hive.openBox<DevicesHiveModel>(devicesBoxName);
+      final Isar devicesBox = await Isar.open([DevicesHiveModelSchema]);
 
       final List<DevicesHiveModel> devicesHiveModelFromDb =
-          devicesBox.values.toList().cast<DevicesHiveModel>();
+          await devicesBox.devicesHiveModels.where().findAll();
 
       await devicesBox.close();
 
-      for (final DevicesHiveModel deviceHive in devicesHiveModelFromDb) {
+      for (final DevicesHiveModel deviceIsar in devicesHiveModelFromDb) {
         final DeviceEntityAbstract deviceEntity =
-            DeviceHelper.convertJsonStringToDomain(deviceHive.deviceStringJson);
+            DeviceHelper.convertJsonStringToDomain(deviceIsar.deviceStringJson);
 
         devices.add(
           deviceEntity
@@ -209,15 +197,14 @@ class HiveRepository extends ILocalDbRepository {
     required String vendorBoxName,
   }) async {
     try {
-      final Box<TuyaVendorCredentialsHiveModel> tuyaVendorCredentialsBox =
-          await Hive.openBox<TuyaVendorCredentialsHiveModel>(
-        vendorBoxName,
-      );
+      final Isar tuyaVendorCredentialsBox =
+          await Isar.open([TuyaVendorCredentialsHiveModelSchema]);
 
       final List<TuyaVendorCredentialsHiveModel>
-          tuyaVendorCredentialsModelFromDb = tuyaVendorCredentialsBox.values
-              .toList()
-              .cast<TuyaVendorCredentialsHiveModel>();
+          tuyaVendorCredentialsModelFromDb = await tuyaVendorCredentialsBox
+              .tuyaVendorCredentialsHiveModels
+              .where()
+              .findAll();
 
       if (tuyaVendorCredentialsModelFromDb.isNotEmpty) {
         final TuyaVendorCredentialsHiveModel firstTuyaVendorFromDB =
@@ -262,11 +249,10 @@ class HiveRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, String>> getRemotePipesDnsName() async {
     try {
-      final Box<RemotePipesHiveModel> remotePipesBox =
-          await Hive.openBox<RemotePipesHiveModel>(remotePipesBoxName);
+      final Isar remotePipesBox = await Isar.open([RemotePipesHiveModelSchema]);
 
       final List<RemotePipesHiveModel> remotePipesHiveModelFromDb =
-          remotePipesBox.values.toList().cast<RemotePipesHiveModel>();
+          await remotePipesBox.remotePipesHiveModels.where().findAll();
 
       if (remotePipesHiveModelFromDb.isNotEmpty) {
         final String remotePipesDnsName =
@@ -304,11 +290,12 @@ class HiveRepository extends ILocalDbRepository {
         devicesHiveList.add(devicesHiveModel);
       }
 
-      final Box<DevicesHiveModel> devicesBox =
-          await Hive.openBox<DevicesHiveModel>(devicesBoxName);
+      final Isar devicesBox = await Isar.open([DevicesHiveModelSchema]);
 
-      await devicesBox.clear();
-      await devicesBox.addAll(devicesHiveList);
+      await devicesBox.writeTxn(() async {
+        await devicesBox.devicesHiveModels.clear();
+        await devicesBox.devicesHiveModels.putAll(devicesHiveList);
+      });
 
       await devicesBox.close();
       logger.i('Devices got saved to local storage');
@@ -325,10 +312,9 @@ class HiveRepository extends ILocalDbRepository {
     required List<RoomEntity> roomsList,
   }) async {
     try {
-      final Box<RoomsHiveModel> roomsBox =
-          await Hive.openBox<RoomsHiveModel>(roomsBoxName);
+      final Isar roomsBox = await Isar.open([RoomsHiveModelSchema]);
 
-      final List<RoomsHiveModel> remotePipesHiveList = [];
+      final List<RoomsHiveModel> roomsHiveList = [];
 
       final List<RoomEntityDtos> roomsListDto =
           List<RoomEntityDtos>.from(roomsList.map((e) => e.toInfrastructure()));
@@ -345,11 +331,13 @@ class HiveRepository extends ILocalDbRepository {
           ..roomMostUsedBy = roomEntityDtos.roomMostUsedBy
           ..roomPermissions = roomEntityDtos.roomPermissions
           ..roomTypes = roomEntityDtos.roomTypes;
-        remotePipesHiveList.add(roomsHiveModel);
+        roomsHiveList.add(roomsHiveModel);
       }
 
-      await roomsBox.clear();
-      await roomsBox.addAll(remotePipesHiveList);
+      await roomsBox.writeTxn(() async {
+        await roomsBox.roomsHiveModels.clear();
+        await roomsBox.roomsHiveModels.putAll(roomsHiveList); // insert & update
+      });
 
       await roomsBox.close();
       logger.i('Rooms got saved to local storage');
@@ -409,17 +397,15 @@ class HiveRepository extends ILocalDbRepository {
     required String remotePipesDomainName,
   }) async {
     try {
-      final Box<RemotePipesHiveModel> remotePipesBox =
-          await Hive.openBox<RemotePipesHiveModel>(remotePipesBoxName);
+      final Isar remotePipesBox = await Isar.open([RemotePipesHiveModelSchema]);
 
       final RemotePipesHiveModel remotePipesHiveModel = RemotePipesHiveModel()
         ..domainName = remotePipesDomainName;
 
-      if (remotePipesBox.isNotEmpty) {
-        await remotePipesBox.putAt(0, remotePipesHiveModel);
-      } else {
-        remotePipesBox.add(remotePipesHiveModel);
-      }
+      await remotePipesBox.writeTxn(() async {
+        await remotePipesBox.remotePipesHiveModels.clear();
+        await remotePipesBox.remotePipesHiveModels.put(remotePipesHiveModel);
+      });
 
       await remotePipesBox.close();
       logger.i(
@@ -439,10 +425,8 @@ class HiveRepository extends ILocalDbRepository {
     required String vendorCredentialsBoxName,
   }) async {
     try {
-      final Box<TuyaVendorCredentialsHiveModel> tuyaVendorCredentialsBox =
-          await Hive.openBox<TuyaVendorCredentialsHiveModel>(
-        vendorCredentialsBoxName,
-      );
+      final Isar tuyaVendorCredentialsBox =
+          await Isar.open([TuyaVendorCredentialsHiveModelSchema]);
 
       final TuyaVendorCredentialsHiveModel tuyaVendorCredentialsModel =
           TuyaVendorCredentialsHiveModel()
@@ -454,11 +438,11 @@ class HiveRepository extends ILocalDbRepository {
             ..tuyaRegion = tuyaLoginDE.tuyaRegion.getOrCrash()
             ..loginVendor = tuyaLoginDE.loginVendor.getOrCrash();
 
-      if (tuyaVendorCredentialsBox.isNotEmpty) {
-        await tuyaVendorCredentialsBox.putAt(0, tuyaVendorCredentialsModel);
-      } else {
-        tuyaVendorCredentialsBox.add(tuyaVendorCredentialsModel);
-      }
+      await tuyaVendorCredentialsBox.writeTxn(() async {
+        await tuyaVendorCredentialsBox.tuyaVendorCredentialsHiveModels.clear();
+        await tuyaVendorCredentialsBox.tuyaVendorCredentialsHiveModels
+            .put(tuyaVendorCredentialsModel);
+      });
 
       await tuyaVendorCredentialsBox.close();
       logger.i(
@@ -482,17 +466,16 @@ class HiveRepository extends ILocalDbRepository {
     final List<SceneCbjEntity> scenes = <SceneCbjEntity>[];
 
     try {
-      final Box<ScenesHiveModel> scenesBox =
-          await Hive.openBox<ScenesHiveModel>(scenesBoxName);
+      final Isar scenesBox = await Isar.open([ScenesHiveModelSchema]);
 
       final List<ScenesHiveModel> scenesHiveModelFromDb =
-          scenesBox.values.toList().cast<ScenesHiveModel>();
+          await scenesBox.scenesHiveModels.where().findAll();
 
       await scenesBox.close();
 
-      for (final ScenesHiveModel sceneHive in scenesHiveModelFromDb) {
+      for (final ScenesHiveModel sceneIsar in scenesHiveModelFromDb) {
         final SceneCbjEntity sceneEntity = SceneCbjDtos.fromJson(
-          jsonDecode(sceneHive.scenesStringJson) as Map<String, dynamic>,
+          jsonDecode(sceneIsar.scenesStringJson) as Map<String, dynamic>,
         ).toDomain();
 
         scenes.add(
@@ -516,11 +499,10 @@ class HiveRepository extends ILocalDbRepository {
     final List<RoutineCbjEntity> routines = <RoutineCbjEntity>[];
 
     try {
-      final Box<RoutinesHiveModel> routinesBox =
-          await Hive.openBox<RoutinesHiveModel>(routinesBoxName);
+      final Isar routinesBox = await Isar.open([RoutinesHiveModelSchema]);
 
       final List<RoutinesHiveModel> routinesHiveModelFromDb =
-          routinesBox.values.toList().cast<RoutinesHiveModel>();
+          await routinesBox.routinesHiveModels.where().findAll();
 
       await routinesBox.close();
 
@@ -550,17 +532,16 @@ class HiveRepository extends ILocalDbRepository {
     final List<BindingCbjEntity> bindings = <BindingCbjEntity>[];
 
     try {
-      final Box<BindingsHiveModel> bindingsBox =
-          await Hive.openBox<BindingsHiveModel>(bindingsBoxName);
+      final Isar bindingsBox = await Isar.open([BindingsHiveModelSchema]);
 
       final List<BindingsHiveModel> bindingsHiveModelFromDb =
-          bindingsBox.values.toList().cast<BindingsHiveModel>();
+          await bindingsBox.bindingsHiveModels.where().findAll();
 
       await bindingsBox.close();
 
-      for (final BindingsHiveModel bindingHive in bindingsHiveModelFromDb) {
+      for (final BindingsHiveModel bindingIsar in bindingsHiveModelFromDb) {
         final BindingCbjEntity bindingEntity = BindingCbjDtos.fromJson(
-          jsonDecode(bindingHive.bindingsStringJson) as Map<String, dynamic>,
+          jsonDecode(bindingIsar.bindingsStringJson) as Map<String, dynamic>,
         ).toDomain();
 
         bindings.add(
@@ -595,11 +576,12 @@ class HiveRepository extends ILocalDbRepository {
         scenesHiveList.add(scenesHiveModel);
       }
 
-      final Box<ScenesHiveModel> scenesBox =
-          await Hive.openBox<ScenesHiveModel>(scenesBoxName);
+      final Isar scenesBox = await Isar.open([ScenesHiveModelSchema]);
 
-      await scenesBox.clear();
-      await scenesBox.addAll(scenesHiveList);
+      await scenesBox.writeTxn(() async {
+        await scenesBox.scenesHiveModels.clear();
+        await scenesBox.scenesHiveModels.putAll(scenesHiveList);
+      });
 
       await scenesBox.close();
       logger.i('Scenes got saved to local storage');
@@ -629,11 +611,13 @@ class HiveRepository extends ILocalDbRepository {
         routinesHiveList.add(routinesHiveModel);
       }
 
-      final Box<RoutinesHiveModel> routinesBox =
-          await Hive.openBox<RoutinesHiveModel>(routinesBoxName);
+      final Isar routinesBox = await Isar.open([RoutinesHiveModelSchema]);
 
-      await routinesBox.clear();
-      await routinesBox.addAll(routinesHiveList);
+      await routinesBox.writeTxn(() async {
+        await routinesBox.routinesHiveModels.clear();
+        await routinesBox.routinesHiveModels
+            .putAll(routinesHiveList); // insert & update
+      });
 
       await routinesBox.close();
       logger.i('Routines got saved to local storage');
@@ -663,11 +647,12 @@ class HiveRepository extends ILocalDbRepository {
         bindingsHiveList.add(bindingsHiveModel);
       }
 
-      final Box<BindingsHiveModel> bindingsBox =
-          await Hive.openBox<BindingsHiveModel>(bindingsBoxName);
+      final Isar bindingsBox = await Isar.open([BindingsHiveModelSchema]);
 
-      await bindingsBox.clear();
-      await bindingsBox.addAll(bindingsHiveList);
+      await bindingsBox.writeTxn(() async {
+        await bindingsBox.bindingsHiveModels.clear();
+        await bindingsBox.bindingsHiveModels.putAll(bindingsHiveList);
+      });
 
       await bindingsBox.close();
       logger.i('Bindings got saved to local storage');
