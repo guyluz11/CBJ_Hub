@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 
-part 'bindings_hive_model.g.dart';
+part 'bindings_isar_model.g.dart';
 
 @collection
-class BindingsHiveModel {
+class BindingsIsarModel {
   Id id = Isar.autoIncrement;
   late String bindingsStringJson;
 }

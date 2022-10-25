@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 
-part 'hub_entity_hive_model.g.dart';
+part 'hub_entity_isar_model.g.dart';
 
 @collection
-class HubEntityHiveModel {
+class HubEntityIsarModel {
   Id id = Isar.autoIncrement;
 
   late String hubNetworkBssid;

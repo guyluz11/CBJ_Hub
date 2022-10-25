@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 
-part 'tuya_vendor_credentials_hive_model.g.dart';
+part 'tuya_vendor_credentials_isar_model.g.dart';
 
 @collection
-class TuyaVendorCredentialsHiveModel {
+class TuyaVendorCredentialsIsarModel {
   Id id = Isar.autoIncrement;
 
   late String? senderUniqueId;

@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 
-part 'rooms_hive_model.g.dart';
+part 'rooms_isar_model.g.dart';
 
 @collection
-class RoomsHiveModel {
+class RoomsIsarModel {
   Id id = Isar.autoIncrement;
 
   late String roomUniqueId;

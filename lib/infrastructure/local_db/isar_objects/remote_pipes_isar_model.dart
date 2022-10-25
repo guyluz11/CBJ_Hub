@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 
-part 'remote_pipes_hive_model.g.dart';
+part 'remote_pipes_isar_model.g.dart';
 
 @collection
-class RemotePipesHiveModel {
+class RemotePipesIsarModel {
   Id id = Isar.autoIncrement;
 
   late String domainName;
