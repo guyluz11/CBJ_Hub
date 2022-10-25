@@ -120,10 +120,10 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 
     if (snapCommonEnvironmentVariablePath == null) {
       final String? currentUserName = await MySingleton.getCurrentUserName();
-      localDbFolderPath = '/home/$currentUserName/Documents/hive';
+      localDbFolderPath = '/home/$currentUserName/Documents/isar';
     } else {
-      // /var/snap/cbj-hub/common/hive
-      localDbFolderPath = '$snapCommonEnvironmentVariablePath/hive';
+      // /var/snap/cbj-hub/common/isar
+      localDbFolderPath = '$snapCommonEnvironmentVariablePath/isar';
     }
     return localDbFolderPath;
   }

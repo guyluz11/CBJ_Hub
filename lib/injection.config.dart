@@ -78,7 +78,7 @@ _i1.GetIt $initGetIt(
       () => _i10.BindingCbjRepository());
   gh.lazySingleton<_i11.ICbjWebServerRepository>(
       () => _i12.CbjWebServerRepository());
-  gh.lazySingleton<_i13.ILocalDbRepository>(() => _i14.HiveRepository());
+  gh.lazySingleton<_i13.ILocalDbRepository>(() => _i14.IsarRepository());
   gh.lazySingleton<_i15.IMqttServerRepository>(
       () => _i16.MqttServerRepository());
   gh.lazySingleton<_i17.INodeRedRepository>(() => _i18.NodeRedRepository());

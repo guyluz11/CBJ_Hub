@@ -32,9 +32,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
   final HashMap<String, SceneCbjEntity> _allScenes = HashMap();
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
+    /// Delay inorder for the Isar boxes to initialize
     /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
+    /// "IsarError: You need to initialize Isar or provide a path to store
     /// the box."
     /// Please increase the duration
     await Future.delayed(const Duration(milliseconds: 100));
