@@ -4,16 +4,16 @@ import 'package:uuid/uuid.dart';
 class NodeRedNodeAbstract {
   NodeRedNodeAbstract({
     required this.type,
-    this.id,
+    String? tempId,
     this.name,
   }) {
-    id ??= const Uuid().v1();
+    id = tempId ?? const Uuid().v1();
   }
 
   String type;
 
   /// The id of the node, will create one for you if not given
-  String? id;
+  late String id;
   String? name;
 
   @override

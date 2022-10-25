@@ -312,7 +312,9 @@ class CompaniesConnectorConjector {
         activeHost: activeHost,
       );
     } else if (deviceHostNameLowerCase.contains('xiaomi') ||
-        deviceHostNameLowerCase.contains('yeelink')) {
+        deviceHostNameLowerCase.contains('yeelink') ||
+        deviceHostNameLowerCase.contains('xiao')) {
+      getIt<XiaomiIoConnectorConjector>().discoverNewDevices();
     } else {
       final ActiveHost? cbjSmartDeviceHost =
           await CbjSmartDeviceClient.checkIfDeviceIsCbjSmartDevice(
@@ -321,10 +323,9 @@ class CompaniesConnectorConjector {
       if (cbjSmartDeviceHost != null) {
         getIt<CbjDevicesConnectorConjector>()
             .addNewDeviceByHostInfo(activeHost: cbjSmartDeviceHost);
-        logger.i('Smart Device $cbjSmartDeviceHost');
         return;
       }
-      logger.i('Internet Name $deviceHostNameLowerCase');
+      // logger.i('Found pingable device $deviceHostNameLowerCase');
     }
   }
 }

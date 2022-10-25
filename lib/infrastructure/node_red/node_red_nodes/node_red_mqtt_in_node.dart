@@ -4,7 +4,7 @@ class NodeRedMqttInNode extends NodeRedVisualNodeAbstract {
   NodeRedMqttInNode({
     required this.brokerNodeId,
     required this.topic,
-    super.id,
+    super.tempId,
     super.name,
     super.wires,
     this.qos,

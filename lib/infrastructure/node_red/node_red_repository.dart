@@ -169,4 +169,34 @@ class NodeRedRepository extends INodeRedRepository {
     }
     return "";
   }
+
+  @override
+  Future<String> setFlowWithModule({
+    required String moduleToUse,
+    required String label,
+    required String nodes,
+    required String flowId,
+  }) async {
+    await _deviceIsReadyToSendInternetRequests;
+
+    try {
+      /// Install the new node module
+      final Response postNodesResponse =
+          await nodeRedApi.postNodes(module: moduleToUse);
+
+      final Response response = await nodeRedApi.postFlow(
+        label: label,
+        nodes: nodes,
+        flowId: flowId,
+      );
+    } catch (e) {
+      if (e.toString() ==
+          'The remote computer refused the network connection.\r\n') {
+        logger.e('Node-RED is not installed');
+      } else {
+        logger.e('Node-RED setting flow with module $moduleToUse\n$e');
+      }
+    }
+    return "";
+  }
 }

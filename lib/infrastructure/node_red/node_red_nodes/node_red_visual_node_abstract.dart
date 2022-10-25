@@ -5,7 +5,7 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_node_abs
 class NodeRedVisualNodeAbstract extends NodeRedNodeAbstract {
   NodeRedVisualNodeAbstract({
     required super.type,
-    super.id,
+    super.tempId,
     super.name,
     this.wires,
   });

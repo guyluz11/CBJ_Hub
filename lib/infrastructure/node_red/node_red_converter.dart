@@ -21,6 +21,7 @@ class NodeRedConverter {
   static const String scenesTopicTypeName = 'Scenes';
   static const String routinesTopicTypeName = 'Routines';
   static const String bindingsTopicTypeName = 'bindings';
+  static const String nodeRedPluginsApi = 'nodeRedPluginsApi';
 
   static SceneCbjEntity convertToSceneNodes({
     required String nodeName,
@@ -35,7 +36,7 @@ class NodeRedConverter {
         allNodesAsWellAsAllNodeRedIdToConnectTo =
         getAllNodesAsWellAsAllNodeRedIdToConnectTo(
       devicesPropertyAction: devicesPropertyAction,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
     );
 
     String nodes = allNodesAsWellAsAllNodeRedIdToConnectTo.key;
@@ -44,7 +45,7 @@ class NodeRedConverter {
 
     final MapEntry<String, String> startingSceneNode = createStartingSceneNode(
       nodeName: nodeName,
-      brokerId: brokerNode.id!,
+      brokerId: brokerNode.id,
       wires: allNodeRedIdToConnectTo,
     );
     if (nodes.isEmpty) {
@@ -90,7 +91,7 @@ class NodeRedConverter {
         allNodesAsWellAsAllNodeRedIdToConnectTo =
         getAllNodesAsWellAsAllNodeRedIdToConnectTo(
       devicesPropertyAction: devicesPropertyAction,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
     );
 
     String nodes = allNodesAsWellAsAllNodeRedIdToConnectTo.key;
@@ -148,7 +149,7 @@ class NodeRedConverter {
         allNodesAsWellAsAllNodeRedIdToConnectTo =
         getAllNodesAsWellAsAllNodeRedIdToConnectTo(
       devicesPropertyAction: devicesPropertyAction,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
     );
 
     String nodes = allNodesAsWellAsAllNodeRedIdToConnectTo.key;
@@ -158,7 +159,7 @@ class NodeRedConverter {
     final MapEntry<String, String> startingBindingNode =
         createStartingBindingNode(
       nodeName: nodeName,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
       wires: allNodeRedIdToConnectTo,
     );
 
@@ -207,13 +208,13 @@ class NodeRedConverter {
       name: action,
       wires: [
         [
-          mqttNode.id!,
+          mqttNode.id,
         ]
       ],
     );
 
     return MapEntry(
-      functionForNode.id!,
+      functionForNode.id,
       '${functionForNode.toString()}, ${mqttNode.toString()}',
     );
   }
@@ -230,9 +231,9 @@ class NodeRedConverter {
       brokerNodeId: brokerId,
       topic: topic,
       wires: [wires],
-      id: mqttInNodeId,
+      tempId: mqttInNodeId,
     );
-    return MapEntry(nodeRedMqttInNode.id!, nodeRedMqttInNode.toString());
+    return MapEntry(nodeRedMqttInNode.id, nodeRedMqttInNode.toString());
   }
 
   static MapEntry<String, String> createStartingRoutineNode({
@@ -247,12 +248,12 @@ class NodeRedConverter {
         NodeRedInjectAtASpecificTimeNode(
       name: nodeName,
       wires: [wires],
-      id: injectNodeId,
+      tempId: injectNodeId,
       daysToRepeat: daysToRepeat,
       hourToRepeat: hourToRepeat,
       minutesToRepeat: minutesToRepeat,
     );
-    return MapEntry(nodeRedInjectNode.id!, nodeRedInjectNode.toString());
+    return MapEntry(nodeRedInjectNode.id, nodeRedInjectNode.toString());
   }
 
   static MapEntry<String, String> createStartingBindingNode({
@@ -267,9 +268,9 @@ class NodeRedConverter {
       brokerNodeId: brokerNodeId,
       topic: topic,
       wires: [wires],
-      id: mqttInNodeId,
+      tempId: mqttInNodeId,
     );
-    return MapEntry(nodeRedMqttInNode.id!, nodeRedMqttInNode.toString());
+    return MapEntry(nodeRedMqttInNode.id, nodeRedMqttInNode.toString());
   }
 
   static MapEntry<String, List<String>>

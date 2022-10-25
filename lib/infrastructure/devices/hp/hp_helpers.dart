@@ -21,9 +21,9 @@ class HpHelpers {
     final HpPrinterEntity lgDE = HpPrinterEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-      defaultName: DeviceDefaultName('LG TV'),
+      defaultName: DeviceDefaultName(mDnsName),
       deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
-      senderDeviceOs: DeviceSenderDeviceOs('WebOs'),
+      senderDeviceOs: DeviceSenderDeviceOs('HP'),
       senderDeviceModel: DeviceSenderDeviceModel('UP7550PVG'),
       senderId: DeviceSenderId(),
       compUuid: DeviceCompUuid('34asdfrsd23gggg'),

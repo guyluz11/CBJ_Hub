@@ -14,8 +14,6 @@ dependencies:
   color: ^3.0.0
   # Collection of cyclic redundancy check (CRC) routines as Dart converters.
   crclib: ^3.0.0
-  # Cast videos to your ChromeCast device and control their playback
-  dart_chromecast: ^0.3.3
   # Functional programming thingies, let you use multiple return types
   dartz: ^0.10.1
   # Allow returning more than one type of object
@@ -57,7 +55,7 @@ dependencies:
   # Simple, fast generation of RFC4122 UUIDs.
   uuid: ^3.0.6
   # Dart library for controlling Yeelight products over LAN.
-  yeedart: ^0.3.1+2
+  yeedart: ^0.3.2
 
 dev_dependencies:
   # A build system for Dart code generation and modular compilation.
