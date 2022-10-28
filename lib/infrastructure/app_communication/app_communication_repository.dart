@@ -185,7 +185,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         );
 
         if (sceneStateGrpcTemp == DeviceStateGRPC.addingNewScene.toString()) {
-          getIt<ISceneCbjRepository>().addNewScene(sceneCbj);
+          getIt<ISceneCbjRepository>().addNewSceneAndSaveInDb(sceneCbj);
         } else {
           getIt<ISceneCbjRepository>().activateScene(sceneCbj);
         }
@@ -207,7 +207,8 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
 
         if (routineStateGrpcTemp ==
             DeviceStateGRPC.addingNewRoutine.toString()) {
-          getIt<IRoutineCbjRepository>().addNewRoutine(routineCbj);
+          getIt<IRoutineCbjRepository>()
+              .addNewRoutineAndSaveItToLocalDb(routineCbj);
         } else {
           // For a way to active it manually
           // getIt<IRoutineCbjRepository>().activateRoutine(routineCbj);

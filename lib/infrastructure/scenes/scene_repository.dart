@@ -32,13 +32,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
   final HashMap<String, SceneCbjEntity> _allScenes = HashMap();
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Isar boxes to initialize
-    /// In case you got the following error:
-    /// "IsarError: You need to initialize Isar or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
     getIt<ILocalDbRepository>().getScenesFromDb().then((value) {
       value.fold((l) => null, (r) {
         for (final element in r) {
@@ -59,7 +52,10 @@ class SceneCbjRepository implements ISceneCbjRepository {
   }
 
   @override
-  Future<Either<LocalDbFailures, Unit>> saveAndActivateScenesToDb() {
+  Future<Either<LocalDbFailures, Unit>>
+      saveAndActivateScenesAndSmartDevicesToDb() async {
+    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+
     return getIt<ILocalDbRepository>().saveScenes(
       sceneList: List<SceneCbjEntity>.from(_allScenes.values),
     );
@@ -67,8 +63,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
   @override
   Future<Either<SceneCbjFailure, String>> addNewScene(
-    SceneCbjEntity sceneCbj,
-  ) async {
+      SceneCbjEntity sceneCbj) async {
     SceneCbjEntity tempSceneCbj = sceneCbj;
 
     final SceneCbjEntity? existingScene =
@@ -88,8 +83,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
     /// If it is new scene
     _allScenes[entityId] = tempSceneCbj;
 
-    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-
     String sceneNodeRedFlowId = '';
 
     if (existingScene == null ||
@@ -106,9 +99,17 @@ class SceneCbjRepository implements ISceneCbjRepository {
     }
     getIt<ISavedRoomsRepo>().addSceneToRoomDiscoveredIfNotExist(tempSceneCbj);
     _allScenes[tempSceneCbj.uniqueId.getOrCrash()] = tempSceneCbj;
-
-    await saveAndActivateScenesToDb();
     return right(sceneNodeRedFlowId);
+  }
+
+  @override
+  Future<Either<SceneCbjFailure, String>> addNewSceneAndSaveInDb(
+    SceneCbjEntity sceneCbj,
+  ) async {
+    final Either<SceneCbjFailure, String> sceneNodeRedFlowId =
+        await addNewScene(sceneCbj);
+    await saveAndActivateScenesAndSmartDevicesToDb();
+    return sceneNodeRedFlowId;
   }
 
   @override
@@ -148,7 +149,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
     final String sceneId = sceneCbjEntityTemp.uniqueId.getOrCrash();
     String nodeRedFlowId = '';
 
-    (await addNewScene(sceneCbjEntityTemp)).fold((l) {}, (r) {
+    (await addNewSceneAndSaveInDb(sceneCbjEntityTemp)).fold((l) {}, (r) {
       nodeRedFlowId = r;
     });
 
@@ -174,7 +175,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     _allScenes[sceneId] = sceneCbjEntityTemp;
 
-    saveAndActivateScenesToDb();
+    saveAndActivateScenesAndSmartDevicesToDb();
 
     AppCommunicationRepository.sendAllScenesFromHubRequestsStream();
 
@@ -383,7 +384,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     String nodeRedFlowId = '';
 
-    (await addNewScene(scene)).fold((l) {}, (r) {
+    (await addNewSceneAndSaveInDb(scene)).fold((l) {}, (r) {
       nodeRedFlowId = r;
     });
 
@@ -405,7 +406,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     _allScenes[sceneId] = scene;
 
-    saveAndActivateScenesToDb();
+    saveAndActivateScenesAndSmartDevicesToDb();
 
     //TODO: add to the automationString part the new automation for devices String from actionForDevicesInArea and connect all to first node id
     return right(scene);

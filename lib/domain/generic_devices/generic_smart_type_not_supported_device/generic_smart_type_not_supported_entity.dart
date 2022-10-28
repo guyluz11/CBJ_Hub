@@ -1,54 +1,47 @@
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_ping_device/generic_ping_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_hub/infrastructure/generic_devices/generic_ping_device/generic_ping_device_dtos.dart';
+import 'package:cbj_hub/infrastructure/generic_devices/generic_smart_type_type_not_supported_device/generic_smart_type_not_supported_device_dtos.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 
-/// Abstract smart GenericPing that exist inside a computer, the
-/// implementations will be actual GenericPing like blinds pings and more
-class GenericPingDE extends DeviceEntityAbstract {
-  /// All public field of GenericPing entity
-  GenericPingDE({
+/// Abstract smart GenericSmartTypeNotSupported that exist inside a computer, the
+/// implementations will be actual GenericSmartTypeNotSupported like smartTypeNotSupported smartTypeNotSupporteds and more
+class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
+  /// All public field of GenericSmartTypeNotSupported entity
+  GenericSmartTypeNotSupportedDE({
     required super.uniqueId,
     required super.vendorUniqueId,
-    required super.deviceVendor,
     required super.defaultName,
+    required super.deviceVendor,
     required super.deviceStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required this.pingSwitchState,
-    DevicePowerConsumption? powerConsumption,
   }) : super(
-          deviceTypes: DeviceType(DeviceTypes.pingDevice.toString()),
+          deviceTypes: DeviceType(DeviceTypes.smartTypeNotSupported.toString()),
         );
 
-  /// Ping instance of GenericPingEntity
-  factory GenericPingDE.empty() => GenericPingDE(
+  /// Empty instance of GenericSmartTypeNotSupportedEntity
+  factory GenericSmartTypeNotSupportedDE.empty() =>
+      GenericSmartTypeNotSupportedDE(
         uniqueId: CoreUniqueId(),
         vendorUniqueId: VendorUniqueId(),
-        defaultName: DeviceDefaultName('Ping device'),
-        deviceStateGRPC: DeviceState(DeviceStateGRPC.pingNow.toString()),
-        senderDeviceOs: DeviceSenderDeviceOs('Hub'),
-        senderDeviceModel: DeviceSenderDeviceModel('Hub'),
-        stateMassage: DeviceStateMassage('Test'),
+        defaultName: DeviceDefaultName(''),
+        deviceStateGRPC: DeviceState(''),
+        senderDeviceOs: DeviceSenderDeviceOs(''),
+        senderDeviceModel: DeviceSenderDeviceModel(''),
+        stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
-        deviceVendor: DeviceVendor(
-          VendorsAndServices.vendorsAndServicesNotSupported.toString(),
-        ),
-        compUuid: DeviceCompUuid('Test'),
-        powerConsumption: DevicePowerConsumption('Test'),
-        pingSwitchState: GenericPingSwitchState(DeviceActions.off.toString()),
+        deviceVendor: DeviceVendor(''),
+        compUuid: DeviceCompUuid(''),
       );
 
-  /// State of the ping on/off
-  GenericPingSwitchState? pingSwitchState;
+  DevicePowerConsumption? powerConsumption;
 
   //
   // /// Will return failure if any of the fields failed or return unit if fields
@@ -64,7 +57,7 @@ class GenericPingDE extends DeviceEntityAbstract {
   //           // Getting the failureOption from the TodoItem ENTITY - NOT a failureOrUnit from a VALUE OBJECT
   //           .map((todoItem) => todoItem.failureOption)
   //           .filter((o) => o.isSome())
-  //           // If we can't get the 0th element, the list is ping. In such a case, it's valid.
+  //           // If we can't get the 0th element, the list is empty. In such a case, it's valid.
   //           .getOrElse(0, (_) => none())
   //           .fold(() => right(unit), (f) => left(f)),
   //     )
@@ -79,15 +72,16 @@ class GenericPingDE extends DeviceEntityAbstract {
   /// Return a list of all valid actions for this device
   @override
   List<String> getAllValidActions() {
-    return GenericPingSwitchState.pingValidActions();
+    return [];
   }
 
   @override
   DeviceEntityDtoAbstract toInfrastructure() {
-    return GenericPingDeviceDtos(
-      deviceDtoClass: (GenericPingDeviceDtos).toString(),
+    return GenericSmartTypeNotSupportedDeviceDtos(
+      deviceDtoClass: (GenericSmartTypeNotSupportedDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
       vendorUniqueId: vendorUniqueId.getOrCrash(),
+
       defaultName: defaultName.getOrCrash(),
       deviceStateGRPC: deviceStateGRPC.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
@@ -96,7 +90,6 @@ class GenericPingDE extends DeviceEntityAbstract {
       senderId: senderId.getOrCrash(),
       deviceTypes: deviceTypes.getOrCrash(),
       compUuid: compUuid.getOrCrash(),
-      pingSwitchState: pingSwitchState!.getOrCrash(),
       deviceVendor: deviceVendor.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
@@ -116,7 +109,7 @@ class GenericPingDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> turnOnPing() async {
+  Future<Either<CoreFailure, Unit>> turnOnSmartTypeNotSupported() async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -126,7 +119,7 @@ class GenericPingDE extends DeviceEntityAbstract {
   }
 
   /// Please override the following methods
-  Future<Either<CoreFailure, Unit>> turnOffPing() async {
+  Future<Either<CoreFailure, Unit>> turnOffSmartTypeNotSupported() async {
     logger.w('Please override this method in the non generic implementation');
     return left(
       const CoreFailure.actionExcecuter(
@@ -137,17 +130,11 @@ class GenericPingDE extends DeviceEntityAbstract {
 
   @override
   bool replaceActionIfExist(String action) {
-    if (GenericPingSwitchState.pingValidActions().contains(action)) {
-      pingSwitchState = GenericPingSwitchState(action);
-      return true;
-    }
-    return false;
+    return true;
   }
 
   @override
   List<String> getListOfPropertiesToChange() {
-    return [
-      'pingSwitchState',
-    ];
+    return [];
   }
 }

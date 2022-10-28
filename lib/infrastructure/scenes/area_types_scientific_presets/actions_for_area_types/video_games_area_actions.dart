@@ -182,7 +182,13 @@ class VideoGamesAreaAction {
       case DeviceTypes.toaster:
         // TODO: Handle this case.
         break;
-      case DeviceTypes.typeNotSupported:
+      case DeviceTypes.smartTypeNotSupported:
+        // TODO: Handle this case.
+        break;
+      case DeviceTypes.emptyDevice:
+        // TODO: Handle this case.
+        break;
+      case DeviceTypes.pingDevice:
         // TODO: Handle this case.
         break;
       case DeviceTypes.vacuumCleaner:

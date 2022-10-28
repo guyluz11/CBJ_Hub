@@ -30,12 +30,6 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       HashMap<String, RoomEntity>();
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Isar boxes to initialize
-    /// In case you got the following error:
-    /// "IsarError: You need to initialize Isar or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
     getIt<ILocalDbRepository>().getRoomsFromDb().then((value) {
       value.fold((l) => null, (r) {
         for (final element in r) {
@@ -172,9 +166,10 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
 
     if (_allRooms[discoveredRoomId] == null) {
       _allRooms.addEntries([MapEntry(discoveredRoomId, RoomEntity.empty())]);
+    } else {
+      _allRooms[discoveredRoomId]!
+          .addDeviceId(deviceEntity.uniqueId.getOrCrash());
     }
-    _allRooms[discoveredRoomId]!
-        .addDeviceId(deviceEntity.uniqueId.getOrCrash());
   }
 
   @override
@@ -229,6 +224,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
   Future<Either<LocalDbFailures, Unit>> saveAndActiveRoomToDb({
     required RoomEntity roomEntity,
   }) async {
+    // TODO: Rewrite it to call addOrUpdateRoom and just save the final state
     RoomEntity roomEntityTemp = roomEntity;
     final String roomId = roomEntityTemp.uniqueId.getOrCrash();
 
