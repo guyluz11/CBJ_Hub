@@ -23,7 +23,7 @@ class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
     required super.senderId,
     required super.compUuid,
   }) : super(
-          deviceTypes: DeviceType(DeviceTypes.typeNotSupported.toString()),
+          deviceTypes: DeviceType(DeviceTypes.smartTypeNotSupported.toString()),
         );
 
   /// Empty instance of GenericSmartTypeNotSupportedEntity
