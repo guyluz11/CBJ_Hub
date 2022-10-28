@@ -43,17 +43,24 @@ import 'package:isar/isar.dart';
 class IsarRepository extends ILocalDbRepository {
   IsarRepository() {
     asyncConstractor();
+    loadFromDb();
   }
 
   late Isar isar;
+  Future<bool>? didDbInitialzed;
 
   Future<void> asyncConstractor() async {
+    if (didDbInitialzed == null) {
+      didDbInitialzed = asyncConstractorHelper();
+    } else {
+      await didDbInitialzed;
+    }
+  }
+
+  Future<bool> asyncConstractorHelper() async {
     String? localDbPath = await MySingleton.getLocalDbPath();
 
-    if (localDbPath == null) {
-      logger.e('Cant find local DB path');
-      localDbPath = '/';
-    }
+    localDbPath ??= '/';
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open([
@@ -65,8 +72,9 @@ class IsarRepository extends ILocalDbRepository {
       ScenesIsarModelSchema,
       RoutinesIsarModelSchema,
     ]);
+    logger.i('Isar db location\n${isar.path}');
 
-    loadFromDb();
+    return true;
   }
 
   @override
@@ -113,8 +121,9 @@ class IsarRepository extends ILocalDbRepository {
 
   @override
   Future<Either<LocalDbFailures, List<RoomEntity>>> getRoomsFromDb() async {
-    final List<RoomEntity> rooms = <RoomEntity>[];
+    await asyncConstractor();
 
+    final List<RoomEntity> rooms = <RoomEntity>[];
     try {
       final List<RoomsIsarModel> roomsIsarModelFromDb =
           await isar.roomsIsarModels.where().findAll();
@@ -154,6 +163,8 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, List<DeviceEntityAbstract>>>
       getSmartDevicesFromDb() async {
+    await asyncConstractor();
+
     final List<DeviceEntityAbstract> devices = <DeviceEntityAbstract>[];
 
     try {
@@ -179,18 +190,24 @@ class IsarRepository extends ILocalDbRepository {
 
   @override
   Future<Either<LocalDbFailures, String>> getHubEntityLastKnownIp() async {
+    await asyncConstractor();
+
     // TODO: implement getHubEntityLastKnownIp
     throw UnimplementedError();
   }
 
   @override
   Future<Either<LocalDbFailures, String>> getHubEntityNetworkBssid() async {
+    await asyncConstractor();
+
     // TODO: implement getHubEntityNetworkBssid
     throw UnimplementedError();
   }
 
   @override
   Future<Either<LocalDbFailures, String>> getHubEntityNetworkName() async {
+    await asyncConstractor();
+
     // TODO: implement getHubEntityNetworkName
     throw UnimplementedError();
   }
@@ -200,6 +217,8 @@ class IsarRepository extends ILocalDbRepository {
       getTuyaVendorLoginCredentials({
     required String vendorBoxName,
   }) async {
+    await asyncConstractor();
+
     try {
       final List<TuyaVendorCredentialsIsarModel>
           tuyaVendorCredentialsModelFromDb =
@@ -244,6 +263,8 @@ class IsarRepository extends ILocalDbRepository {
 
   @override
   Future<Either<LocalDbFailures, String>> getRemotePipesDnsName() async {
+    await asyncConstractor();
+
     try {
       final List<RemotePipesIsarModel> remotePipesIsarModelFromDb =
           await isar.remotePipesIsarModels.where().findAll();
@@ -270,6 +291,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveSmartDevices({
     required List<DeviceEntityAbstract> deviceList,
   }) async {
+    await asyncConstractor();
+
     try {
       final List<DevicesIsarModel> devicesIsarList = [];
 
@@ -302,6 +325,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveRoomsToDb({
     required List<RoomEntity> roomsList,
   }) async {
+    await asyncConstractor();
+
     try {
       final List<RoomsIsarModel> roomsIsarList = [];
 
@@ -344,6 +369,8 @@ class IsarRepository extends ILocalDbRepository {
     required String networkName,
     required String lastKnownIp,
   }) async {
+    await asyncConstractor();
+
     // TODO: implement saveHubEntity
     throw UnimplementedError();
   }
@@ -352,6 +379,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveVendorLoginCredentials({
     required LoginEntityAbstract loginEntityAbstract,
   }) async {
+    await asyncConstractor();
+
     if (loginEntityAbstract is GenericTuyaLoginDE) {
       if (loginEntityAbstract.loginVendor.getOrCrash() ==
           VendorsAndServices.smartLife.name) {
@@ -385,6 +414,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveRemotePipes({
     required String remotePipesDomainName,
   }) async {
+    await asyncConstractor();
+
     try {
       final RemotePipesIsarModel remotePipesIsarModel = RemotePipesIsarModel()
         ..domainName = remotePipesDomainName;
@@ -411,6 +442,8 @@ class IsarRepository extends ILocalDbRepository {
     required GenericTuyaLoginDE tuyaLoginDE,
     required String vendorCredentialsBoxName,
   }) async {
+    await asyncConstractor();
+
     try {
       final TuyaVendorCredentialsIsarModel tuyaVendorCredentialsModel =
           TuyaVendorCredentialsIsarModel()
@@ -447,6 +480,8 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, List<SceneCbjEntity>>>
       getScenesFromDb() async {
+    await asyncConstractor();
+
     final List<SceneCbjEntity> scenes = <SceneCbjEntity>[];
 
     try {
@@ -476,6 +511,8 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, List<RoutineCbjEntity>>>
       getRoutinesFromDb() async {
+    await asyncConstractor();
+
     final List<RoutineCbjEntity> routines = <RoutineCbjEntity>[];
 
     try {
@@ -505,6 +542,8 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, List<BindingCbjEntity>>>
       getBindingsFromDb() async {
+    await asyncConstractor();
+
     final List<BindingCbjEntity> bindings = <BindingCbjEntity>[];
 
     try {
@@ -535,6 +574,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveScenes({
     required List<SceneCbjEntity> sceneList,
   }) async {
+    await asyncConstractor();
+
     try {
       final List<ScenesIsarModel> scenesIsarList = [];
 
@@ -567,6 +608,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveRoutines({
     required List<RoutineCbjEntity> routineList,
   }) async {
+    await asyncConstractor();
+
     try {
       final List<RoutinesIsarModel> routinesIsarList = [];
 
@@ -600,6 +643,8 @@ class IsarRepository extends ILocalDbRepository {
   Future<Either<LocalDbFailures, Unit>> saveBindings({
     required List<BindingCbjEntity> bindingList,
   }) async {
+    await asyncConstractor();
+
     try {
       final List<BindingsIsarModel> bindingsIsarList = [];
 

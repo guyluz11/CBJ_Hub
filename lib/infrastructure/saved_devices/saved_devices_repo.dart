@@ -27,13 +27,6 @@ class SavedDevicesRepo extends ISavedDevicesRepo {
   static bool setUpAllFromDbAtLestOnce = false;
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Isar boxes to initialize
-    /// In case you got the following error:
-    /// "IsarError: You need to initialize Isar or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
     getIt<ILocalDbRepository>().getSmartDevicesFromDb().then((value) {
       value.fold((l) => null, (r) {
         for (final element in r) {
