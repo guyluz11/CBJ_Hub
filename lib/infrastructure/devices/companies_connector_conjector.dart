@@ -5,8 +5,12 @@ import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
+import 'package:cbj_hub/infrastructure/cbj_smart_device_client/cbj_smart_device_client.dart';
+import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/hp/hp_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/hp/hp_printer/hp_printer_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/lg/lg_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/lifx/lifx_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/shelly/shelly_connector_conjector.dart';
@@ -31,35 +35,38 @@ class CompaniesConnectorConjector {
         final String deviceVendor =
             deviceEntityAbstract.deviceVendor.getOrCrash();
         if (deviceVendor == VendorsAndServices.yeelight.toString()) {
-          YeelightConnectorConjector()
+          getIt<YeelightConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.tasmota.toString()) {
-          TasmotaIpConnectorConjector()
+          getIt<TasmotaIpConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.espHome.toString()) {
-          EspHomeConnectorConjector()
+          getIt<EspHomeConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor ==
             VendorsAndServices.switcherSmartHome.toString()) {
-          SwitcherConnectorConjector()
+          getIt<SwitcherConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.google.toString()) {
-          GoogleConnectorConjector()
+          getIt<GoogleConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
-          XiaomiIoConnectorConjector()
+          getIt<XiaomiIoConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.tuyaSmart.toString()) {
-          TuyaSmartConnectorConjector()
+          getIt<TuyaSmartConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.lifx.toString()) {
-          LifxConnectorConjector()
+          getIt<LifxConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
-          ShellyConnectorConjector()
+          getIt<ShellyConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.sonoff.toString()) {
-          SonoffDiyConnectorConjector()
+        } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
+          getIt<SonoffDiyConnectorConjector>()
+              .manageHubRequestsForDevice(deviceEntityAbstract);
+        } else if (deviceVendor == VendorsAndServices.cbjDevices.toString()) {
+          getIt<CbjDevicesConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
           logger.w(
@@ -116,7 +123,7 @@ class CompaniesConnectorConjector {
       LifxConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
       ShellyConnectorConjector.companyDevices.addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.sonoff.toString()) {
+    } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
       SonoffDiyConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else {
       logger.w('Cannot add device entity to its repo, type not supported');
@@ -191,7 +198,7 @@ class CompaniesConnectorConjector {
 
     if (EspHomeConnectorConjector.mdnsTypes
         .contains(hostMdnsInfo.mdnsServiceType)) {
-      EspHomeConnectorConjector().addNewDeviceByMdnsName(
+      getIt<EspHomeConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
         port: mdnsPort,
@@ -199,14 +206,14 @@ class CompaniesConnectorConjector {
     } else if (ShellyConnectorConjector.mdnsTypes
             .contains(hostMdnsInfo.mdnsServiceType) &&
         hostMdnsInfo.getOnlyTheStartOfMdnsName().contains('shelly')) {
-      ShellyConnectorConjector().addNewDeviceByMdnsName(
+      getIt<ShellyConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
         port: mdnsPort,
       );
     } else if (SonoffDiyConnectorConjector.mdnsTypes
         .contains(hostMdnsInfo.mdnsServiceType)) {
-      SonoffDiyConnectorConjector().addNewDeviceByMdnsName(
+      getIt<SonoffDiyConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
         port: mdnsPort,
@@ -216,7 +223,7 @@ class CompaniesConnectorConjector {
         (startOfMdnsNameLower.contains('google') ||
             startOfMdnsNameLower.contains('android') ||
             startOfMdnsNameLower.contains('chrome'))) {
-      GoogleConnectorConjector().addNewDeviceByMdnsName(
+      getIt<GoogleConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
         port: mdnsPort,
@@ -225,7 +232,15 @@ class CompaniesConnectorConjector {
             .contains(hostMdnsInfo.mdnsServiceType) &&
         (startOfMdnsNameLower.contains('lg') ||
             startOfMdnsNameLower.contains('webos'))) {
-      LgConnectorConjector().addNewDeviceByMdnsName(
+      getIt<LgConnectorConjector>().addNewDeviceByMdnsName(
+        mDnsName: startOfMdnsName,
+        ip: mdnsDeviceIp,
+        port: mdnsPort,
+      );
+    } else if (HpPrinterEntity.mdnsTypes
+            .contains(hostMdnsInfo.mdnsServiceType) &&
+        (startOfMdnsNameLower.contains('hp'))) {
+      getIt<HpConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
         port: mdnsPort,
@@ -293,13 +308,24 @@ class CompaniesConnectorConjector {
       return;
     }
     if (deviceHostNameLowerCase.contains('tasmota')) {
-      TasmotaIpConnectorConjector().addNewDeviceByHostInfo(
+      getIt<TasmotaIpConnectorConjector>().addNewDeviceByHostInfo(
         activeHost: activeHost,
       );
     } else if (deviceHostNameLowerCase.contains('xiaomi') ||
-        deviceHostNameLowerCase.contains('yeelink')) {
+        deviceHostNameLowerCase.contains('yeelink') ||
+        deviceHostNameLowerCase.contains('xiao')) {
+      getIt<XiaomiIoConnectorConjector>().discoverNewDevices();
     } else {
-      // logger.i('Internet Name ${internetAddress.host}');
+      final ActiveHost? cbjSmartDeviceHost =
+          await CbjSmartDeviceClient.checkIfDeviceIsCbjSmartDevice(
+        activeHost.address,
+      );
+      if (cbjSmartDeviceHost != null) {
+        getIt<CbjDevicesConnectorConjector>()
+            .addNewDeviceByHostInfo(activeHost: cbjSmartDeviceHost);
+        return;
+      }
+      // logger.i('Found pingable device $deviceHostNameLowerCase');
     }
   }
 }

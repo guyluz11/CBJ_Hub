@@ -3,7 +3,8 @@ import 'package:cbj_hub/domain/routine/routine_cbj_failures.dart';
 import 'package:dartz/dartz.dart';
 
 Either<RoutineCbjFailure<String>, String> validateRoutineNotEmpty(
-    String input) {
+  String input,
+) {
   if (input.isNotEmpty) {
     return right(input);
   } else {

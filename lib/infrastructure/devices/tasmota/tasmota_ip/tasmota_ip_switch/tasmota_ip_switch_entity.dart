@@ -26,32 +26,21 @@ import 'package:http/http.dart';
 
 class TasmotaIpSwitchEntity extends GenericSwitchDE {
   TasmotaIpSwitchEntity({
-    required CoreUniqueId uniqueId,
-    required VendorUniqueId vendorUniqueId,
-    required DeviceDefaultName defaultName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericSwitchSwitchState switchState,
+    required super.uniqueId,
+    required super.vendorUniqueId,
+    required super.defaultName,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required super.powerConsumption,
+    required super.switchState,
     required this.tasmotaIpDeviceHostName,
     required this.tasmotaIpLastIp,
   }) : super(
-          uniqueId: uniqueId,
-          vendorUniqueId: vendorUniqueId,
-          defaultName: defaultName,
-          switchState: switchState,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor: DeviceVendor(VendorsAndServices.tasmota.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
         );
 
   TasmotaIpHostName tasmotaIpDeviceHostName;

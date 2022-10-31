@@ -21,11 +21,13 @@ class NodeRedConverter {
   static const String scenesTopicTypeName = 'Scenes';
   static const String routinesTopicTypeName = 'Routines';
   static const String bindingsTopicTypeName = 'bindings';
+  static const String nodeRedPluginsApi = 'nodeRedPluginsApi';
 
   static SceneCbjEntity convertToSceneNodes({
     required String nodeName,
     required List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         devicesPropertyAction,
+    required String sceneColor,
   }) {
     final NodeRedMqttBrokerNode brokerNode =
         NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
@@ -34,7 +36,7 @@ class NodeRedConverter {
         allNodesAsWellAsAllNodeRedIdToConnectTo =
         getAllNodesAsWellAsAllNodeRedIdToConnectTo(
       devicesPropertyAction: devicesPropertyAction,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
     );
 
     String nodes = allNodesAsWellAsAllNodeRedIdToConnectTo.key;
@@ -43,7 +45,7 @@ class NodeRedConverter {
 
     final MapEntry<String, String> startingSceneNode = createStartingSceneNode(
       nodeName: nodeName,
-      brokerId: brokerNode.id!,
+      brokerId: brokerNode.id,
       wires: allNodeRedIdToConnectTo,
     );
     if (nodes.isEmpty) {
@@ -55,7 +57,7 @@ class NodeRedConverter {
     return SceneCbjEntity(
       uniqueId: UniqueId(),
       name: SceneCbjName(nodeName),
-      backgroundColor: SceneCbjBackgroundColor('0xFFFF9800'),
+      backgroundColor: SceneCbjBackgroundColor(sceneColor),
       automationString: SceneCbjAutomationString(nodes),
       nodeRedFlowId: SceneCbjNodeRedFlowId(null),
       firstNodeId: SceneCbjFirstNodeId(startingSceneNode.key),
@@ -80,6 +82,7 @@ class NodeRedConverter {
     required RoutineCbjRepeatDateDays daysToRepeat,
     required RoutineCbjRepeatDateHour hourToRepeat,
     required RoutineCbjRepeatDateMinute minutesToRepeat,
+    required String routineColor,
   }) {
     final NodeRedMqttBrokerNode brokerNode =
         NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
@@ -88,7 +91,7 @@ class NodeRedConverter {
         allNodesAsWellAsAllNodeRedIdToConnectTo =
         getAllNodesAsWellAsAllNodeRedIdToConnectTo(
       devicesPropertyAction: devicesPropertyAction,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
     );
 
     String nodes = allNodesAsWellAsAllNodeRedIdToConnectTo.key;
@@ -109,7 +112,7 @@ class NodeRedConverter {
     return RoutineCbjEntity(
       uniqueId: UniqueId(),
       name: RoutineCbjName(nodeName),
-      backgroundColor: RoutineCbjBackgroundColor('0xFFFF9800'),
+      backgroundColor: RoutineCbjBackgroundColor(routineColor),
       automationString: RoutineCbjAutomationString(nodes),
       nodeRedFlowId: RoutineCbjNodeRedFlowId(null),
       firstNodeId: RoutineCbjFirstNodeId(startingRoutineNode.key),
@@ -137,6 +140,7 @@ class NodeRedConverter {
     required String nodeName,
     required List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         devicesPropertyAction,
+    required String bindingColor,
   }) {
     final NodeRedMqttBrokerNode brokerNode =
         NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
@@ -145,7 +149,7 @@ class NodeRedConverter {
         allNodesAsWellAsAllNodeRedIdToConnectTo =
         getAllNodesAsWellAsAllNodeRedIdToConnectTo(
       devicesPropertyAction: devicesPropertyAction,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
     );
 
     String nodes = allNodesAsWellAsAllNodeRedIdToConnectTo.key;
@@ -155,7 +159,7 @@ class NodeRedConverter {
     final MapEntry<String, String> startingBindingNode =
         createStartingBindingNode(
       nodeName: nodeName,
-      brokerNodeId: brokerNode.id!,
+      brokerNodeId: brokerNode.id,
       wires: allNodeRedIdToConnectTo,
     );
 
@@ -164,7 +168,7 @@ class NodeRedConverter {
     return BindingCbjEntity(
       uniqueId: UniqueId(),
       name: BindingCbjName(nodeName),
-      backgroundColor: BindingCbjBackgroundColor('0xFFFF9800'),
+      backgroundColor: BindingCbjBackgroundColor(bindingColor),
       automationString: BindingCbjAutomationString(nodes),
       nodeRedFlowId: BindingCbjNodeRedFlowId(null),
       firstNodeId: BindingCbjFirstNodeId(startingBindingNode.key),
@@ -204,13 +208,13 @@ class NodeRedConverter {
       name: action,
       wires: [
         [
-          mqttNode.id!,
+          mqttNode.id,
         ]
       ],
     );
 
     return MapEntry(
-      functionForNode.id!,
+      functionForNode.id,
       '${functionForNode.toString()}, ${mqttNode.toString()}',
     );
   }
@@ -227,9 +231,9 @@ class NodeRedConverter {
       brokerNodeId: brokerId,
       topic: topic,
       wires: [wires],
-      id: mqttInNodeId,
+      tempId: mqttInNodeId,
     );
-    return MapEntry(nodeRedMqttInNode.id!, nodeRedMqttInNode.toString());
+    return MapEntry(nodeRedMqttInNode.id, nodeRedMqttInNode.toString());
   }
 
   static MapEntry<String, String> createStartingRoutineNode({
@@ -244,12 +248,12 @@ class NodeRedConverter {
         NodeRedInjectAtASpecificTimeNode(
       name: nodeName,
       wires: [wires],
-      id: injectNodeId,
+      tempId: injectNodeId,
       daysToRepeat: daysToRepeat,
       hourToRepeat: hourToRepeat,
       minutesToRepeat: minutesToRepeat,
     );
-    return MapEntry(nodeRedInjectNode.id!, nodeRedInjectNode.toString());
+    return MapEntry(nodeRedInjectNode.id, nodeRedInjectNode.toString());
   }
 
   static MapEntry<String, String> createStartingBindingNode({
@@ -264,9 +268,9 @@ class NodeRedConverter {
       brokerNodeId: brokerNodeId,
       topic: topic,
       wires: [wires],
-      id: mqttInNodeId,
+      tempId: mqttInNodeId,
     );
-    return MapEntry(nodeRedMqttInNode.id!, nodeRedMqttInNode.toString());
+    return MapEntry(nodeRedMqttInNode.id, nodeRedMqttInNode.toString());
   }
 
   static MapEntry<String, List<String>>

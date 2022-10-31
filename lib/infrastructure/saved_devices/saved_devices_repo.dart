@@ -27,18 +27,11 @@ class SavedDevicesRepo extends ISavedDevicesRepo {
   static bool setUpAllFromDbAtLestOnce = false;
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
-    /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
     getIt<ILocalDbRepository>().getSmartDevicesFromDb().then((value) {
       value.fold((l) => null, (r) {
-        r.forEach((element) {
+        for (final element in r) {
           addOrUpdateDevice(element);
-        });
+        }
       });
     });
     setUpAllFromDbAtLestOnce = true;

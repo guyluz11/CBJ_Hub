@@ -20,18 +20,11 @@ class BindingCbjRepository implements IBindingCbjRepository {
   final Map<String, BindingCbjEntity> _allBindings = {};
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
-    /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
     getIt<ILocalDbRepository>().getBindingsFromDb().then((value) {
       value.fold((l) => null, (r) {
-        r.forEach((element) {
+        for (final element in r) {
           addNewBinding(element);
-        });
+        }
       });
     });
   }
@@ -62,7 +55,8 @@ class BindingCbjRepository implements IBindingCbjRepository {
     /// Check if binding already exist
     if (findBindingIfAlreadyBeenAdded(tempBindingCbj) == null) {
       _allBindings.addEntries(
-          [MapEntry(tempBindingCbj.uniqueId.getOrCrash(), tempBindingCbj)]);
+        [MapEntry(tempBindingCbj.uniqueId.getOrCrash(), tempBindingCbj)],
+      );
 
       final String entityId = tempBindingCbj.uniqueId.getOrCrash();
 

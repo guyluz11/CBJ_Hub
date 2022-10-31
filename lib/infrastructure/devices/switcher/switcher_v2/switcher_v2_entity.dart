@@ -14,34 +14,25 @@ import 'package:dartz/dartz.dart';
 
 class SwitcherV2Entity extends GenericBoilerDE {
   SwitcherV2Entity({
-    required CoreUniqueId uniqueId,
+    required super.uniqueId,
     required VendorUniqueId vendorUniqueId,
     required DeviceDefaultName defaultName,
-    required DeviceState deviceStateGRPC,
-    required DeviceStateMassage stateMassage,
-    required DeviceSenderDeviceOs senderDeviceOs,
-    required DeviceSenderDeviceModel senderDeviceModel,
-    required DeviceSenderId senderId,
-    required DeviceCompUuid compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericBoilerSwitchState boilerSwitchState,
+    required super.deviceStateGRPC,
+    required super.stateMassage,
+    required super.senderDeviceOs,
+    required super.senderDeviceModel,
+    required super.senderId,
+    required super.compUuid,
+    required super.powerConsumption,
+    required super.boilerSwitchState,
     required this.switcherMacAddress,
     required this.lastKnownIp,
     required this.switcherPort,
   }) : super(
-          uniqueId: uniqueId,
           vendorUniqueId: vendorUniqueId,
           defaultName: defaultName,
-          deviceStateGRPC: deviceStateGRPC,
-          stateMassage: stateMassage,
-          senderDeviceOs: senderDeviceOs,
-          senderDeviceModel: senderDeviceModel,
-          senderId: senderId,
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
-          compUuid: compUuid,
-          powerConsumption: powerConsumption,
-          boilerSwitchState: boilerSwitchState,
         ) {
     switcherObject = SwitcherApiObject(
       deviceType: SwitcherDevicesTypes.switcherV2Esp,
@@ -49,7 +40,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
       switcherIp: lastKnownIp.getOrCrash(),
       switcherName: defaultName.getOrCrash()!,
       macAddress: switcherMacAddress.getOrCrash(),
-      powerConsumption: powerConsumption.getOrCrash(),
+      powerConsumption: powerConsumption?.getOrCrash() ?? '0',
     );
   }
 

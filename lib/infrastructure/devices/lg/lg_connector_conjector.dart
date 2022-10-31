@@ -13,8 +13,6 @@ import 'package:injectable/injectable.dart';
 
 @singleton
 class LgConnectorConjector implements AbstractCompanyConnectorConjector {
-  LgConnectorConjector() {}
-
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
   static const List<String> mdnsTypes = [
@@ -70,8 +68,9 @@ class LgConnectorConjector implements AbstractCompanyConnectorConjector {
           MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
+      logger.i(
+          'New LG device got added ${entityAsDevice.defaultName.getOrCrash()}');
     }
-    logger.i('New LG device got added');
   }
 
   Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract lg) {

@@ -37,6 +37,7 @@ class EspHomeUtil {
         return result;
       }
     }
+    return null;
   }
 
   // /// aioesphomeapi:
