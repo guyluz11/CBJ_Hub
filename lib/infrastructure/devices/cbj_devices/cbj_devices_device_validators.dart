@@ -5,7 +5,8 @@ Either<CoreFailure<String>, String> validateCbjDevicesIdNotEmpty(String input) {
   return right(input);
 }
 
-Either<CoreFailure<String>, String> validateCbjDevicesPortNotEmpty(String input) {
+Either<CoreFailure<String>, String> validateCbjDevicesPortNotEmpty(
+    String input) {
   return right(input);
 }
 
