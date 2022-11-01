@@ -36,7 +36,6 @@ import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
-import 'package:hive/hive.dart';
 import 'package:isar/isar.dart';
 
 // We are going back to hive and leving all this part as isar does not
@@ -95,7 +94,7 @@ class IsarRepository extends ILocalDbRepository {
     });
     (await getTuyaVendorLoginCredentials(
       vendorBoxName: tuyaVendorCredentialsBoxName,
-      tuyaBox: null,
+      tuyaVendorCredentialsModelFromDb: [],
     ))
         .fold((l) {}, (r) {
       CompaniesConnectorConjector.setVendorLoginCredentials(r);
@@ -106,7 +105,7 @@ class IsarRepository extends ILocalDbRepository {
     });
     (await getTuyaVendorLoginCredentials(
       vendorBoxName: smartLifeVendorCredentialsBoxName,
-      tuyaBox: null,
+      tuyaVendorCredentialsModelFromDb: [],
     ))
         .fold((l) {}, (r) {
       CompaniesConnectorConjector.setVendorLoginCredentials(r);
@@ -117,7 +116,7 @@ class IsarRepository extends ILocalDbRepository {
     });
     (await getTuyaVendorLoginCredentials(
       vendorBoxName: jinvooSmartVendorCredentialsBoxName,
-      tuyaBox: null,
+      tuyaVendorCredentialsModelFromDb: [],
     ))
         .fold((l) {}, (r) {
       CompaniesConnectorConjector.setVendorLoginCredentials(r);
@@ -214,7 +213,8 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, GenericTuyaLoginDE>>
       getTuyaVendorLoginCredentials({
-    required Box<TuyaVendorCredentialsHiveModel>? tuyaBox,
+    required List<TuyaVendorCredentialsHiveModel>
+        tuyaVendorCredentialsModelFromDb,
     required String vendorBoxName,
   }) async {
     await initializeDb();
