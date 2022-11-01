@@ -22,24 +22,27 @@ import 'package:cbj_hub/infrastructure/core/singleton/my_singleton.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/bindings_isar_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/devices_isar_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/remote_pipes_isar_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/rooms_isar_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/routines_isar_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/scenes_isar_model.dart';
-import 'package:cbj_hub/infrastructure/local_db/isar_objects/tuya_vendor_credentials_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/bindings_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/devices_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/remote_pipes_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/rooms_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/routines_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/scenes_isar_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/tuya_vendor_credentials_isar_model.dart';
 import 'package:cbj_hub/infrastructure/room/room_entity_dtos.dart';
 import 'package:cbj_hub/infrastructure/routines/routine_cbj_dtos.dart';
 import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
-import 'package:injectable/injectable.dart';
 import 'package:isar/isar.dart';
 
+// We are going back to hive and leving all this part as isar does not
+// currently support linux arm/arm64 architecture
+// https://github.com/isar/isar/issues/848
+
 /// Only ISavedDevicesRepo need to call functions here
-@LazySingleton(as: ILocalDbRepository)
+// @LazySingleton(as: ILocalDbRepository)
 class IsarRepository extends ILocalDbRepository {
   IsarRepository() {
     asyncConstractor();

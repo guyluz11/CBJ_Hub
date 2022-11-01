@@ -62,7 +62,11 @@ class TuyaSmartHelpers {
         (tuyaSmartDevice.icon ==
                 'https://images.tuyaeu.com/smart/solution/134001/66ba22c327bfbf3d_cover.png' ||
             tuyaSmartDevice.icon ==
-                'https://images.tuyaeu.com/smart/icon/ay15422864509092y6k8/1622259081104c41dc2b7.png')) {
+                'https://images.tuyaus.com/smart/solution/134001/66ba22c327bfbf3d_cover.png' ||
+            tuyaSmartDevice.icon ==
+                'https://images.tuyaeu.com/smart/icon/ay15422864509092y6k8/1622259081104c41dc2b7.png' ||
+            tuyaSmartDevice.icon ==
+                'https://images.tuyaus.com/smart/icon/ay15422864509092y6k8/1622259081104c41dc2b7.png')) {
       /// Spacial cases to differentiate smart plug from regular switch
 
       tuyaSmartDE = TuyaSmartPlugEntity(
