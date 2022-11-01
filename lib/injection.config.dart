@@ -46,7 +46,7 @@ import 'infrastructure/devices/xiaomi_io/xiaomi_io_connector_conjector.dart'
     as _i36;
 import 'infrastructure/devices/yeelight/yeelight_connector_conjector.dart'
     as _i37;
-import 'infrastructure/local_db/local_db_repository.dart' as _i14;
+import 'infrastructure/local_db/local_db_hive_repository.dart' as _i14;
 import 'infrastructure/mqtt_server/mqtt_server_repository.dart' as _i16;
 import 'infrastructure/node_red/node_red_repository.dart' as _i18;
 import 'infrastructure/room/saved_rooms_repo.dart' as _i24;
@@ -78,7 +78,7 @@ _i1.GetIt $initGetIt(
       () => _i10.BindingCbjRepository());
   gh.lazySingleton<_i11.ICbjWebServerRepository>(
       () => _i12.CbjWebServerRepository());
-  gh.lazySingleton<_i13.ILocalDbRepository>(() => _i14.IsarRepository());
+  gh.lazySingleton<_i13.ILocalDbRepository>(() => _i14.HiveRepository());
   gh.lazySingleton<_i15.IMqttServerRepository>(
       () => _i16.MqttServerRepository());
   gh.lazySingleton<_i17.INodeRedRepository>(() => _i18.NodeRedRepository());

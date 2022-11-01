@@ -111,11 +111,11 @@ class MqttServerRepository extends IMqttServerRepository {
     client.connectionMessage = connMessage;
     try {
       await client.connect();
+      client.subscribe('#', MqttQos.atLeastOnce);
     } catch (e) {
-      logger.e('Error: $e');
+      logger.e('Error in mqtt connect\n$e');
       client.disconnect();
     }
-    client.subscribe('#', MqttQos.atLeastOnce);
     return client;
   }
 
