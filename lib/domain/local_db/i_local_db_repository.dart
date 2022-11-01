@@ -43,7 +43,7 @@ abstract class ILocalDbRepository {
   String hubEntityBoxName = 'hubEntityBox';
 
   /// Loading once all the data from the database
-  Future<void> asyncConstractor();
+  Future<void> initializeDb();
 
   /// Will load all the local database content into the program
   Future<void> loadFromDb();

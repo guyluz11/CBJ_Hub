@@ -42,17 +42,15 @@ import 'package:injectable/injectable.dart';
 /// Only ISavedDevicesRepo need to call functions here
 @LazySingleton(as: ILocalDbRepository)
 class HiveRepository extends ILocalDbRepository {
-  HiveRepository() {
-    asyncConstractor();
-  }
-
-  Future<void> asyncConstractor() async {
+  @override
+  Future<void> initializeDb() async {
     String? localDbPath = await MySingleton.getLocalDbPath();
 
     if (localDbPath == null) {
       logger.e('Cant find local DB path');
       localDbPath = '/';
     }
+    localDbPath += '/hive';
 
     Hive.init(localDbPath);
     Hive.registerAdapter(RemotePipesHiveModelAdapter());
@@ -63,7 +61,15 @@ class HiveRepository extends ILocalDbRepository {
     Hive.registerAdapter(BindingsHiveModelAdapter());
     Hive.registerAdapter(HubEntityHiveModelAdapter());
     Hive.registerAdapter(TuyaVendorCredentialsHiveModelAdapter());
-    loadFromDb();
+
+    /// Delay inorder for the Hive boxes to initialize
+    /// In case you got the following error:
+    /// "HiveError: You need to initialize Hive or provide a path to store
+    /// the box."
+    /// Please increase the duration
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    await loadFromDb();
   }
 
   @override
@@ -505,7 +511,7 @@ class HiveRepository extends ILocalDbRepository {
       }
       return right(scenes);
     } catch (e) {
-      logger.e('Local DB hive error while getting devices: $e');
+      logger.e('Local DB hive error while getting scenes: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }
@@ -539,7 +545,7 @@ class HiveRepository extends ILocalDbRepository {
       }
       return right(routines);
     } catch (e) {
-      logger.e('Local DB hive error while getting devices: $e');
+      logger.e('Local DB hive error while getting routines: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }
@@ -573,7 +579,7 @@ class HiveRepository extends ILocalDbRepository {
       }
       return right(bindings);
     } catch (e) {
-      logger.e('Local DB hive error while getting devices: $e');
+      logger.e('Local DB hive error while getting bindings: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }

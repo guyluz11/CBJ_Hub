@@ -30,12 +30,6 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       HashMap<String, RoomEntity>();
 
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
-    /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
     getIt<ILocalDbRepository>().getRoomsFromDb().then((value) {
       value.fold((l) => null, (r) {
         for (final element in r) {
