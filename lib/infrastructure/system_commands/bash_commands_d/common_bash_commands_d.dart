@@ -83,8 +83,8 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
         etcReleaseFiles += File(releaseContent).readAsStringSync();
       }
     } catch (error) {
-      logger.e('Error getting all files from /etc/that end with release');
-      logger.e('error: $error');
+      logger
+          .e('Error getting all files from /etc/that end with release\n$error');
     }
     return etcReleaseFiles;
   }
@@ -120,10 +120,10 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 
     if (snapCommonEnvironmentVariablePath == null) {
       final String? currentUserName = await MySingleton.getCurrentUserName();
-      localDbFolderPath = '/home/$currentUserName/Documents/isar';
+      localDbFolderPath = '/home/$currentUserName/Documents';
     } else {
       // /var/snap/cbj-hub/common/isar
-      localDbFolderPath = '$snapCommonEnvironmentVariablePath/isar';
+      localDbFolderPath = snapCommonEnvironmentVariablePath;
     }
     return localDbFolderPath;
   }

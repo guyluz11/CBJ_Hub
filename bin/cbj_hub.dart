@@ -24,7 +24,7 @@ Future<void> main(List<String> arguments) async {
     await MySingleton.getLocalDbPath();
   }
 
-  getIt<ILocalDbRepository>();
+  await getIt<ILocalDbRepository>().initializeDb();
   logger.v('');
 
   await BootUp.setup();
