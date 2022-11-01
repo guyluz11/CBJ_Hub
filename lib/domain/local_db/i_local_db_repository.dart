@@ -6,7 +6,9 @@ import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
 import 'package:dartz/dartz.dart';
+import 'package:hive/hive.dart';
 
 /// Only ISavedDevicesRepo need to call functions here
 abstract class ILocalDbRepository {
@@ -78,7 +80,10 @@ abstract class ILocalDbRepository {
   });
 
   Future<Either<LocalDbFailures, GenericTuyaLoginDE>>
-      getTuyaVendorLoginCredentials({required String vendorBoxName});
+      getTuyaVendorLoginCredentials({
+    required Box<TuyaVendorCredentialsHiveModel>? tuyaBox,
+    required String vendorBoxName,
+  });
 
   Future<Either<LocalDbFailures, Unit>> saveRoomsToDb({
     required List<RoomEntity> roomsList,
