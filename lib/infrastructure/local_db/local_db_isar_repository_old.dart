@@ -22,6 +22,7 @@ import 'package:cbj_hub/infrastructure/core/singleton/my_singleton.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/bindings_isar_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/devices_isar_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/remote_pipes_isar_model.dart';
@@ -35,6 +36,7 @@ import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
+import 'package:hive/hive.dart';
 import 'package:isar/isar.dart';
 
 // We are going back to hive and leving all this part as isar does not
@@ -60,7 +62,12 @@ class IsarRepository extends ILocalDbRepository {
   Future<bool> asyncConstractorHelper() async {
     String? localDbPath = await MySingleton.getLocalDbPath();
 
-    localDbPath ??= '/';
+    if (localDbPath == null) {
+      logger.e('Cant find local DB path');
+      localDbPath = '/';
+    }
+
+    logger.i('Isar db location\n${isar.path}');
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open([
@@ -72,7 +79,6 @@ class IsarRepository extends ILocalDbRepository {
       ScenesIsarModelSchema,
       RoutinesIsarModelSchema,
     ]);
-    logger.i('Isar db location\n${isar.path}');
 
     return true;
   }
@@ -89,6 +95,7 @@ class IsarRepository extends ILocalDbRepository {
     });
     (await getTuyaVendorLoginCredentials(
       vendorBoxName: tuyaVendorCredentialsBoxName,
+      tuyaBox: null,
     ))
         .fold((l) {}, (r) {
       CompaniesConnectorConjector.setVendorLoginCredentials(r);
@@ -99,6 +106,7 @@ class IsarRepository extends ILocalDbRepository {
     });
     (await getTuyaVendorLoginCredentials(
       vendorBoxName: smartLifeVendorCredentialsBoxName,
+      tuyaBox: null,
     ))
         .fold((l) {}, (r) {
       CompaniesConnectorConjector.setVendorLoginCredentials(r);
@@ -109,6 +117,7 @@ class IsarRepository extends ILocalDbRepository {
     });
     (await getTuyaVendorLoginCredentials(
       vendorBoxName: jinvooSmartVendorCredentialsBoxName,
+      tuyaBox: null,
     ))
         .fold((l) {}, (r) {
       CompaniesConnectorConjector.setVendorLoginCredentials(r);
@@ -146,16 +155,6 @@ class IsarRepository extends ILocalDbRepository {
     } catch (e) {
       logger.e('Local DB isar error while getting rooms: $e');
       await deleteAllSavedRooms();
-    }
-
-    /// Gets all rooms from db, if there are non it will create and return
-    /// only a discovered room
-    if (rooms.isEmpty) {
-      final RoomEntity discoveredRoom = RoomEntity.empty().copyWith(
-        uniqueId: RoomUniqueId.discoveredRoomId(),
-        defaultName: RoomDefaultName.discoveredRoomName(),
-      );
-      rooms.add(discoveredRoom);
     }
     return right(rooms);
   }
@@ -215,6 +214,7 @@ class IsarRepository extends ILocalDbRepository {
   @override
   Future<Either<LocalDbFailures, GenericTuyaLoginDE>>
       getTuyaVendorLoginCredentials({
+    required Box<TuyaVendorCredentialsHiveModel>? tuyaBox,
     required String vendorBoxName,
   }) async {
     await initializeDb();
