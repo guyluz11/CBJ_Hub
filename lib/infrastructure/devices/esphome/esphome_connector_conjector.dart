@@ -23,6 +23,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     required String mDnsName,
     required String ip,
     required String port,
+    required String address,
   }) async {
     CoreUniqueId? tempCoreUniqueId;
 
@@ -47,6 +48,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
       mDnsName: mDnsName,
       port: port,
       uniqueDeviceId: tempCoreUniqueId,
+      address: address,
     );
 
     if (espDevice.isEmpty) {
@@ -61,8 +63,9 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
           MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
+
+      logger.v('New espHome devices name:${entityAsDevice.defaultName}');
     }
-    logger.v('New espHome devices name:$mDnsName');
   }
 
   Future<void> manageHubRequestsForDevice(
