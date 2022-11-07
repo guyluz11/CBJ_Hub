@@ -91,7 +91,7 @@ class EspHomeLightEntity extends GenericLightDE {
 
     try {
       logger.v('Turn on ESPHome device');
-      await EspHomePythonApi.turnOnOffDevice(
+      await EspHomePythonApi.turnOnOffLightEntity(
         address: lastKnownIp!.getOrCrash(),
         port: devicePort.getOrCrash(),
         deviceKey: espHomeKey.getOrCrash(),
@@ -108,7 +108,7 @@ class EspHomeLightEntity extends GenericLightDE {
     lightSwitchState = GenericLightSwitchState(DeviceActions.off.toString());
 
     try {
-      await EspHomePythonApi.turnOnOffDevice(
+      await EspHomePythonApi.turnOnOffLightEntity(
         address: lastKnownIp!.getOrCrash(),
         port: devicePort.getOrCrash(),
         deviceKey: espHomeKey.getOrCrash(),

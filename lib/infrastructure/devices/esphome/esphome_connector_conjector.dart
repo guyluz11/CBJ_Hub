@@ -44,10 +44,9 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     }
 
     final List<DeviceEntityAbstract> espDevice =
-        await EspHomeHelpers.addDiscoverdDevice(
+        await EspHomeHelpers.addDiscoverdEntities(
       mDnsName: mDnsName,
       port: port,
-      uniqueDeviceId: tempCoreUniqueId,
       address: address,
     );
 
@@ -64,7 +63,9 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
 
       companyDevices.addEntries([deviceAsEntry]);
 
-      logger.v('New espHome devices name:${entityAsDevice.defaultName}');
+      logger.i(
+        'New ESPHome devices name:${entityAsDevice.defaultName.getOrCrash()}',
+      );
     }
   }
 

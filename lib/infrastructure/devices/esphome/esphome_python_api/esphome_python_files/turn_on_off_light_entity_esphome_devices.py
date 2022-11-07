@@ -16,14 +16,15 @@ async def main():
     device_password = sys.argv[3]
 
     device_key = int(sys.argv[4])
-    device_new_state = bool(sys.argv[5])
+
+    device_new_state = True
+    if "false" == sys.argv[5].lower() or "0" == sys.argv[5]:
+        device_new_state = False
 
     # Establish connection
     api = aioesphomeapi.APIClient(device_address, device_port, device_password)
     await api.connect(login=True)
-    await api.switch_command(device_key, device_new_state)
-
-    await api.list_entities_services()
+    await api.light_command(device_key, device_new_state)
 
 
 async def result_in_new_massage():
