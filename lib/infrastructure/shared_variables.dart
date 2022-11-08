@@ -9,14 +9,13 @@ class SharedVariables {
   }
 
   ///  Save the location of all the files that were created during the snapcraft
-  static String? _projectRootDirectoryPath;
+  static late String _projectRootDirectoryPath;
 
-  static String? getProjectRootDirectoryPath() => _projectRootDirectoryPath;
+  static String getProjectRootDirectoryPath() => _projectRootDirectoryPath;
 
   /// Getting snap location environment variable value of $SNAP
   static String? getSnapLocationEnvironmentVariable() {
-    if (_projectRootDirectoryPath == null ||
-        !_projectRootDirectoryPath!.contains('/snap/')) {
+    if (!_projectRootDirectoryPath.contains('/snap/')) {
       return null;
     }
     return '/snap/cbj-hub/current';
@@ -24,8 +23,7 @@ class SharedVariables {
 
   /// Getting snap common environment variable value of SNAP_COMMON
   static String? getSnapCommonEnvironmentVariable() {
-    if (_projectRootDirectoryPath == null ||
-        !_projectRootDirectoryPath!.contains('/snap/')) {
+    if (!_projectRootDirectoryPath.contains('/snap/')) {
       return null;
     }
     return '/var/snap/cbj-hub/common';
@@ -33,8 +31,7 @@ class SharedVariables {
 
   /// Getting snap user common environment variable, value of $SNAP_USER_COMMON
   static String? getSnapUserCommonEnvironmentVariable() {
-    if (_projectRootDirectoryPath == null ||
-        !_projectRootDirectoryPath!.contains('/snap/')) {
+    if (!_projectRootDirectoryPath.contains('/snap/')) {
       return null;
     }
     return '/root/snap/cbj-hub/common';
@@ -52,4 +49,6 @@ class SharedVariables {
     }
     return null;
   }
+
+
 }

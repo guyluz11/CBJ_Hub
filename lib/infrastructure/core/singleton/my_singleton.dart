@@ -15,6 +15,7 @@ class MySingleton {
   static Future<String>? _deviceUid;
   static Future<String>? _currentUserName;
   static Future<String>? _localDbPath;
+  static Future<String>? _projectFilesLocation;
 
   static Future<String> getUuid() => _deviceUid ??= MySingletonHelper.getUuid();
 
@@ -23,4 +24,7 @@ class MySingleton {
 
   static Future<String?> getLocalDbPath() =>
       _localDbPath ??= MySingletonHelper.getLocalDbPath();
+
+  static Future<String> getSnapLocationEnvironmentVariable() =>
+    _projectFilesLocation ??= MySingletonHelper.getProjectFilesLocation();
 }

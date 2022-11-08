@@ -36,6 +36,10 @@ class SystemCommandsManager {
     return systemCommandsBaseClassD!.getLocalDbPath();
   }
 
+  Future<String> getProjectFilesLocation() {
+    return systemCommandsBaseClassD!.getProjectFilesLocation();
+  }
+
   Future<String> getDeviceHostName() {
     return systemCommandsBaseClassD!.getDeviceHostName();
   }

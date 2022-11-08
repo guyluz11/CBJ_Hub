@@ -125,4 +125,9 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
         r'\Documents\cbjinni\'; // Will only work if the program located in the os driver
     return cbjFullPath;
   }
+
+  @override
+  Future<String> getProjectFilesLocation() async {
+    return Directory.current.path;
+  }
 }

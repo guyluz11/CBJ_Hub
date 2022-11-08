@@ -15,4 +15,9 @@ class MySingletonHelper {
     final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
     return systemCommandsManager.getLocalDbPath();
   }
+
+  static Future<String> getProjectFilesLocation() {
+    final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
+    return systemCommandsManager.getProjectFilesLocation();
+  }
 }

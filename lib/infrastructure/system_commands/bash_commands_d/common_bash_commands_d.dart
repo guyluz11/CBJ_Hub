@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cbj_hub/infrastructure/core/singleton/my_singleton.dart';
+import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_base_class_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_hub/utils.dart';
@@ -127,5 +128,18 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
       localDbFolderPath = snapCommonEnvironmentVariablePath;
     }
     return localDbFolderPath;
+  }
+
+  @override
+  Future<String> getProjectFilesLocation() async {
+    if (!SharedVariables.getProjectRootDirectoryPath().contains('/snap/')) {
+      return SharedVariables.getProjectRootDirectoryPath();
+    }
+    // If we are running inside the snap project files location is different 
+    // then the output of Directory.current.path
+    final String? getSnapLocationEnvironmentVariable =
+        await SystemCommandsManager().getProjectFilesLocation();
+
+    return getSnapLocationEnvironmentVariable!;
   }
 }
