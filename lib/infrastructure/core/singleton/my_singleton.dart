@@ -1,14 +1,19 @@
 import 'package:cbj_hub/infrastructure/core/singleton/my_singleton_helper.dart';
+import 'package:cbj_hub/infrastructure/shared_variables.dart';
 
 class MySingleton {
   factory MySingleton() {
     return _singleton;
   }
 
-  MySingleton._internal() {
-    getUuid();
-    getCurrentUserName();
-    getLocalDbPath();
+  MySingleton._internal() ;
+
+  static Future<void> asyncConstractor() async {
+    await MySingletonHelper.asyncConstractor();
+    await getUuid();
+    await getCurrentUserName();
+    await getLocalDbPath();
+    getProjectFilesLocation();
   }
 
   static final MySingleton _singleton = MySingleton._internal();
@@ -23,8 +28,8 @@ class MySingleton {
       _currentUserName ??= MySingletonHelper.getCurrentUserName();
 
   static Future<String?> getLocalDbPath() =>
-      _localDbPath ??= MySingletonHelper.getLocalDbPath();
+      _localDbPath ??= MySingletonHelper.getLocalDbPath(getCurrentUserName());
 
   static Future<String> getProjectFilesLocation() =>
-    _projectFilesLocation ??= MySingletonHelper.getProjectFilesLocation();
+    _projectFilesLocation ??= MySingletonHelper.getProjectFilesLocation(SharedVariables.getProjectRootDirectoryPath());
 }

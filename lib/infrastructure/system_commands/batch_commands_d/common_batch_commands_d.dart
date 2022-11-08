@@ -118,7 +118,7 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
   }
 
   @override
-  Future<String> getLocalDbPath() async {
+  Future<String> getLocalDbPath(Future<String?> snapCommonEnvironmentVariable, Future<String?> currentUserName) async {
     final String cbjFullPath = (await getCurrentDriveLetter()) +
         r'\Users\' +
         (await getCurrentUserName()) +
@@ -127,7 +127,7 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
   }
 
   @override
-  Future<String> getProjectFilesLocation() async {
-    return Directory.current.path;
+  Future<String> getProjectFilesLocation(Future<String> rootDirectoryPath, Future<String?> projectFilesLocation) async {
+    return rootDirectoryPath;
   }
 }

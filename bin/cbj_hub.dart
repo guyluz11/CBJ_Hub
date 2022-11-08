@@ -21,6 +21,7 @@ Future<void> main(List<String> arguments) async {
   } catch (error) {
     logger.w('Path/argument 1 is not specified\n$error');
   }
+  await MySingleton.asyncConstractor();
 
   //  Setting device model and checking if configuration for this model exist
   await DevicePinListManager().setPhysicalDeviceType();

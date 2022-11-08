@@ -26,18 +26,18 @@ class SystemCommandsManager {
     }
   }
 
-  SystemCommandsBaseClassD? systemCommandsBaseClassD;
+  static SystemCommandsBaseClassD? systemCommandsBaseClassD;
 
   Future<String> getCurrentUserName() {
     return systemCommandsBaseClassD!.getCurrentUserName();
   }
 
-  Future<String> getLocalDbPath() {
-    return systemCommandsBaseClassD!.getLocalDbPath();
+  Future<String> getLocalDbPath(Future<String?> snapCommonEnvironmentVariable, Future<String?> currentUserName ) {
+    return systemCommandsBaseClassD!.getLocalDbPath(snapCommonEnvironmentVariable, currentUserName);
   }
 
-  Future<String> getProjectFilesLocation() {
-    return systemCommandsBaseClassD!.getProjectFilesLocation();
+  Future<String> getProjectFilesLocation(String rootDirectoryPath , Future<String?> projectFilesLocation) {
+    return systemCommandsBaseClassD!.getProjectFilesLocation(rootDirectoryPath, projectFilesLocation);
   }
 
   Future<String> getDeviceHostName() {

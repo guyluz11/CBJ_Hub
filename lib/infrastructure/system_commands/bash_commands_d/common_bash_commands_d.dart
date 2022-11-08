@@ -1,12 +1,16 @@
 import 'dart:io';
 
 import 'package:cbj_hub/infrastructure/core/singleton/my_singleton.dart';
-import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_base_class_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_hub/utils.dart';
 
 class CommonBashCommandsD implements SystemCommandsBaseClassD {
+
+  Future<void> asyncConstractor() async {
+    SystemCommandsManager();
+  }
+
   @override
   Future<String> getCurrentUserName() async {
     final String whoami =
@@ -115,31 +119,27 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
   }
 
   @override
-  Future<String> getLocalDbPath() async {
+  Future<String> getLocalDbPath(Future<String?> snapCommonEnvironmentVariable, Future<String?> currentUserName ) async {
     String localDbFolderPath;
-    final String? snapCommonEnvironmentVariablePath =
-        await SystemCommandsManager().getSnapCommonEnvironmentVariable();
 
-    if (snapCommonEnvironmentVariablePath == null) {
-      final String? currentUserName = await MySingleton.getCurrentUserName();
+    if (await snapCommonEnvironmentVariable == null) {
       localDbFolderPath = '/home/$currentUserName/Documents';
     } else {
       // /var/snap/cbj-hub/common/isar
-      localDbFolderPath = snapCommonEnvironmentVariablePath;
+      localDbFolderPath = (await snapCommonEnvironmentVariable)!;
     }
     return localDbFolderPath;
   }
 
   @override
-  Future<String> getProjectFilesLocation() async {
-    if (!SharedVariables.getProjectRootDirectoryPath().contains('/snap/')) {
-      return SharedVariables.getProjectRootDirectoryPath();
+  Future<String> getProjectFilesLocation(Future<String> rootDirectoryPath, Future<String?> projectFilesLocation) async {
+    if ((await rootDirectoryPath).contains('/snap/')) {
+      return rootDirectoryPath;
     }
     // If we are running inside the snap project files location is different 
     // then the output of Directory.current.path
-    final String? getSnapLocationEnvironmentVariable =
-        await SystemCommandsManager().getProjectFilesLocation();
+  
 
-    return getSnapLocationEnvironmentVariable!;
+    return (await projectFilesLocation)!;
   }
 }

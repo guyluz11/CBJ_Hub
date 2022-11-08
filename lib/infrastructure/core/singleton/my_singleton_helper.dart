@@ -1,23 +1,30 @@
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
 
 class MySingletonHelper {
+
+
+  static Future<void> asyncConstractor() async{
+    _systemCommandsManager =  SystemCommandsManager();
+  }
+  
+  static late SystemCommandsManager _systemCommandsManager; 
+  
   static Future<String> getUuid() {
-    final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
-    return systemCommandsManager.getUuidOfCurrentDevice();
+
+    return _systemCommandsManager.getUuidOfCurrentDevice();
   }
 
   static Future<String> getCurrentUserName() {
-    final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
-    return systemCommandsManager.getCurrentUserName();
+
+    return _systemCommandsManager.getCurrentUserName();
   }
 
-  static Future<String> getLocalDbPath() {
-    final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
-    return systemCommandsManager.getLocalDbPath();
+  static Future<String> getLocalDbPath(Future<String?> currentUserName) {
+    return _systemCommandsManager.getLocalDbPath(_systemCommandsManager.getSnapCommonEnvironmentVariable(), currentUserName);
   }
 
-  static Future<String> getProjectFilesLocation() {
-    final SystemCommandsManager systemCommandsManager = SystemCommandsManager();
-    return systemCommandsManager.getProjectFilesLocation();
+  static Future<String> getProjectFilesLocation( String rootDirectoryPath ) {
+
+    return _systemCommandsManager.getProjectFilesLocation(rootDirectoryPath);
   }
 }
