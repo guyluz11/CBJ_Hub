@@ -25,6 +25,6 @@ class MySingleton {
   static Future<String?> getLocalDbPath() =>
       _localDbPath ??= MySingletonHelper.getLocalDbPath();
 
-  static Future<String> getSnapLocationEnvironmentVariable() =>
+  static Future<String> getProjectFilesLocation() =>
     _projectFilesLocation ??= MySingletonHelper.getProjectFilesLocation();
 }

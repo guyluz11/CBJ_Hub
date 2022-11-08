@@ -62,10 +62,10 @@ class EspHomePythonApi {
         },
       );
 
-      logger.i('Path: ${MySingleton.getSnapLocationEnvironmentVariable()}');
+      logger.i('Path: ${await MySingleton.getProjectFilesLocation()}');
 
       await instance.runFile(
-        '${MySingleton.getSnapLocationEnvironmentVariable()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
+        '${await MySingleton.getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
         listener: shellListener,
         arguments: [
           address,
@@ -103,10 +103,10 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i('Path: ${MySingleton.getSnapLocationEnvironmentVariable()}');
+    logger.i('Path: ${await MySingleton.getProjectFilesLocation()}');
 
     await instance.runFile(
-      '${MySingleton.getSnapLocationEnvironmentVariable()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
+      '${await MySingleton.getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
       listener: shellListener,
       arguments: [
         address,
@@ -142,10 +142,10 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i('Path: ${MySingleton.getSnapLocationEnvironmentVariable()}');
+    logger.i('Path: ${await MySingleton.getProjectFilesLocation()}');
 
     await instance.runFile(
-      '${MySingleton.getSnapLocationEnvironmentVariable()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
+      '${await MySingleton.getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
       listener: shellListener,
       arguments: [
         address,
