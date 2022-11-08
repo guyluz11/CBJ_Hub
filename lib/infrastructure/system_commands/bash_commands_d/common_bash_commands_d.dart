@@ -127,7 +127,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
     final String? snapCommonEnvironmentVariable =
         getIt<SharedVariables>().getSnapCommonEnvironmentVariable();
     if (snapCommonEnvironmentVariable == null) {
-      localDbFolderPath = '/home/$currentUserName/Documents';
+      localDbFolderPath = '/home/${await currentUserName}/Documents';
     } else {
       // /var/snap/cbj-hub/common/isar
       localDbFolderPath = snapCommonEnvironmentVariable;
