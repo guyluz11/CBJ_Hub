@@ -1,9 +1,7 @@
-import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
-
 abstract class SystemCommandsBaseClassD {
   Future<String> getCurrentUserName();
 
-  Future<String> getLocalDbPath(Future<String?> snapCommonEnvironmentVariable, Future<String?> currentUserName);
+  Future<String> getLocalDbPath(Future<String?> currentUserName);
 
   Future<String> getUuidOfCurrentDevice();
 
@@ -15,7 +13,7 @@ abstract class SystemCommandsBaseClassD {
 
   Future<String?> getDeviceConfiguration();
 
-  Future<String> getProjectFilesLocation(Future<String> rootDirectoryPath, Future<String?> projectFilesLocation);
+  Future<String> getProjectFilesLocation();
 
 // TODO: Need to find a way in dart to get os environment variable
 // /// Get Snap location environment variable "SNAP"

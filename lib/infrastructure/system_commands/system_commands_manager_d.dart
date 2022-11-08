@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/bash_commands_d/bash_commands_for_raspberry_pi_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/bash_commands_d/common_bash_commands_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/batch_commands_d/common_batch_commands_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_base_class_d.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class SystemCommandsManager {
   SystemCommandsManager() {
     if (Platform.isLinux) {
@@ -26,18 +27,20 @@ class SystemCommandsManager {
     }
   }
 
-  static SystemCommandsBaseClassD? systemCommandsBaseClassD;
+  SystemCommandsBaseClassD? systemCommandsBaseClassD;
 
   Future<String> getCurrentUserName() {
     return systemCommandsBaseClassD!.getCurrentUserName();
   }
 
-  Future<String> getLocalDbPath(Future<String?> snapCommonEnvironmentVariable, Future<String?> currentUserName ) {
-    return systemCommandsBaseClassD!.getLocalDbPath(snapCommonEnvironmentVariable, currentUserName);
+  Future<String> getLocalDbPath() {
+    return systemCommandsBaseClassD!.getLocalDbPath(
+      getCurrentUserName(),
+    );
   }
 
-  Future<String> getProjectFilesLocation(String rootDirectoryPath , Future<String?> projectFilesLocation) {
-    return systemCommandsBaseClassD!.getProjectFilesLocation(rootDirectoryPath, projectFilesLocation);
+  Future<String> getProjectFilesLocation() {
+    return systemCommandsBaseClassD!.getProjectFilesLocation();
   }
 
   Future<String> getDeviceHostName() {
@@ -62,17 +65,5 @@ class SystemCommandsManager {
 
   Future<String?> getRaspberryPiDeviceVersion() {
     return BashCommandsForRaspberryPi.getRaspberryPiDeviceVersion();
-  }
-
-  Future<String?> getSnapLocationEnvironmentVariable() {
-    return Future.value(SharedVariables.getSnapLocationEnvironmentVariable());
-  }
-
-  Future<String?> getSnapCommonEnvironmentVariable() {
-    return Future.value(SharedVariables.getSnapCommonEnvironmentVariable());
-  }
-
-  Future<String?> getSnapUserCommonEnvironmentVariable() {
-    return Future.value(SharedVariables.getSnapUserCommonEnvironmentVariable());
   }
 }

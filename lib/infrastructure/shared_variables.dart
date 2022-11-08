@@ -1,20 +1,22 @@
 import 'dart:io';
 
 import 'package:cbj_hub/utils.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class SharedVariables {
-  SharedVariables(String projectRootDirectoryPath) {
+  Future<void> asyncConstractor(String projectRootDirectoryPath) async {
     _projectRootDirectoryPath = projectRootDirectoryPath;
     logger.v('PATH: $_projectRootDirectoryPath');
   }
 
   ///  Save the location of all the files that were created during the snapcraft
-  static late String _projectRootDirectoryPath;
+  late String _projectRootDirectoryPath;
 
-  static String getProjectRootDirectoryPath() => _projectRootDirectoryPath;
+  String getProjectRootDirectoryPath() => _projectRootDirectoryPath;
 
   /// Getting snap location environment variable value of $SNAP
-  static String? getSnapLocationEnvironmentVariable() {
+  String? getSnapLocationEnvironmentVariable() {
     if (!_projectRootDirectoryPath.contains('/snap/')) {
       return null;
     }
@@ -22,7 +24,7 @@ class SharedVariables {
   }
 
   /// Getting snap common environment variable value of SNAP_COMMON
-  static String? getSnapCommonEnvironmentVariable() {
+  String? getSnapCommonEnvironmentVariable() {
     if (!_projectRootDirectoryPath.contains('/snap/')) {
       return null;
     }
@@ -30,7 +32,7 @@ class SharedVariables {
   }
 
   /// Getting snap user common environment variable, value of $SNAP_USER_COMMON
-  static String? getSnapUserCommonEnvironmentVariable() {
+  String? getSnapUserCommonEnvironmentVariable() {
     if (!_projectRootDirectoryPath.contains('/snap/')) {
       return null;
     }
@@ -38,7 +40,7 @@ class SharedVariables {
   }
 
   ///  Get Ip info
-  static Future<String?> getIps() async {
+  Future<String?> getIps() async {
     for (final NetworkInterface interface in await NetworkInterface.list()) {
 //      print('== Interface: ${interface.name} ==');
       for (final InternetAddress address in interface.addresses) {
@@ -49,6 +51,4 @@ class SharedVariables {
     }
     return null;
   }
-
-
 }

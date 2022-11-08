@@ -1,6 +1,7 @@
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/infrastructure/core/singleton/my_singleton.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_python_api/esphome_python_json_objects_type.dart';
+import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:python_shell/python_shell.dart';
 
@@ -62,10 +63,11 @@ class EspHomePythonApi {
         },
       );
 
-      logger.i('Path: ${await MySingleton.getProjectFilesLocation()}');
+      logger.i(
+          'Path: ${await getIt<SystemCommandsManager>().getProjectFilesLocation()}');
 
       await instance.runFile(
-        '${await MySingleton.getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
+        '${await getIt<SystemCommandsManager>().getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
         listener: shellListener,
         arguments: [
           address,
@@ -103,10 +105,11 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i('Path: ${await MySingleton.getProjectFilesLocation()}');
+    logger.i(
+        'Path: ${await getIt<SystemCommandsManager>().getProjectFilesLocation()}');
 
     await instance.runFile(
-      '${await MySingleton.getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
+      '${await getIt<SystemCommandsManager>().getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
       listener: shellListener,
       arguments: [
         address,
@@ -142,10 +145,11 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i('Path: ${await MySingleton.getProjectFilesLocation()}');
+    logger.i(
+        'Path: ${await getIt<SystemCommandsManager>().getProjectFilesLocation()}');
 
     await instance.runFile(
-      '${await MySingleton.getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
+      '${await getIt<SystemCommandsManager>().getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
       listener: shellListener,
       arguments: [
         address,
