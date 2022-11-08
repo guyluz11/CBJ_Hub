@@ -9,10 +9,15 @@ import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 
 Future<void> main(List<String> arguments) async {
+  // arguments[0] is the location of the project
   configureInjection(Env.prod);
 
   try {
-    SharedVariables(arguments[0]);
+    if(arguments.length >1) {
+      SharedVariables(arguments[0]);
+    } else {
+      SharedVariables(Directory.current.path);
+    }
   } catch (error) {
     logger.w('Path/argument 1 is not specified\n$error');
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_python_api/esphome_python_json_objects_type.dart';
+import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:python_shell/python_shell.dart';
 
@@ -63,10 +64,10 @@ class EspHomePythonApi {
         },
       );
 
-      logger.i('Path: ${Directory.current.path}');
+      logger.i('Path: ${SharedVariables.getProjectRootDirectoryPath()}');
 
       await instance.runFile(
-        '${Directory.current.path}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
+        '${SharedVariables.getProjectRootDirectoryPath()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
         listener: shellListener,
         arguments: [
           address,
@@ -104,10 +105,10 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i('Path: ${Directory.current.path}');
+    logger.i('Path: ${SharedVariables.getProjectRootDirectoryPath()}');
 
     await instance.runFile(
-      '${Directory.current.path}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
+      '${SharedVariables.getProjectRootDirectoryPath()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
       listener: shellListener,
       arguments: [
         address,
@@ -143,10 +144,10 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i('Path: ${Directory.current.path}');
+    logger.i('Path: ${SharedVariables.getProjectRootDirectoryPath()}');
 
     await instance.runFile(
-      '${Directory.current.path}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
+      '${SharedVariables.getProjectRootDirectoryPath()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
       listener: shellListener,
       arguments: [
         address,
