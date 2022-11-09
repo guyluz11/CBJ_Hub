@@ -47,7 +47,6 @@ class DevicePinListManager extends DevicePinListManagerAbstract {
       );
       deviceHostName =
           deviceHostName.substring(deviceHostName.indexOf('=') + 1);
-      logger.v('Now');
       logger.v(deviceHostName);
       deviceHostName = deviceHostName.replaceAll('-', '').replaceAll(' ', '');
 

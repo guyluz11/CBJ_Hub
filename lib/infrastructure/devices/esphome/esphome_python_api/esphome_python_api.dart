@@ -63,9 +63,6 @@ class EspHomePythonApi {
         },
       );
 
-      logger.i(
-          'Path: ${await getIt<SystemCommandsManager>().getProjectFilesLocation()}');
-
       await instance.runFile(
         '${await getIt<SystemCommandsManager>().getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
         listener: shellListener,
@@ -105,9 +102,6 @@ class EspHomePythonApi {
       },
     );
 
-    logger.i(
-        'Path: ${await getIt<SystemCommandsManager>().getProjectFilesLocation()}');
-
     await instance.runFile(
       '${await getIt<SystemCommandsManager>().getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
       listener: shellListener,
@@ -144,9 +138,6 @@ class EspHomePythonApi {
         logger.v('EspHome device scan error $object\n$stackTrace');
       },
     );
-
-    logger.i(
-        'Path: ${await getIt<SystemCommandsManager>().getProjectFilesLocation()}');
 
     await instance.runFile(
       '${await getIt<SystemCommandsManager>().getProjectFilesLocation()}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
