@@ -162,6 +162,8 @@ class CompaniesConnectorConjector {
         if (result) {
           break;
         }
+        logger.w('No internet connection detected, will try again in 2m to'
+            ' search mdns in the network');
         await Future.delayed(const Duration(minutes: 2));
       }
       for (final ActiveHost activeHost in await MdnsScanner.searchMdnsDevices(
@@ -173,7 +175,7 @@ class CompaniesConnectorConjector {
           setMdnsDeviceByCompany(activeHost);
         }
       }
-      await Future.delayed(const Duration(minutes: 2));
+      await Future.delayed(const Duration(seconds: 50));
     }
   }
 
