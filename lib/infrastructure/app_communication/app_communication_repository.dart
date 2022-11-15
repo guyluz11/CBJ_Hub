@@ -98,7 +98,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   @override
   void sendToApp(Stream<MqttPublishMessage> dataToSend) {
     dataToSend.listen((MqttPublishMessage event) async {
-      logger.i('Got AppRequestsToHub');
+      logger.i('Got hub requests to app');
 
       (await getIt<ISavedDevicesRepo>().getAllDevices())
           .forEach((String id, deviceEntityToSend) {
@@ -130,7 +130,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         deviceEntityFromApp.deviceStateGRPC =
             DeviceState(DeviceStateGRPC.waitingInComp.toString());
 
-        getIt<IMqttServerRepository>().postToMqtt(
+        getIt<IMqttServerRepository>().postToHubMqtt(
           entityFromTheApp: deviceEntityFromApp,
           gotFromApp: true,
         );
@@ -143,7 +143,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
           roomEntity: roomEntityFromApp,
         );
 
-        getIt<IMqttServerRepository>().postToMqtt(
+        getIt<IMqttServerRepository>().postToHubMqtt(
           entityFromTheApp: roomEntityFromApp,
           gotFromApp: true,
         );
