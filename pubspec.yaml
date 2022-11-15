@@ -33,7 +33,7 @@ dependencies:
   # Utility library that checks for an Active Internet connection
   internet_connection_checker: ^1.0.0+1
   # Extremely fast, easy to use, and fully async NoSQL database.
-  isar: ^3.0.2
+  isar: ^3.0.4
   # Defines the annotations used by json_serializable to create code for JSON serialization and deserialization.
   json_annotation: ^4.7.0
   # Dart Build System builders for handling JSON.
@@ -56,9 +56,9 @@ dependencies:
   python_shell:
     git: 'https://github.com/guyluz11/python_shell.dart.git'
   # Extends the capabilities of Dart Streams and StreamControllers.
-  rxdart: ^0.27.5
+  rxdart: ^0.27.6
   # Simple, fast generation of RFC4122 UUIDs.
-  uuid: ^3.0.6
+  uuid: ^3.0.7
   # Dart library for controlling Yeelight products over LAN.
   yeedart: ^0.3.2
 
@@ -74,7 +74,7 @@ dev_dependencies:
   # Injectable is a convenient code generator for get_it.
   injectable_generator: ^1.5.5
   # Code generator for the Isar Database. Finds classes annotated with @Collection.
-  isar_generator: ^3.0.2
+  isar_generator: ^3.0.4
   # Collection of lint rules for Dart and Flutter projects
   lint: ^1.10.0
   # Library for mocks
