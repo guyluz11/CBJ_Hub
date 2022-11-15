@@ -29,7 +29,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   static const String hubBaseTopic = 'CBJ_Hub_Topic';
 
-  static const String appBaseTopic = 'CBJ_Apb_Topic';
+  static const String appBaseTopic = 'CBJ_App_Topic';
 
   static const String nodeRedApiBaseTopic = 'NodeRed_Api_Topic';
 

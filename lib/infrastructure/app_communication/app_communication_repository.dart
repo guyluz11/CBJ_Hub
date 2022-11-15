@@ -98,7 +98,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   @override
   void sendToApp(Stream<MqttPublishMessage> dataToSend) {
     dataToSend.listen((MqttPublishMessage event) async {
-      logger.i('Got Hub requests to Hub');
+      logger.i('Got hub requests to app');
 
       (await getIt<ISavedDevicesRepo>().getAllDevices())
           .forEach((String id, deviceEntityToSend) {
