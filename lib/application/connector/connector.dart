@@ -6,7 +6,9 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/room/room_entity.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -46,7 +48,8 @@ class Connector {
     });
 
     getIt<IMqttServerRepository>().allHubDevicesSubscriptions();
-    // appCommunication.sendToApp();
+
+    getIt<IMqttServerRepository>().sendToApp();
 
     CompaniesConnectorConjector.updateAllDevicesReposWithDeviceChanges(
       ConnectorDevicesStreamFromMqtt.fromMqttStream,
@@ -67,6 +70,8 @@ class Connector {
 
     final Map<String, dynamic> devicePropertyAndValues =
         deviceChangeFromMqtt.value;
+
+    String? deviceStateValue;
 
     for (final DeviceEntityAbstract d in allDevices.values) {
       if (d.getDeviceId() == deviceChangeFromMqtt.key) {
@@ -98,6 +103,12 @@ class Connector {
 
           ConnectorDevicesStreamFromMqtt.fromMqttStream.sink
               .add(savedDeviceWithSameIdAsMqtt);
+
+          if (property == 'deviceStateGRPC' &&
+              propertyValueString == DeviceStateGRPC.ack.toString()) {
+            HubRequestsToApp.streamRequestsToApp.sink
+                .add(savedDeviceWithSameIdAsMqtt.toInfrastructure());
+          }
           return;
         }
       }

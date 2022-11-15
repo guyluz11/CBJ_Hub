@@ -95,7 +95,7 @@ class EspHomeSwitchEntity extends GenericSwitchDE {
         deviceKey: espHomeKey.getOrCrash(),
         newState: 'True',
       );
-      logger.v('Turn on ESPHome device');
+      logger.v('Turn on ESPHome switch');
       return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
