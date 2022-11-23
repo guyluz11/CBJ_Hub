@@ -70,6 +70,9 @@ class CompaniesConnectorConjector {
         } else if (deviceVendor == VendorsAndServices.cbjDevices.toString()) {
           getIt<CbjDevicesConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
+        } else if (deviceVendor == VendorsAndServices.hp.toString()) {
+          getIt<HpConnectorConjector>()
+              .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
           logger.w(
             'Cannot send device changes to its repo, company not supported $deviceVendor',

@@ -5,6 +5,8 @@ import 'package:cbj_hub/domain/app_communication/i_app_communication_repository.
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/room/room_entity.dart';
+import 'package:cbj_hub/domain/room/value_objects_room.dart';
+import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
@@ -106,8 +108,20 @@ class Connector {
 
           if (property == 'deviceStateGRPC' &&
               propertyValueString == DeviceStateGRPC.ack.toString()) {
+            final Map<String, RoomEntity> rooms =
+                await getIt<ISavedRoomsRepo>().getAllRooms();
+
             HubRequestsToApp.streamRequestsToApp.sink
                 .add(savedDeviceWithSameIdAsMqtt.toInfrastructure());
+            if (rooms[RoomUniqueId.discoveredRoomId().getOrCrash()]!
+                .roomDevicesId
+                .getOrCrash()
+                .contains(savedDeviceWithSameIdAsMqtt.uniqueId.getOrCrash())) {
+              HubRequestsToApp.streamRequestsToApp.sink.add(
+                rooms[RoomUniqueId.discoveredRoomId().getOrCrash()]!
+                    .toInfrastructure(),
+              );
+            }
           }
           return;
         }
