@@ -55,7 +55,11 @@ class HiveRepository extends ILocalDbRepository {
       logger.e('Cant find local DB path');
       localDbPath = '/';
     }
-    localDbPath += 'hive';
+
+    if(localDbPath[localDbPath.length-1] == '/'){
+      localDbPath = localDbPath.substring(0, localDbPath.length-1);
+    }
+    localDbPath += '/hive';
 
     logger.i('Hive db location\n$localDbPath');
 
