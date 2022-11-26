@@ -16,7 +16,7 @@ class EspHomeHelpers {
       deviceKey: 'null',
       newState: 'null',
       mDnsName: mDnsName,
-      devicePassword: 'null',
+      devicePassword: 'MyPassword',
       getProjectFilesLocation:
           await getIt<SystemCommandsManager>().getProjectFilesLocation(),
     );

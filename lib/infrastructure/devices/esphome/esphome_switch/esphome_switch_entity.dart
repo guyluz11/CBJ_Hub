@@ -107,7 +107,7 @@ class EspHomeSwitchEntity extends GenericSwitchDE {
         deviceKey: espHomeKey.getOrCrash(),
         newState: 'True',
         mDnsName: 'null',
-        devicePassword: 'null',
+        devicePassword: 'MyPassword',
         getProjectFilesLocation:
             await getIt<SystemCommandsManager>().getProjectFilesLocation(),
       );
@@ -135,7 +135,7 @@ class EspHomeSwitchEntity extends GenericSwitchDE {
         deviceKey: espHomeKey.getOrCrash(),
         newState: 'False',
         mDnsName: 'null',
-        devicePassword: 'null',
+        devicePassword: 'MyPassword',
         getProjectFilesLocation:
             await getIt<SystemCommandsManager>().getProjectFilesLocation(),
       );

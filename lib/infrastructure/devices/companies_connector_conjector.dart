@@ -304,7 +304,7 @@ class CompaniesConnectorConjector {
               in HostScanner.getAllPingableDevices(
             subnet,
             resultsInAddressAscendingOrder: false,
-            lastSubnet: 126,
+            lastHostId: 126,
           )) {
             try {
               setHostNameDeviceByCompany(
@@ -320,7 +320,7 @@ class CompaniesConnectorConjector {
               in HostScanner.getAllPingableDevices(
             subnet,
             resultsInAddressAscendingOrder: false,
-            lastSubnet: 127,
+            lastHostId: 127,
           )) {
             try {
               setHostNameDeviceByCompany(
