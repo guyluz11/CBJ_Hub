@@ -12,6 +12,8 @@ dependencies:
   async: ^2.10.0
   # Package to create, convert, alter, and compare colors in a variety of colorspaces.
   color: ^3.0.0
+  # Compute function made available for all non-Flutter Dart programs
+  compute: ^1.0.2
   # Collection of cyclic redundancy check (CRC) routines as Dart converters.
   crclib: ^3.0.0
   # Functional programming thingies, let you use multiple return types
