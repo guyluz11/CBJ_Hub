@@ -205,7 +205,7 @@ class CompaniesConnectorConjector {
             setMdnsDeviceByCompany(activeHost);
           }
         }
-        await Future.delayed(const Duration(seconds: 50));
+        await Future.delayed(const Duration(minutes: 2));
       }
     } catch (e) {
       logger.e('Mdns search error\n$e');
