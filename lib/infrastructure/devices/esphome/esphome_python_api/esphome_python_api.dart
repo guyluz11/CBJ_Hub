@@ -6,20 +6,6 @@ import 'package:python_shell/python_shell.dart';
 class EspHomePythonApi {
   static List<String> requeiredPythonPackages = ['aioesphomeapi'];
 
-  static PythonShell? _shell;
-
-  static Future<PythonShell> getShell() async {
-    if (_shell != null) {
-      return _shell!;
-    }
-
-    _shell = PythonShell(PythonShellConfig());
-    await _shell!.initialize();
-    final instance = ShellManager.getInstance("default");
-    instance.installRequires(requeiredPythonPackages);
-    return _shell!;
-  }
-
   static Future<List<DeviceEntityAbstract>> getAllEntities(
     HelperEspHomeDeviceInfo helperEspHomeDeviceInfo,
   ) async {
@@ -27,8 +13,6 @@ class EspHomePythonApi {
     final List<DeviceEntityAbstract> devicesList = [];
 
     try {
-      await getShell();
-
       final instance = ShellManager.getInstance("default");
 
       String? currentType;
@@ -79,10 +63,6 @@ class EspHomePythonApi {
   static Future<void> turnOnOffLightEntity(
     HelperEspHomeDeviceInfo helperEspHomeDeviceInfo,
   ) async {
-    const String devicePassword = 'MyPassword';
-
-    await getShell();
-
     final instance = ShellManager.getInstance("default");
 
     final ShellListener shellListener = ShellListener(
@@ -112,10 +92,6 @@ class EspHomePythonApi {
   static Future<void> turnOnOffSwitchEntity(
     HelperEspHomeDeviceInfo helperEspHomeDeviceInfo,
   ) async {
-    const String devicePassword = 'MyPassword';
-
-    await getShell();
-
     final instance = ShellManager.getInstance("default");
 
     final ShellListener shellListener = ShellListener(

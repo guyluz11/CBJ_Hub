@@ -6,6 +6,7 @@ import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/python_integration/python_integration.dart';
 import 'package:cbj_hub/injection.dart';
 
 class BootUp {
@@ -14,6 +15,9 @@ class BootUp {
   }
 
   static Future<void> setup() async {
+    // Setting up all python env
+    getIt<PythonIntegration>().asyncConstractor();
+
     // Return all saved rooms
     final ISavedRoomsRepo savedRoomsRepo = getIt<ISavedRoomsRepo>();
     final ISceneCbjRepository savedScenesRepo = getIt<ISceneCbjRepository>();
