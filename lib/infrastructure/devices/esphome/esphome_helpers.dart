@@ -2,6 +2,7 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_python_api/esphome_python_api.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_hub/injection.dart';
+import 'package:compute/compute.dart';
 
 class EspHomeHelpers {
   static Future<List<DeviceEntityAbstract>> addDiscoverdEntities({
@@ -21,7 +22,7 @@ class EspHomeHelpers {
           await getIt<SystemCommandsManager>().getProjectFilesLocation(),
     );
     final List<DeviceEntityAbstract> deviceEntityList =
-        await EspHomePythonApi.getAllEntities(helperEspHomeDeviceInfo);
+        await compute(EspHomePythonApi.getAllEntities, helperEspHomeDeviceInfo);
 
     return deviceEntityList;
   }

@@ -8,16 +8,21 @@ class EspHomePythonApi {
 
   static PythonShell? _shell;
 
-  static Future<PythonShell> getShell() async {
-    if (_shell != null) {
-      return _shell!;
-    }
+  static Future<PythonShell?> getShell() async {
+    try {
+      if (_shell != null) {
+        return _shell!;
+      }
 
-    _shell = PythonShell(PythonShellConfig());
-    await _shell!.initialize();
-    final instance = ShellManager.getInstance("default");
-    instance.installRequires(requeiredPythonPackages);
-    return _shell!;
+      _shell = PythonShell(PythonShellConfig());
+      await _shell!.initialize();
+      final instance = ShellManager.getInstance("default");
+      instance.installRequires(requeiredPythonPackages);
+      return _shell!;
+    } catch (e) {
+      logger.e('Error getting python shell\n$e');
+    }
+    return null;
   }
 
   static Future<List<DeviceEntityAbstract>> getAllEntities(
@@ -53,7 +58,7 @@ class EspHomePythonApi {
           }
         },
         onComplete: () {
-          logger.v('EspHome device scan done');
+          logger.v('EspHome get all entities scan done');
         },
         onError: (object, stackTrace) {
           logger.v('EspHome device scan error $object\n$stackTrace');
@@ -79,67 +84,71 @@ class EspHomePythonApi {
   static Future<void> turnOnOffLightEntity(
     HelperEspHomeDeviceInfo helperEspHomeDeviceInfo,
   ) async {
-    const String devicePassword = 'MyPassword';
+    try {
+      await getShell();
 
-    await getShell();
+      final instance = ShellManager.getInstance("default");
 
-    final instance = ShellManager.getInstance("default");
+      final ShellListener shellListener = ShellListener(
+        onMessage: (String message) {},
+        onComplete: () {
+          logger
+              .v('EspHome turn lights on or off action completed successfully');
+        },
+        onError: (object, stackTrace) {
+          logger.v('EspHome device scan error $object\n$stackTrace');
+        },
+      );
 
-    final ShellListener shellListener = ShellListener(
-      onMessage: (String message) {},
-      onComplete: () {
-        logger.v('EspHome device scan done');
-      },
-      onError: (object, stackTrace) {
-        logger.v('EspHome device scan error $object\n$stackTrace');
-      },
-    );
-
-    await instance.runFile(
-      '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
-      listener: shellListener,
-      arguments: [
-        helperEspHomeDeviceInfo.address,
-        helperEspHomeDeviceInfo.port,
-        helperEspHomeDeviceInfo.devicePassword,
-        helperEspHomeDeviceInfo.deviceKey,
-        helperEspHomeDeviceInfo.newState,
-      ],
-      echo: false,
-    );
+      await instance.runFile(
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
+        listener: shellListener,
+        arguments: [
+          helperEspHomeDeviceInfo.address,
+          helperEspHomeDeviceInfo.port,
+          helperEspHomeDeviceInfo.devicePassword,
+          helperEspHomeDeviceInfo.deviceKey,
+          helperEspHomeDeviceInfo.newState,
+        ],
+        echo: false,
+      );
+    } catch (e) {
+      logger.e('Error while turning esphome light entity $e');
+    }
   }
 
   static Future<void> turnOnOffSwitchEntity(
     HelperEspHomeDeviceInfo helperEspHomeDeviceInfo,
   ) async {
-    const String devicePassword = 'MyPassword';
+    try {
+      final instance = ShellManager.getInstance("default");
 
-    await getShell();
+      final ShellListener shellListener = ShellListener(
+        onMessage: (String message) {},
+        onComplete: () {
+          logger
+              .v('EspHome turn switch on or off action completed successfully');
+        },
+        onError: (object, stackTrace) {
+          logger.v('EspHome device scan error $object\n$stackTrace');
+        },
+      );
 
-    final instance = ShellManager.getInstance("default");
-
-    final ShellListener shellListener = ShellListener(
-      onMessage: (String message) {},
-      onComplete: () {
-        logger.v('EspHome device scan done');
-      },
-      onError: (object, stackTrace) {
-        logger.v('EspHome device scan error $object\n$stackTrace');
-      },
-    );
-
-    await instance.runFile(
-      '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
-      listener: shellListener,
-      arguments: [
-        helperEspHomeDeviceInfo.address,
-        helperEspHomeDeviceInfo.port,
-        helperEspHomeDeviceInfo.devicePassword,
-        helperEspHomeDeviceInfo.deviceKey,
-        helperEspHomeDeviceInfo.newState,
-      ],
-      echo: false,
-    );
+      await instance.runFile(
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
+        listener: shellListener,
+        arguments: [
+          helperEspHomeDeviceInfo.address,
+          helperEspHomeDeviceInfo.port,
+          helperEspHomeDeviceInfo.devicePassword,
+          helperEspHomeDeviceInfo.deviceKey,
+          helperEspHomeDeviceInfo.newState,
+        ],
+        echo: false,
+      );
+    } catch (e) {
+      logger.e('Error while turning esphome light entity $e');
+    }
   }
 }
 
