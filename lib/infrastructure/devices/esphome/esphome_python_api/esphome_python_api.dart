@@ -4,7 +4,7 @@ import 'package:cbj_hub/utils.dart';
 import 'package:python_shell/python_shell.dart';
 
 class EspHomePythonApi {
-  static List<String> requeiredPythonPackages = ['aioesphomeapi'];
+  static List<String> requeiredPythonPackages = ['cffi', 'aioesphomeapi'];
 
   static PythonShell? _shell;
 
