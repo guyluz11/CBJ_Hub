@@ -66,7 +66,7 @@ class EspHomePythonApi {
       );
 
       await instance.runFile(
-        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/get_esphome_entities.py',
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/__pycache__/get_esphome_entities.cpython-310.pyc',
         listener: shellListener,
         arguments: [
           helperEspHomeDeviceInfo.address,
@@ -101,7 +101,7 @@ class EspHomePythonApi {
       );
 
       await instance.runFile(
-        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_light_entity_esphome_devices.py',
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/__pycache__/turn_on_off_light_entity_esphome_devices.cpython-310.pyc',
         listener: shellListener,
         arguments: [
           helperEspHomeDeviceInfo.address,
@@ -135,7 +135,7 @@ class EspHomePythonApi {
       );
 
       await instance.runFile(
-        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/turn_on_off_switch_entity_esphome_devices.py',
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/__pycache__/turn_on_off_switch_entity_esphome_devices.cpython-310.pyc',
         listener: shellListener,
         arguments: [
           helperEspHomeDeviceInfo.address,
