@@ -93,5 +93,4 @@ lib/infrastructure/core/constant_credentials.dart
 lib/generated_plugin_registrant.dart
 
 # Python integration
-!lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_pyc_files/**
-!lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_pyc_files/get_esphome_entities.cpython-310bn.pyc
+!lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_pyc_files/
