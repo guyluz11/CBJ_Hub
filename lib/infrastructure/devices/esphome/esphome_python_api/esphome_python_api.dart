@@ -68,7 +68,7 @@ class EspHomePythonApi {
       );
 
       await instance.runFile(
-        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_pyc_files/get_esphome_entities.cpython-310.pyc',
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_pyc_files/get_esphome_entities_a.pyc_extention',
         listener: shellListener,
         arguments: [
           helperEspHomeDeviceInfo.address,
