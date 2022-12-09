@@ -31,6 +31,8 @@ class EspHomePythonApi {
     const String devicePassword = 'MyPassword';
     final List<DeviceEntityAbstract> devicesList = [];
 
+    logger.v('Trying to get all ESPHome device entities');
+
     try {
       await getShell();
 
@@ -66,7 +68,7 @@ class EspHomePythonApi {
       );
 
       await instance.runFile(
-        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/__pycache__/get_esphome_entities.cpython-310.pyc',
+        '${helperEspHomeDeviceInfo.getProjectFilesLocation}/lib/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_pyc_files/get_esphome_entities.cpython-310.pyc',
         listener: shellListener,
         arguments: [
           helperEspHomeDeviceInfo.address,

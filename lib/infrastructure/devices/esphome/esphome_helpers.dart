@@ -1,8 +1,8 @@
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_python_api/esphome_python_api.dart';
-import 'package:cbj_hub/infrastructure/devices/esphome/esphome_python_api/esphome_python_files/esphome_run_python_executables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_hub/injection.dart';
+import 'package:compute/compute.dart';
 
 class EspHomeHelpers {
   static Future<List<DeviceEntityAbstract>> addDiscoverdEntities({
@@ -21,9 +21,9 @@ class EspHomeHelpers {
       getProjectFilesLocation:
           await getIt<SystemCommandsManager>().getProjectFilesLocation(),
     );
-    // final List<DeviceEntityAbstract> deviceEntityList =
-    //     await compute(EspHomePythonApi.getAllEntities, helperEspHomeDeviceInfo);
+    final List<DeviceEntityAbstract> deviceEntityList =
+        await compute(EspHomePythonApi.getAllEntities, helperEspHomeDeviceInfo);
 
-    return EspHomeRunPythonExecutables.getAllEntities(helperEspHomeDeviceInfo);
+    return deviceEntityList;
   }
 }

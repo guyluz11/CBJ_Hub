@@ -2,7 +2,7 @@
 *.class
 *.lock
 *.log
-*.pyc
+#*.pyc
 *.swp
 .DS_Store
 .atom/
