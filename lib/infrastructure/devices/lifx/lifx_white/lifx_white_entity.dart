@@ -11,6 +11,7 @@ import 'package:cbj_hub/infrastructure/devices/lifx/lifx_device_value_objects.da
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
+import 'package:lifx_http_api/lifx_http_api.dart';
 
 class LifxWhiteEntity extends GenericLightDE {
   LifxWhiteEntity({
@@ -89,8 +90,12 @@ class LifxWhiteEntity extends GenericLightDE {
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
     lightSwitchState = GenericLightSwitchState(DeviceActions.on.toString());
     try {
-      final setStateBodyResponse = await LifxConnectorConjector.lifxClient
-          ?.setState(vendorUniqueId.getOrCrash(), power: 'on', fast: true);
+      final setStateBodyResponse =
+          await LifxConnectorConjector.lifxClient?.setState(
+        Selector.id(vendorUniqueId.getOrCrash()),
+        power: 'on',
+        fast: true,
+      );
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }
@@ -109,8 +114,12 @@ class LifxWhiteEntity extends GenericLightDE {
     lightSwitchState = GenericLightSwitchState(DeviceActions.off.toString());
 
     try {
-      final setStateBodyResponse = await LifxConnectorConjector.lifxClient
-          ?.setState(vendorUniqueId.getOrCrash(), power: 'off', fast: true);
+      final setStateBodyResponse =
+          await LifxConnectorConjector.lifxClient?.setState(
+        Selector.id(vendorUniqueId.getOrCrash()),
+        power: 'off',
+        fast: true,
+      );
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }

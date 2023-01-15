@@ -43,7 +43,7 @@ dependencies:
   # Port of Kotlin's Kotlin Standard library for Dart/Flutter projects
   kt_dart: ^1.0.0
   # Implementation of the LIFX HTTP API
-  lifx_http_api: ^0.0.13
+  lifx_http_api: ^0.0.14
   # Small, easy to use and extensible logger which prints beautiful logs.
   logger: ^1.1.0
   # A server and browser based MQTT client for Dart.
@@ -83,8 +83,8 @@ dev_dependencies:
   # Code generator for the Isar Database. Finds classes annotated with @Collection.
   isar_generator: ^3.0.5
   # Collection of lint rules for Dart and Flutter projects
-  lint: ^1.10.0
+  lint: ^2.0.1
   # Library for mocks
   mockito: ^5.3.2
   # A full featured library for writing and running Dart tests across platforms.
-  test: ^1.22.1
+  test: ^1.22.2
