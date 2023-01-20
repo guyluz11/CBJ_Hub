@@ -37,9 +37,9 @@ dependencies:
   # Extremely fast, easy to use, and fully async NoSQL database.
   isar: ^3.0.5
   # Defines the annotations used by json_serializable to create code for JSON serialization and deserialization.
-  json_annotation: ^4.7.0
+  json_annotation: ^4.8.0
   # Dart Build System builders for handling JSON.
-  json_serializable: ^6.5.4
+  json_serializable: ^6.6.0
   # Port of Kotlin's Kotlin Standard library for Dart/Flutter projects
   kt_dart: ^1.0.0
   # Implementation of the LIFX HTTP API
