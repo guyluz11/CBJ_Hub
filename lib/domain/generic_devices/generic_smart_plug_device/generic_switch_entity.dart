@@ -47,6 +47,7 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
 
   /// State of the smartPlug on/off
   GenericSmartPlugState? smartPlugState;
+  DevicePowerConsumption? powerConsumption;
 
   //
   // /// Will return failure if any of the fields failed or return unit if fields
