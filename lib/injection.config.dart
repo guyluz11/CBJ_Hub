@@ -50,10 +50,12 @@ import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_mqtt/tasmota_mqtt
     as _i36;
 import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_connector_conjector.dart'
     as _i37;
-import 'package:cbj_hub/infrastructure/devices/xiaomi_io/xiaomi_io_connector_conjector.dart'
+import 'package:cbj_hub/infrastructure/devices/wiz/wiz_connector_conjector.dart'
     as _i38;
-import 'package:cbj_hub/infrastructure/devices/yeelight/yeelight_connector_conjector.dart'
+import 'package:cbj_hub/infrastructure/devices/xiaomi_io/xiaomi_io_connector_conjector.dart'
     as _i39;
+import 'package:cbj_hub/infrastructure/devices/yeelight/yeelight_connector_conjector.dart'
+    as _i40;
 import 'package:cbj_hub/infrastructure/local_db/local_db_hive_repository.dart'
     as _i14;
 import 'package:cbj_hub/infrastructure/mqtt_server/mqtt_server_repository.dart'
@@ -124,10 +126,11 @@ extension GetItInjectableX on _i1.GetIt {
         _i36.TasmotaMqttConnectorConjector());
     gh.singleton<_i37.TuyaSmartConnectorConjector>(
         _i37.TuyaSmartConnectorConjector());
-    gh.singleton<_i38.XiaomiIoConnectorConjector>(
-        _i38.XiaomiIoConnectorConjector());
-    gh.singleton<_i39.YeelightConnectorConjector>(
-        _i39.YeelightConnectorConjector());
+    gh.singleton<_i38.WizConnectorConjector>(_i38.WizConnectorConjector());
+    gh.singleton<_i39.XiaomiIoConnectorConjector>(
+        _i39.XiaomiIoConnectorConjector());
+    gh.singleton<_i40.YeelightConnectorConjector>(
+        _i40.YeelightConnectorConjector());
     return this;
   }
 }
