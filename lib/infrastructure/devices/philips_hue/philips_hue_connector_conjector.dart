@@ -13,6 +13,56 @@ class PhilipsHueConnectorConjector
     implements AbstractCompanyConnectorConjector {
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
+  static const List<String> mdnsTypes = [
+    '_hue._tcp',
+  ];
+
+  /// Add new devices to [companyDevices] if not exist
+  Future<void> addNewDeviceByMdnsName({
+    required String mDnsName,
+    required String ip,
+    required String port,
+  }) async {
+    logger.w('Philips Hue device implementation is missing');
+
+    // CoreUniqueId? tempCoreUniqueId;
+    //
+    // for (final DeviceEntityAbstract device in companyDevices.values) {
+    //   if (device is PhilipsHueE26Entity &&
+    //       (mDnsName == device.vendorUniqueId.getOrCrash() ||
+    //           ip == device.lastKnownIp!.getOrCrash())) {
+    //     return;
+    //   } else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+    //     logger.w(
+    //       'HP device type supported but implementation is missing here',
+    //     );
+    //     return;
+    //   }
+    // }
+
+    // final List<DeviceEntityAbstract> hpDevice = PhilipsHueHelpers.addDiscoverdDevice(
+    //   mDnsName: mDnsName,
+    //   ip: ip,
+    //   port: port,
+    //   uniqueDeviceId: tempCoreUniqueId,
+    // );
+    //
+    // if (hpDevice.isEmpty) {
+    //   return;
+    // }
+    //
+    // for (final DeviceEntityAbstract entityAsDevice in hpDevice) {
+    //   final DeviceEntityAbstract deviceToAdd =
+    //       CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
+    //
+    //   final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
+    //       MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+    //
+    //   companyDevices.addEntries([deviceAsEntry]);
+    // }
+    // logger.i('New Philips Hue device got added');
+  }
+
   Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract philipsHue) {
     // TODO: implement create
     throw UnimplementedError();
