@@ -13,6 +13,7 @@ class WizHelpers {
     } else {
       uniqueDeviceIdTemp = CoreUniqueId();
     }
+    return null;
     // final WizWhiteEntity wizDE = WizWhiteEntity(
     //   uniqueId: uniqueDeviceIdTemp,
     //   vendorUniqueId: VendorUniqueId.fromUniqueString(wizDevice.id),
