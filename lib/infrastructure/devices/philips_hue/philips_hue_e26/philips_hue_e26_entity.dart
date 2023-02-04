@@ -4,15 +4,16 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dar
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_light_with_brightness_device/generic_light_with_brightness_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_light_with_brightness_device/generic_light_with_brightness_value_objects.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:yeedart/yeedart.dart';
 
-class PhilipsHueE26Entity extends GenericRgbwLightDE {
+class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
   PhilipsHueE26Entity({
     required super.uniqueId,
     required super.vendorUniqueId,
@@ -25,11 +26,6 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
     required super.compUuid,
     required super.powerConsumption,
     required super.lightSwitchState,
-    required super.lightColorAlpha,
-    required super.lightColorHue,
-    required super.lightColorSaturation,
-    required super.lightColorValue,
-    required super.lightColorTemperature,
     required super.lightBrightness,
     required this.philipsHuePort,
     this.deviceMdnsName,
@@ -113,7 +109,8 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
-    lightSwitchState = GenericRgbwLightSwitchState(DeviceActions.on.toString());
+    lightSwitchState =
+        GenericLightWithBrightnessSwitchState(DeviceActions.on.toString());
     try {
       return left(const CoreFailure.unexpected());
     } catch (e) {
@@ -124,7 +121,7 @@ class PhilipsHueE26Entity extends GenericRgbwLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
     lightSwitchState =
-        GenericRgbwLightSwitchState(DeviceActions.off.toString());
+        GenericLightWithBrightnessSwitchState(DeviceActions.off.toString());
     try {
       return left(const CoreFailure.unexpected());
     } catch (e) {

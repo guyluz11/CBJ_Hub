@@ -1,16 +1,20 @@
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_value_objects.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_light_with_brightness_device/generic_light_with_brightness_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_e26/philips_hue_e26_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:yeedart/yeedart.dart';
+import 'package:http/http.dart';
+import 'package:hue_dart/src/core/bridge.dart';
+import 'package:hue_dart/src/light/light.dart';
 
 class PhilipsHueHelpers {
-  static DeviceEntityAbstract? addDiscoverdDevice({
-    required DiscoveryResponse philipsHueDevice,
+  static Future<List<DeviceEntityAbstract>> addDiscoverdDevice({
+    required String mDnsName,
+    required String? port,
+    required String ip,
     required CoreUniqueId? uniqueDeviceId,
-  }) {
+  }) async {
     CoreUniqueId uniqueDeviceIdTemp;
 
     if (uniqueDeviceId != null) {
@@ -18,44 +22,42 @@ class PhilipsHueHelpers {
     } else {
       uniqueDeviceIdTemp = CoreUniqueId();
     }
-    final PhilipsHueE26Entity philipsHueDE = PhilipsHueE26Entity(
-      uniqueId: uniqueDeviceIdTemp,
-      vendorUniqueId:
-          VendorUniqueId.fromUniqueString(philipsHueDevice.id.toString()),
-      defaultName: DeviceDefaultName(
-        philipsHueDevice.name != ''
-            ? philipsHueDevice.name
-            : 'PhilipsHue test 2',
-      ),
-      deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
-      senderDeviceOs: DeviceSenderDeviceOs('philips_hue'),
-      senderDeviceModel: DeviceSenderDeviceModel('1SE'),
-      senderId: DeviceSenderId(),
-      compUuid: DeviceCompUuid('34asdfrsd23gggg'),
-      deviceMdnsName: DeviceMdnsName('yeelink-light-colora_miap9C52'),
-      lastKnownIp: DeviceLastKnownIp(philipsHueDevice.address.address),
-      stateMassage: DeviceStateMassage('Hello World'),
-      powerConsumption: DevicePowerConsumption('0'),
-      philipsHuePort: PhilipsHuePort(philipsHueDevice.port.toString()),
-      lightSwitchState:
-          GenericRgbwLightSwitchState(philipsHueDevice.powered.toString()),
-      lightColorTemperature: GenericRgbwLightColorTemperature(
-        philipsHueDevice.colorTemperature.toString(),
-      ),
-      lightBrightness:
-          GenericRgbwLightBrightness(philipsHueDevice.brightness.toString()),
-      lightColorAlpha: GenericRgbwLightColorAlpha('1.0'),
-      lightColorHue: GenericRgbwLightColorHue('0.0'),
-      lightColorSaturation: GenericRgbwLightColorSaturation('1.0'),
-      lightColorValue: GenericRgbwLightColorValue('1.0'),
-    );
 
-    return philipsHueDE;
+    final client = Client();
 
-    // TODO: Add if device type does not supported return null
-    // logger.i(
-    //   'Please add new philips device type ${philipsHueDevice.model}',
-    // );
-    // return null;
+    //create bridge
+    final bridge = Bridge(client, ip, 'userName');
+    final List<Light> lights = await bridge.lights();
+
+    final List<DeviceEntityAbstract> tempDeviceEntities = [];
+
+    for (final Light light in lights) {
+      final PhilipsHueE26Entity philipsHueDE = PhilipsHueE26Entity(
+        uniqueId: uniqueDeviceIdTemp,
+        vendorUniqueId: VendorUniqueId.fromUniqueString(light.id.toString()),
+        defaultName: DeviceDefaultName(
+          light.name != null && light.name != ''
+              ? light.name
+              : 'PhilipsHue test 2',
+        ),
+        deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+        senderDeviceOs: DeviceSenderDeviceOs('philips_hue'),
+        senderDeviceModel: DeviceSenderDeviceModel('E26'),
+        senderId: DeviceSenderId(),
+        compUuid: DeviceCompUuid('55asdhd23gggg'),
+        deviceMdnsName: DeviceMdnsName(mDnsName),
+        lastKnownIp: DeviceLastKnownIp(ip),
+        stateMassage: DeviceStateMassage('Hello World'),
+        powerConsumption: DevicePowerConsumption('0'),
+        philipsHuePort: PhilipsHuePort(port),
+        lightSwitchState:
+            GenericLightWithBrightnessSwitchState(DeviceActions.off.toString()),
+        lightBrightness: GenericLightWithBrightnessBrightness('100'),
+      );
+
+      tempDeviceEntities.add(philipsHueDE);
+    }
+
+    return tempDeviceEntities;
   }
 }
