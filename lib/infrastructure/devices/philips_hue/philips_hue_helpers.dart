@@ -28,10 +28,12 @@ class PhilipsHueHelpers {
 
     final client = Client();
 
-    // TODO: Add user id from App ui
-    const String philipsHueUserId = 'UserId';
     //create bridge
-    final bridge = Bridge(client, ip, philipsHueUserId);
+    final bridge = Bridge(client, ip);
+    final String userNameForPhilipsHueHub =
+        await bridge.brideLoopToAwaitPushlinkForUserId();
+    bridge.username = userNameForPhilipsHueHub;
+
     final List<Light> lights = await bridge.lights();
 
     final List<DeviceEntityAbstract> tempDeviceEntities = [];
@@ -67,8 +69,8 @@ class PhilipsHueHelpers {
           lightBrightness: GenericLightWithBrightnessBrightness(
             (lightState?.brightness ?? 0).toString(),
           ),
-          philipsHueApiLight:
-              PhilipsHueApiLight(username: philipsHueUserId, ipAdress: ip),
+          philipsHueApiLight: PhilipsHueApiLight(
+              username: userNameForPhilipsHueHub, ipAdress: ip),
         );
         tempDeviceEntities.add(philipsHueDE);
       } else {

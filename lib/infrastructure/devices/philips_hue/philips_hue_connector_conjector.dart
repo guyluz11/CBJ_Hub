@@ -20,14 +20,18 @@ class PhilipsHueConnectorConjector
     '_hue._tcp',
   ];
 
+  static bool gotHueHubIp = false;
+
   /// Add new devices to [companyDevices] if not exist
   Future<void> addNewDeviceByMdnsName({
     required String mDnsName,
     required String ip,
     required String port,
   }) async {
-    logger.w('Philips Hue device implementation is missing');
-
+    /// There can only be one Philips Hub in the same network
+    if (gotHueHubIp) {
+      return;
+    }
     CoreUniqueId? tempCoreUniqueId;
 
     for (final DeviceEntityAbstract device in companyDevices.values) {
@@ -42,6 +46,7 @@ class PhilipsHueConnectorConjector
         return;
       }
     }
+    gotHueHubIp = true;
 
     final List<DeviceEntityAbstract> hpDevice =
         await PhilipsHueHelpers.addDiscoverdDevice(
