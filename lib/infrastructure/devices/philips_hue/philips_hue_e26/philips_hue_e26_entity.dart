@@ -4,9 +4,10 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dar
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_with_brightness_device/generic_light_with_brightness_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_with_brightness_device/generic_light_with_brightness_value_objects.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
+import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_api/philips_hue_api_light.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
@@ -27,6 +28,7 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
     required super.powerConsumption,
     required super.lightSwitchState,
     required super.lightBrightness,
+    required this.philipsHueApiLight,
     required this.philipsHuePort,
     this.deviceMdnsName,
     this.lastKnownIp,
@@ -46,12 +48,15 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
   /// PhilipsHue package object require to close previews request before new one
   Device? philipsHuePackageObject;
 
+  PhilipsHueApiLight philipsHueApiLight;
+
   /// Please override the following methods
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({
     required DeviceEntityAbstract newEntity,
   }) async {
-    if (newEntity is! GenericRgbwLightDE) {
+    // TODO: Fix line not working with GenericLightWithBrightnessDE
+    if (newEntity is! GenericLightDE) {
       return left(
         const CoreFailure.actionExcecuter(
           failedValue: 'Not the correct type',
@@ -111,8 +116,11 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
     lightSwitchState =
         GenericLightWithBrightnessSwitchState(DeviceActions.on.toString());
+
     try {
-      return left(const CoreFailure.unexpected());
+      await philipsHueApiLight.turnLightOn(vendorUniqueId.getOrCrash());
+
+      return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
@@ -122,8 +130,11 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
     lightSwitchState =
         GenericLightWithBrightnessSwitchState(DeviceActions.off.toString());
+
     try {
-      return left(const CoreFailure.unexpected());
+      await philipsHueApiLight.turnLightOff(vendorUniqueId.getOrCrash());
+
+      return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
@@ -131,34 +142,21 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
 
   @override
   Future<Either<CoreFailure, Unit>> setBrightness(String brightness) async {
-    logger.w('Philips adjust brightness method is not implemented yet');
-    return left(
-      const CoreFailure.actionExcecuter(
-        failedValue: 'Action does not exist',
-      ),
-    );
-  }
+    final int? brightnessInt = int.tryParse(brightness);
+    if (brightnessInt == null) {
+      return left(
+        const CoreFailure.actionExcecuter(
+          failedValue: "brightnessInt can't be converted to int",
+        ),
+      );
+    }
 
-  @override
-  Future<Either<CoreFailure, Unit>> changeColorTemperature({
-    required String lightColorTemperatureNewValue,
-  }) async {
-    logger.w('Please override this method in the non generic implementation');
-    return left(
-      const CoreFailure.actionExcecuter(
-        failedValue: 'Action does not exist',
-      ),
-    );
-  }
+    lightBrightness =
+        GenericLightWithBrightnessBrightness(brightnessInt.toString());
 
-  @override
-  Future<Either<CoreFailure, Unit>> changeColorHsv({
-    required String lightColorAlphaNewValue,
-    required String lightColorHueNewValue,
-    required String lightColorSaturationNewValue,
-    required String lightColorValueNewValue,
-  }) async {
-    logger.w('Philips change color temperature is not implemented yet');
+    await philipsHueApiLight.setLightBrightness(
+        vendorUniqueId.getOrCrash(), brightnessInt);
+
     return left(
       const CoreFailure.actionExcecuter(
         failedValue: 'Action does not exist',

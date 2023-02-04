@@ -76,6 +76,9 @@ class CompaniesConnectorConjector {
         } else if (deviceVendor == VendorsAndServices.hp.toString()) {
           getIt<HpConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
+        } else if (deviceVendor == VendorsAndServices.philipsHue.toString()) {
+          getIt<PhilipsHueConnectorConjector>()
+              .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
           logger.w(
             'Cannot send device changes to its repo, company not supported $deviceVendor',
@@ -133,6 +136,8 @@ class CompaniesConnectorConjector {
       ShellyConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
       SonoffDiyConnectorConjector.companyDevices.addEntries([devicesEntry]);
+    } else if (deviceVendor == VendorsAndServices.philipsHue.toString()) {
+      PhilipsHueConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else {
       logger.w('Cannot add device entity to its repo, type not supported');
     }
