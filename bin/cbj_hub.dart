@@ -9,7 +9,7 @@ import 'package:cbj_hub/utils.dart';
 
 Future<void> main(List<String> arguments) async {
   // arguments[0] is the location of the project
-  configureInjection(Env.devPc);
+  configureInjection(Env.prod);
 
   try {
     if (arguments.length > 1) {
