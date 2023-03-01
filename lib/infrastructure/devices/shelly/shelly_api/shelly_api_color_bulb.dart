@@ -60,11 +60,9 @@ class ShellyApiColorBulb extends ShellyApiDeviceAbstract {
   Future<String> changTemperature({
     required String temperature,
   }) async {
-
-    if(bulbeMode != ShellyBulbeMode.white) {
+    if (bulbeMode != ShellyBulbeMode.white) {
       await changeModeToWhite();
     }
-
 
     final HttpClientRequest httpClientRequest = await HttpClient().getUrl(
       Uri.parse(
@@ -79,25 +77,24 @@ class ShellyApiColorBulb extends ShellyApiDeviceAbstract {
   Future<String> changBrightness({
     required String brightness,
   }) async {
+    HttpClientRequest httpClientRequest;
 
-     HttpClientRequest httpClientRequest;
-
-     switch (bulbeMode) {
-       case ShellyBulbeMode.white:
-         httpClientRequest = await HttpClient().getUrl(
-           Uri.parse(
-             '$url/color/0?turn=on&brightness=$brightness',
-           ),
-         );
-         break;
-       case ShellyBulbeMode.colore:
-         httpClientRequest = await HttpClient().getUrl(
-           Uri.parse(
-             '$url/color/0?turn=on&gain=$brightness',
-           ),
-         );
-         break;
-     }
+    switch (bulbeMode) {
+      case ShellyBulbeMode.white:
+        httpClientRequest = await HttpClient().getUrl(
+          Uri.parse(
+            '$url/color/0?turn=on&brightness=$brightness',
+          ),
+        );
+        break;
+      case ShellyBulbeMode.colore:
+        httpClientRequest = await HttpClient().getUrl(
+          Uri.parse(
+            '$url/color/0?turn=on&gain=$brightness',
+          ),
+        );
+        break;
+    }
 
     final HttpClientResponse response = await httpClientRequest.close();
     return response.reasonPhrase;
@@ -110,7 +107,7 @@ class ShellyApiColorBulb extends ShellyApiDeviceAbstract {
     required String blue,
     String white = "0",
   }) async {
-    if(bulbeMode != ShellyBulbeMode.colore) {
+    if (bulbeMode != ShellyBulbeMode.colore) {
       await changeModeToColor();
     }
 
@@ -124,9 +121,4 @@ class ShellyApiColorBulb extends ShellyApiDeviceAbstract {
   }
 }
 
-
-
-enum ShellyBulbeMode {
-  white,
-  colore
-}
+enum ShellyBulbeMode { white, colore }

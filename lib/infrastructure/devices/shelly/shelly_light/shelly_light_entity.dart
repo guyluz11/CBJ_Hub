@@ -201,10 +201,9 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
         temperatureInt = 6465;
       }
 
-      if(lightColorTemperature.getOrCrash() == temperatureInt.toString())
-        {
-          return right(unit);
-        }
+      if (lightColorTemperature.getOrCrash() == temperatureInt.toString()) {
+        return right(unit);
+      }
 
       lightColorTemperature =
           GenericRgbwLightColorTemperature(temperatureInt.toString());
@@ -212,7 +211,6 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
       await shellyColorBulb.changTemperature(
         temperature: lightColorTemperature.getOrCrash(),
       );
-
 
       return right(unit);
     } catch (e) {
@@ -262,7 +260,6 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
       );
 
       final RgbColor rgbColor = hsvColor.toRgbColor();
-
 
       await shellyColorBulb.changeColor(
         red: rgbColor.r.toString(),
