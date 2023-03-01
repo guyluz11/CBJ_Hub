@@ -55,7 +55,8 @@ class PhilipsHueApiLight {
     return "Can't find device";
   }
 
-  Future<String> setLightBrightness(String deviceUniqueId, int brightness) async {
+  Future<String> setLightBrightness(
+      String deviceUniqueId, int brightness) async {
     final List<Light> lights = await bridge.lights();
 
     for (final Light light in lights) {
