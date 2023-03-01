@@ -33,14 +33,16 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     required this.devicePort,
     required this.lastKnownIp,
     required String hostName,
+    ShellyApiColorBulb? bulbeMode,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.shelly.toString()),
         ) {
-    shellyColorBulb = ShellyApiColorBulb(
-      lastKnownIp: lastKnownIp.getOrCrash(),
-      mDnsName: deviceMdnsName.getOrCrash(),
-      hostName: hostName,
-    );
+    shellyColorBulb = bulbeMode ??
+        ShellyApiColorBulb(
+          lastKnownIp: lastKnownIp.getOrCrash(),
+          mDnsName: deviceMdnsName.getOrCrash(),
+          hostName: hostName,
+        );
   }
 
   DeviceLastKnownIp lastKnownIp;
@@ -233,8 +235,6 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     }
   }
 
-  /// Please override the following methods
-
   @override
   Future<Either<CoreFailure, Unit>> changeColorHsv({
     required String lightColorAlphaNewValue,
@@ -277,7 +277,10 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
   int convertDecimalPresentagetToIntegerPercentage(double number) {
     if (number == 1.0) {
       return 100;
+    } else if (number == 0.0) {
+      return 0;
     }
+
     if (number.toString().length <= 8) {
       throw 'Error converting to integer percentage';
     }

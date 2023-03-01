@@ -155,7 +155,7 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
         GenericLightWithBrightnessBrightness(brightnessInt.toString());
 
     await philipsHueApiLight.setLightBrightness(
-        vendorUniqueId.getOrCrash(), brightnessInt);
+        vendorUniqueId.getOrCrash(), brightnessInt,);
 
     return left(
       const CoreFailure.actionExcecuter(
