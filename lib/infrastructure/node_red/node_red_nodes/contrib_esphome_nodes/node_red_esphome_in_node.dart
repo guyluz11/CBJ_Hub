@@ -2,8 +2,8 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_visual_n
 
 /// Class for Node-Red ESPHome node
 /// https://flows.nodered.org/node/node-red-contrib-esphome
-class NodeRedEspHomeOutNode extends NodeRedVisualNodeAbstract {
-  NodeRedEspHomeOutNode({
+class NodeRedEspHomeInNode extends NodeRedVisualNodeAbstract {
+  NodeRedEspHomeInNode({
     required this.espHomeNodeDeviceId,
     super.wires,
     super.name,
@@ -12,12 +12,12 @@ class NodeRedEspHomeOutNode extends NodeRedVisualNodeAbstract {
         );
 
   /// Take esphome-device node id and pass it down as property and set it up, also pass wires to define the next node to connect to
-  factory NodeRedEspHomeOutNode.passOnlyNewAction({
+  factory NodeRedEspHomeInNode.passOnlyNewAction({
     required String espHomeNodeDeviceId,
     List<List<String>>? wires,
     String? name,
   }) {
-    return NodeRedEspHomeOutNode(
+    return NodeRedEspHomeInNode(
       wires: wires,
       name: name,
       espHomeNodeDeviceId: espHomeNodeDeviceId,

@@ -34,7 +34,7 @@ class NodeRedEspHomeDeviceNode extends NodeRedVisualNodeAbstract {
       "name": "$name",
       "target": "",
       "host": "$host",
-      "port": "8009"
+      "port": "6053"
     }
 ''';
   }

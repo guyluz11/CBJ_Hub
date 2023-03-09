@@ -33,6 +33,8 @@ class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
     "func": "$funcString",
     "outputs": 1,
     "noerr": 0,
+    "x": 400,
+    "y": 1000,
     "initialize": "",
     "finalize": "",
     "wires":  ${fixWiresForNodeRed()}

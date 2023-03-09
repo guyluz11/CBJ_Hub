@@ -36,9 +36,9 @@ class NodeRedEspHomeOutNode extends NodeRedVisualNodeAbstract {
         "name": "$name",
         "device": "$espHomeNodeDeviceId",
         "entity": "",
-        "x": 680,
+        "x": 1200,
         "y": 500,
-        "wires":  ${fixWiresForNodeRed()}
+        "wires":  [[]]
     }
 ''';
   }

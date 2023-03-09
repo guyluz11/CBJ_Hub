@@ -4,12 +4,9 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/esphome/esphome_python_api/esphome_python_api.dart';
+import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esphome_node_red_api.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
-import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:compute/compute.dart';
 import 'package:dartz/dartz.dart';
 
 class EspHomeLightEntity extends GenericLightDE {
@@ -31,7 +28,9 @@ class EspHomeLightEntity extends GenericLightDE {
     this.lastKnownIp,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.espHome.toString()),
-        );
+        ) {
+    setUpNodeRedApi();
+  }
 
   DeviceLastKnownIp? lastKnownIp;
 
@@ -40,6 +39,17 @@ class EspHomeLightEntity extends GenericLightDE {
   DevicePort devicePort;
 
   EspHomeKey espHomeKey;
+  late EsphomeNodeRedApi esphomeNodeRedApi;
+
+  Future<void> setUpNodeRedApi() async {
+    // TODO: add check to add  uniqueId + action as flow in node read only if missing
+
+    esphomeNodeRedApi = EsphomeNodeRedApi();
+    esphomeNodeRedApi.setNewStateNodes(
+      uniqueId.getOrCrash(),
+      lastKnownIp!.getOrCrash(),
+    );
+  }
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({
@@ -101,25 +111,25 @@ class EspHomeLightEntity extends GenericLightDE {
     lightSwitchState = GenericLightSwitchState(DeviceActions.on.toString());
 
     try {
-      final HelperEspHomeDeviceInfo helperEspHomeDeviceInfo =
-          HelperEspHomeDeviceInfo(
-        address: lastKnownIp!.getOrCrash(),
-        port: devicePort.getOrCrash(),
-        deviceKey: espHomeKey.getOrCrash(),
-        newState: 'True',
-        mDnsName: 'null',
-        devicePassword: 'MyPassword',
-        getProjectFilesLocation:
-            await getIt<SystemCommandsManager>().getProjectFilesLocation(),
-      );
-
-      logger.v('Turn on ESPHome Light');
-      await compute(
-        EspHomePythonApi.turnOnOffLightEntity,
-        helperEspHomeDeviceInfo,
-      );
-
-      await EspHomePythonApi.turnOnOffLightEntity(helperEspHomeDeviceInfo);
+      // final HelperEspHomeDeviceInfo helperEspHomeDeviceInfo =
+      //     HelperEspHomeDeviceInfo(
+      //   address: lastKnownIp!.getOrCrash(),
+      //   port: devicePort.getOrCrash(),
+      //   deviceKey: espHomeKey.getOrCrash(),
+      //   newState: 'True',
+      //   mDnsName: 'null',
+      //   devicePassword: 'MyPassword',
+      //   getProjectFilesLocation:
+      //       await getIt<SystemCommandsManager>().getProjectFilesLocation(),
+      // );
+      //
+      // logger.v('Turn on ESPHome Light');
+      // await compute(
+      //   EspHomePythonApi.turnOnOffLightEntity,
+      //   helperEspHomeDeviceInfo,
+      // );
+      //
+      // await EspHomePythonApi.turnOnOffLightEntity(helperEspHomeDeviceInfo);
       return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
@@ -131,22 +141,22 @@ class EspHomeLightEntity extends GenericLightDE {
     lightSwitchState = GenericLightSwitchState(DeviceActions.off.toString());
 
     try {
-      final HelperEspHomeDeviceInfo helperEspHomeDeviceInfo =
-          HelperEspHomeDeviceInfo(
-        address: lastKnownIp!.getOrCrash(),
-        port: devicePort.getOrCrash(),
-        deviceKey: espHomeKey.getOrCrash(),
-        newState: 'False',
-        mDnsName: 'null',
-        devicePassword: 'MyPassword',
-        getProjectFilesLocation:
-            await getIt<SystemCommandsManager>().getProjectFilesLocation(),
-      );
-
-      await compute(
-        EspHomePythonApi.turnOnOffLightEntity,
-        helperEspHomeDeviceInfo,
-      );
+      // final HelperEspHomeDeviceInfo helperEspHomeDeviceInfo =
+      //     HelperEspHomeDeviceInfo(
+      //   address: lastKnownIp!.getOrCrash(),
+      //   port: devicePort.getOrCrash(),
+      //   deviceKey: espHomeKey.getOrCrash(),
+      //   newState: 'False',
+      //   mDnsName: 'null',
+      //   devicePassword: 'MyPassword',
+      //   getProjectFilesLocation:
+      //       await getIt<SystemCommandsManager>().getProjectFilesLocation(),
+      // );
+      //
+      // await compute(
+      //   EspHomePythonApi.turnOnOffLightEntity,
+      //   helperEspHomeDeviceInfo,
+      // );
       return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());
