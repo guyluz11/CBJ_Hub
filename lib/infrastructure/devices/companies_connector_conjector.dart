@@ -317,7 +317,6 @@ class CompaniesConnectorConjector {
           await for (final ActiveHost activeHost
               in HostScanner.getAllPingableDevices(
             subnet,
-            resultsInAddressAscendingOrder: false,
             lastHostId: 126,
           )) {
             try {
@@ -333,8 +332,7 @@ class CompaniesConnectorConjector {
           await for (final ActiveHost activeHost
               in HostScanner.getAllPingableDevices(
             subnet,
-            resultsInAddressAscendingOrder: false,
-            lastHostId: 127,
+            firstHostId: 127,
           )) {
             try {
               setHostNameDeviceByCompany(
@@ -365,7 +363,8 @@ class CompaniesConnectorConjector {
     } else if (deviceHostNameLowerCase.contains('xiaomi') ||
         deviceHostNameLowerCase.contains('yeelink') ||
         deviceHostNameLowerCase.contains('xiao')) {
-      getIt<XiaomiIoConnectorConjector>().discoverNewDevices();
+      getIt<XiaomiIoConnectorConjector>()
+          .discoverNewDevices(activeHost: activeHost);
     } else if (deviceHostNameLowerCase.startsWith('wiz')) {
       getIt<WizConnectorConjector>()
           .addNewDeviceByHostInfo(activeHost: activeHost);
