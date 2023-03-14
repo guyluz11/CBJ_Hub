@@ -3,11 +3,10 @@ import 'dart:collection';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_light/esphome_light_entity.dart';
+import 'package:cbj_hub/infrastructure/devices/esphome/esphome_switch/esphome_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
@@ -18,7 +17,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   static const List<String> mdnsTypes = ['_esphomelib._tcp'];
 
   static Map<String, DeviceEntityAbstract> companyDevices = {};
-  static HashSet<String> lastMdnsName = HashSet<String>();
+  static HashSet<String> discoverdDevicesByMdsn = HashSet<String>();
 
   /// Add new devices to [companyDevices] if not exist
   Future<void> addNewDeviceByMdnsName({
@@ -27,32 +26,14 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     required String port,
     required String address,
   }) async {
-    CoreUniqueId? tempCoreUniqueId;
-
     // Python process take so much that the same result can arrive again
     // before the device completed the process and got add
     // This fixe it
-    if (lastMdnsName.contains(mDnsName)) {
+    if (discoverdDevicesByMdsn.contains(mDnsName)) {
       return;
     }
 
-    lastMdnsName.add(mDnsName);
-
-    for (final DeviceEntityAbstract device in companyDevices.values) {
-      if (device is EspHomeLightEntity &&
-          mDnsName == device.vendorUniqueId.getOrCrash()) {
-        return;
-      } else if (device is GenericLightDE &&
-          mDnsName == device.vendorUniqueId.getOrCrash()) {
-        tempCoreUniqueId = device.uniqueId;
-        break;
-      } else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
-        logger.w(
-          'ESPHome device type supported but implementation is missing here',
-        );
-        return;
-      }
-    }
+    discoverdDevicesByMdsn.add(mDnsName);
 
     final List<DeviceEntityAbstract> espDevice =
         await EspHomeHelpers.addDiscoverdEntities(
@@ -87,6 +68,8 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
         companyDevices[espHomeDE.getDeviceId()];
 
     if (device is EspHomeLightEntity) {
+      device.executeDeviceAction(newEntity: espHomeDE);
+    } else if (device is EspHomeSwitchEntity) {
       device.executeDeviceAction(newEntity: espHomeDE);
     } else {
       logger.w('ESPHome device type does not exist');

@@ -1,10 +1,10 @@
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_visual_node_abstract.dart';
 
-/// Class for Node-Red castv2 node
-/// https://flows.nodered.org/node/node-red-contrib-castv2
 class NodeRedEspHomeDeviceNode extends NodeRedVisualNodeAbstract {
   NodeRedEspHomeDeviceNode({
     required this.host,
+    required this.password,
+    super.tempId,
     super.wires,
     super.name,
   }) : super(
@@ -13,17 +13,22 @@ class NodeRedEspHomeDeviceNode extends NodeRedVisualNodeAbstract {
 
   factory NodeRedEspHomeDeviceNode.passOnlyNewAction({
     required String host,
+    required String password,
     List<List<String>>? wires,
     String? name,
+    String? tempId,
   }) {
     return NodeRedEspHomeDeviceNode(
+      tempId: tempId,
       wires: wires,
       name: name,
       host: host,
+      password: password,
     );
   }
 
   String host;
+  String password;
 
   @override
   String toString() {
@@ -34,7 +39,10 @@ class NodeRedEspHomeDeviceNode extends NodeRedVisualNodeAbstract {
       "name": "$name",
       "target": "",
       "host": "$host",
-      "port": "6053"
+      "port": "6053",
+      "credentials": {
+            "password": "$password"
+      }
     }
 ''';
   }

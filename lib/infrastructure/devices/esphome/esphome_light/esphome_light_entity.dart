@@ -4,7 +4,6 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esphome_node_red_api.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
@@ -28,9 +27,7 @@ class EspHomeLightEntity extends GenericLightDE {
     this.lastKnownIp,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.espHome.toString()),
-        ) {
-    setUpNodeRedApi();
-  }
+        );
 
   DeviceLastKnownIp? lastKnownIp;
 
@@ -39,17 +36,6 @@ class EspHomeLightEntity extends GenericLightDE {
   DevicePort devicePort;
 
   EspHomeKey espHomeKey;
-  late EsphomeNodeRedApi esphomeNodeRedApi;
-
-  Future<void> setUpNodeRedApi() async {
-    // TODO: add check to add  uniqueId + action as flow in node read only if missing
-
-    esphomeNodeRedApi = EsphomeNodeRedApi();
-    esphomeNodeRedApi.setNewStateNodes(
-      uniqueId.getOrCrash(),
-      lastKnownIp!.getOrCrash(),
-    );
-  }
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({

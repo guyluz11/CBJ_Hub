@@ -312,6 +312,9 @@ class CompaniesConnectorConjector {
       for (final NetworkInterface networkInterface in networkInterfaceList) {
         for (final InternetAddress address in networkInterface.addresses) {
           final String ip = address.address;
+          if (!ip.contains('.')) {
+            continue;
+          }
           final String subnet = ip.substring(0, ip.lastIndexOf('.'));
 
           await for (final ActiveHost activeHost

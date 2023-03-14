@@ -149,14 +149,16 @@ class NodeRedRepository extends INodeRedRepository {
 
     try {
       /// Install the new node module
-      final Response postNodesResponse =
-          await nodeRedApi.postNodes(module: moduleToUse);
+      await nodeRedApi.postNodes(module: moduleToUse);
 
       final Response response = await nodeRedApi.postFlow(
         label: label,
         nodes: nodes,
         flowId: flowId,
       );
+      if (response.statusCode != 200) {
+        logger.e('Error sending nodeRED flow request\n${response.body}');
+      }
     } catch (e) {
       if (e.toString() ==
           'The remote computer refused the network connection.\r\n') {
