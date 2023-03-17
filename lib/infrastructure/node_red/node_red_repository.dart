@@ -159,6 +159,8 @@ class NodeRedRepository extends INodeRedRepository {
       if (response.statusCode != 200) {
         logger.e('Error sending nodeRED flow request\n${response.body}');
       }
+      final String returnedFlowId = jsonDecode(response.body)['id'] as String;
+      return returnedFlowId;
     } catch (e) {
       if (e.toString() ==
           'The remote computer refused the network connection.\r\n') {
@@ -166,6 +168,48 @@ class NodeRedRepository extends INodeRedRepository {
       } else {
         logger.e('Node-RED setting flow with module $moduleToUse\n$e');
       }
+    }
+    return "";
+  }
+
+  // TODO: not working
+  @override
+  Future<String> setGlobalNodes({
+    required String? moduleToUse,
+    required String nodes,
+  }) async {
+    try {
+      /// Install the new node module
+      if (moduleToUse != null) {
+        await nodeRedApi.postNodes(module: moduleToUse);
+      }
+      final Response response = await nodeRedApi.postGlobalNode(
+        nodes: nodes,
+      );
+      if (response.statusCode != 200) {
+        logger.e('Error sending nodeRED global node request\n${response.body}');
+      }
+    } catch (e) {
+      logger.e('Node-RED setting global node with module $moduleToUse\n$e');
+    }
+    return "";
+  }
+
+  @override
+  Future<String> updateFlowNodes({
+    required String nodes,
+    required String flowId,
+  }) async {
+    try {
+      final Response response = await nodeRedApi.putFlowById(
+        nodes: nodes,
+        flowId: flowId,
+      );
+      if (response.statusCode != 200) {
+        logger.e('Error updating nodeRED flow node request\n${response.body}');
+      }
+    } catch (e) {
+      logger.e('Node-RED updating flow\n$e');
     }
     return "";
   }

@@ -8,7 +8,6 @@ import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esph
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esphome_node_red_server_api_calls.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_switch/esphome_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_hub/utils.dart';
 
 class EspHomeHelpers {
   static Future<List<DeviceEntityAbstract>> addDiscoverdEntities({
@@ -16,23 +15,19 @@ class EspHomeHelpers {
     required String mDnsName,
     String port = '6053',
   }) async {
-    final String flowId = UniqueId().getOrCrash();
     final String espHomeNodeDeviceId = UniqueId().getOrCrash();
 
-    final String espHomeDeviceId =
-        await EspHomeNodeRedApi.setNewEspHomeDeviceNode(
+    final String flowId = await EspHomeNodeRedApi.setNewEspHomeDeviceNode(
       deviceMdnsName: mDnsName,
       password: 'MyPassword',
-      flowId: flowId,
       espHomeDeviceId: espHomeNodeDeviceId,
     );
     await Future.delayed(const Duration(milliseconds: 500));
     final List<EspHomeDeviceEntityObject> entitiesList =
         await EspHomeNodeRedServerApiCalls.getEspHomeDeviceEntites(
-      espHomeDeviceId,
+      espHomeNodeDeviceId,
     );
 
-    logger.i('Entities $entitiesList');
     if (entitiesList.isEmpty) {
       return [];
     }
@@ -41,10 +36,14 @@ class EspHomeHelpers {
 
     for (final EspHomeDeviceEntityObject espHomeDeviceEntityObject
         in entitiesList) {
+      final String deviceKey =
+          (espHomeDeviceEntityObject.config['key'] as int).toString();
       await EspHomeNodeRedApi.setNewStateNodes(
-        espHomeDeviceNodeId: espHomeNodeDeviceId,
+        deviceMdnsName: mDnsName,
+        password: 'MyPassword',
+        espHomeDeviceId: espHomeNodeDeviceId,
         flowId: flowId,
-        entityId: (espHomeDeviceEntityObject.config['key'] as int).toString(),
+        entityId: deviceKey,
       );
 
       if (espHomeDeviceEntityObject.type == 'Light') {
@@ -65,7 +64,7 @@ class EspHomeHelpers {
             lightSwitchState: GenericLightSwitchState('on'),
             deviceMdnsName: DeviceMdnsName(mDnsName),
             devicePort: DevicePort(port),
-            espHomeKey: EspHomeKey('MyPassword'),
+            espHomeKey: EspHomeKey(deviceKey),
             lastKnownIp: DeviceLastKnownIp(address),
           ),
         );
@@ -86,7 +85,7 @@ class EspHomeHelpers {
             powerConsumption: DevicePowerConsumption('0'),
             deviceMdnsName: DeviceMdnsName(mDnsName),
             devicePort: DevicePort(port),
-            espHomeKey: EspHomeKey('MyPassword'),
+            espHomeKey: EspHomeKey(deviceKey),
             lastKnownIp: DeviceLastKnownIp(address),
             switchState: GenericSwitchSwitchState('on'),
           ),

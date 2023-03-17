@@ -4,12 +4,12 @@ import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/contrib_esphome_nodes/node_red_esphome_device_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/contrib_esphome_nodes/node_red_esphome_in_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/contrib_esphome_nodes/node_red_esphome_out_node.dart';
+import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_function_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_broker_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_in_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_out_node.dart';
 import 'package:cbj_hub/injection.dart';
 
-/// TODO: Change the code to fit ESPHome node Red API
 class EspHomeNodeRedApi {
   static String module = 'node-red-contrib-esphome';
 
@@ -21,12 +21,12 @@ class EspHomeNodeRedApi {
   static Future<String> setNewEspHomeDeviceNode({
     required String deviceMdnsName,
     required String password,
-    String? flowId,
     String? espHomeDeviceId,
   }) async {
     String nodes = '[\n';
 
-    final String flowIdTemp = flowId ?? UniqueId().getOrCrash();
+    // Flow does not change to this id for some reason
+    final String flowIdTemp = UniqueId().getOrCrash();
     final String espHomeDeviceIdTemp =
         espHomeDeviceId ?? UniqueId().getOrCrash();
 
@@ -43,20 +43,22 @@ class EspHomeNodeRedApi {
     nodes += '\n]';
 
     /// Setting the flow
-    await getIt<INodeRedRepository>().setFlowWithModule(
-      moduleToUse: module,
-      label: 'deviceNode',
-      nodes: nodes,
+    final String flowId = await getIt<INodeRedRepository>().setFlowWithModule(
       flowId: flowIdTemp,
+      label: 'espHome device node',
+      moduleToUse: module,
+      nodes: nodes,
     );
 
-    return nodeRedEspHomeDeviceNode.id;
+    return flowId;
   }
 
   static Future<String> setNewStateNodes({
     required String flowId,
-    required String espHomeDeviceNodeId,
     required String entityId,
+    required String deviceMdnsName,
+    required String password,
+    String? espHomeDeviceId,
   }) async {
     String nodes = '[\n';
 
@@ -71,32 +73,63 @@ class EspHomeNodeRedApi {
     final String topic =
         '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/$entityId/$deviceStateProperty';
 
+    final String espHomeDeviceIdTemp = UniqueId().getOrCrash();
+
+    /// Device connection
+    final NodeRedEspHomeDeviceNode nodeRedEspHomeDeviceNode =
+        NodeRedEspHomeDeviceNode(
+      tempId: espHomeDeviceIdTemp,
+      host: '$deviceMdnsName.local',
+      name: 'ESPHome $deviceMdnsName device id $espHomeDeviceIdTemp',
+      password: password,
+    );
+    nodes += nodeRedEspHomeDeviceNode.toString();
+
     /// Mqtt broker
     final NodeRedMqttBrokerNode mqttBrokerNode =
         NodeRedMqttBrokerNode(name: 'Cbj NodeRed plugs Api Broker');
 
-    nodes += mqttBrokerNode.toString();
+    nodes += ', ${mqttBrokerNode.toString()}';
 
     /// Mqtt out
 
-    final NodeRedMqttOutNode mqttNode = NodeRedMqttOutNode(
+    final NodeRedMqttOutNode mqttOutNode = NodeRedMqttOutNode(
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$outputDeviceProperty',
       name: '$mqttNodeName - $outputDeviceProperty',
     );
-    nodes += ', ${mqttNode.toString()}';
+    nodes += ', ${mqttOutNode.toString()}';
+
+    /// Create an EspHome in node
+    final NodeRedEspHomeInNode nodeRedEspHomeInNode = NodeRedEspHomeInNode(
+      wires: [
+        [
+          mqttOutNode.id,
+        ]
+      ],
+      espHomeNodeDeviceId: espHomeDeviceIdTemp,
+      name: 'ESPHome $entityId in type',
+      epsHomeDeviceEntityId: entityId,
+    );
+    nodes += ', ${nodeRedEspHomeInNode.toString()}';
 
     /// Create an EspHome out node
     final NodeRedEspHomeOutNode nodeRedEspHomeOutNode = NodeRedEspHomeOutNode(
-      wires: [
-        [
-          mqttNode.id,
-        ]
-      ],
-      espHomeNodeDeviceId: espHomeDeviceNodeId,
+      wires: [[]],
+      espHomeNodeDeviceId: espHomeDeviceIdTemp,
       name: 'ESPHome $entityId out type',
     );
     nodes += ', ${nodeRedEspHomeOutNode.toString()}';
+
+    final NodeRedFunctionNode nodeRedFunctionToJsonNode =
+        NodeRedFunctionNode.inputPayloadToJson(
+      wires: [
+        [
+          nodeRedEspHomeOutNode.id,
+        ]
+      ],
+    );
+    nodes += ', ${nodeRedFunctionToJsonNode.toString()}';
 
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
@@ -104,31 +137,20 @@ class EspHomeNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$inputDeviceProperty',
       wires: [
-        [nodeRedEspHomeOutNode.id]
+        [
+          nodeRedFunctionToJsonNode.id,
+        ]
       ],
     );
     nodes += ', ${nodeRedMqttInNode.toString()}';
-
-    /// Create an EspHome in node
-    final NodeRedEspHomeInNode nodeRedEspHomeInNode = NodeRedEspHomeInNode(
-      wires: [
-        [
-          mqttNode.id,
-        ]
-      ],
-      espHomeNodeDeviceId: espHomeDeviceNodeId,
-      name: 'ESPHome $entityId in type',
-      epsHomeDeviceEntityId: entityId,
-    );
-    nodes += ', ${nodeRedEspHomeInNode.toString()}';
 
     nodes += '\n]';
 
     /// Setting the flow
     final Future<String> settingTheFlowResponse =
         getIt<INodeRedRepository>().setFlowWithModule(
+      label: 'Setting device $entityId',
       moduleToUse: module,
-      label: 'setDeviceState',
       nodes: nodes,
       flowId: flowId,
     );
