@@ -18,6 +18,8 @@ import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
+import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_value_objects.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_value_objects.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
@@ -30,6 +32,7 @@ import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart'
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/bindings_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/devices_hive_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/esphome_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/hub_entity_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/lifx_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/remote_pipes_hive_model.dart';
@@ -76,6 +79,8 @@ class HiveRepository extends ILocalDbRepository {
     Hive.registerAdapter(BindingsHiveModelAdapter());
     Hive.registerAdapter(HubEntityHiveModelAdapter());
     Hive.registerAdapter(TuyaVendorCredentialsHiveModelAdapter());
+    Hive.registerAdapter(LifxVendorCredentialsHiveModelAdapter());
+    Hive.registerAdapter(EspHomeVendorCredentialsHiveModelAdapter());
 
     /// Delay inorder for the Hive boxes to initialize
     /// In case you got the following error:
@@ -97,6 +102,7 @@ class HiveRepository extends ILocalDbRepository {
   Box<TuyaVendorCredentialsHiveModel>? smartLifeVendorCredentialsBox;
   Box<TuyaVendorCredentialsHiveModel>? jinvooSmartVendorCredentialsBox;
   Box<LifxVendorCredentialsHiveModel>? lifxVendorCredentialsBox;
+  Box<EspHomeVendorCredentialsHiveModel>? espHomeVendorCredentialsBox;
 
   @override
   Future<void> loadFromDb() async {
@@ -203,7 +209,7 @@ class HiveRepository extends ILocalDbRepository {
           lifxVendorCredentialsModelFromDb = lifxVendorCredentialsBox!.values
               .toList()
               .cast<LifxVendorCredentialsHiveModel>();
-      await jinvooSmartVendorCredentialsBox?.close();
+      await espHomeVendorCredentialsBox?.close();
 
       (await getLifxVendorLoginCredentials(
         lifxVendorCredentialsModelFromDb: lifxVendorCredentialsModelFromDb,
@@ -213,6 +219,34 @@ class HiveRepository extends ILocalDbRepository {
 
         logger.i(
           'Lifx login credentials got found in DB',
+        );
+      });
+    }
+
+    {
+      await espHomeVendorCredentialsBox?.close();
+
+      espHomeVendorCredentialsBox =
+          await Hive.openBox<EspHomeVendorCredentialsHiveModel>(
+        espHomeVendorCredentialsBoxName,
+      );
+
+      final List<EspHomeVendorCredentialsHiveModel>
+          espHomeVendorCredentialsModelFromDb = espHomeVendorCredentialsBox!
+              .values
+              .toList()
+              .cast<EspHomeVendorCredentialsHiveModel>();
+      await espHomeVendorCredentialsBox?.close();
+
+      (await getEspHomeVendorLoginCredentials(
+        espHomeVendorCredentialsModelFromDb:
+            espHomeVendorCredentialsModelFromDb,
+      ))
+          .fold((l) {}, (r) {
+        CompaniesConnectorConjector.setVendorLoginCredentials(r);
+
+        logger.i(
+          'ESPHome device password got found in DB',
         );
       });
     }
@@ -388,6 +422,42 @@ class HiveRepository extends ILocalDbRepository {
   }
 
   @override
+  Future<Either<LocalDbFailures, GenericEspHomeLoginDE>>
+      getEspHomeVendorLoginCredentials({
+    required List<EspHomeVendorCredentialsHiveModel>
+        espHomeVendorCredentialsModelFromDb,
+  }) async {
+    try {
+      if (espHomeVendorCredentialsModelFromDb.isNotEmpty) {
+        final EspHomeVendorCredentialsHiveModel firstEspHomeVendorFromDB =
+            espHomeVendorCredentialsModelFromDb[0];
+
+        final String? senderUniqueId = firstEspHomeVendorFromDB.senderUniqueId;
+        final String espHomeDevicePass =
+            firstEspHomeVendorFromDB.espHomeDevicePass;
+
+        final GenericEspHomeLoginDE genericEspHomeLoginDE =
+            GenericEspHomeLoginDE(
+          senderUniqueId: CoreLoginSenderId.fromUniqueString(senderUniqueId),
+          espHomeDevicePass:
+              GenericEspHomeDeviceLoginApiPass(espHomeDevicePass),
+        );
+
+        logger.i(
+          'ESPHome got returned from local storage',
+        );
+        return right(genericEspHomeLoginDE);
+      }
+      logger.i(
+        "Didn't find any ESPHome in the local DB",
+      );
+    } catch (e) {
+      logger.e('Local DB hive error while getting ESPHome vendor: $e');
+    }
+    return left(const LocalDbFailures.unexpected());
+  }
+
+  @override
   Future<Either<LocalDbFailures, String>> getRemotePipesDnsName() async {
     try {
       await remotePipesBox?.close();
@@ -525,6 +595,11 @@ class HiveRepository extends ILocalDbRepository {
         lifxLoginDE: loginEntityAbstract,
         vendorCredentialsBoxName: lifxVendorCredentialsBoxName,
       );
+    } else if (loginEntityAbstract is GenericEspHomeLoginDE) {
+      saveEspHomeVendorCredentials(
+        espHomeLoginDE: loginEntityAbstract,
+        vendorCredentialsBoxName: espHomeVendorCredentialsBoxName,
+      );
     } else {
       logger.e(
         'Please implement save function for this login type '
@@ -630,6 +705,39 @@ class HiveRepository extends ILocalDbRepository {
       );
     } catch (e) {
       logger.e('Error saving Lifx vendor credentials to local storage');
+      return left(const LocalDbFailures.unexpected());
+    }
+    return right(unit);
+  }
+
+  Future<Either<LocalDbFailures, Unit>> saveEspHomeVendorCredentials({
+    required GenericEspHomeLoginDE espHomeLoginDE,
+    required String vendorCredentialsBoxName,
+  }) async {
+    try {
+      final Box<EspHomeVendorCredentialsHiveModel> espHomeVendorCredentialsBox =
+          await Hive.openBox<EspHomeVendorCredentialsHiveModel>(
+        vendorCredentialsBoxName,
+      );
+
+      final EspHomeVendorCredentialsHiveModel espHomeVendorCredentialsModel =
+          EspHomeVendorCredentialsHiveModel()
+            ..senderUniqueId = espHomeLoginDE.senderUniqueId.getOrCrash()
+            ..espHomeDevicePass = espHomeLoginDE.espHomeDevicePass.getOrCrash();
+
+      if (espHomeVendorCredentialsBox.isNotEmpty) {
+        await espHomeVendorCredentialsBox.putAt(
+            0, espHomeVendorCredentialsModel);
+      } else {
+        espHomeVendorCredentialsBox.add(espHomeVendorCredentialsModel);
+      }
+
+      await espHomeVendorCredentialsBox.close();
+      logger.i(
+        'ESPHome vendor credentials saved to local storage',
+      );
+    } catch (e) {
+      logger.e('Error saving ESPHome vendor credentials to local storage');
       return left(const LocalDbFailures.unexpected());
     }
     return right(unit);
