@@ -45,6 +45,11 @@ class EspHomeHelpers {
       );
 
       if (espHomeDeviceEntityObject.type == 'Light') {
+        // TODO: Add support for more light types, I think the type is stored in supportedColorModList
+        // final List supportedColorModList = espHomeDeviceEntityObject
+        //     .config['supportedColorModesList'] as List<dynamic>;
+        // if (supportedColorModList.first == 1) {}
+
         deviceEntityList.add(
           EspHomeLightEntity(
             uniqueId: CoreUniqueId(),
@@ -66,7 +71,9 @@ class EspHomeHelpers {
             lastKnownIp: DeviceLastKnownIp(address),
           ),
         );
-      } else if (espHomeDeviceEntityObject.type == 'Switch') {
+      } else if (espHomeDeviceEntityObject.type == 'Switch' ||
+          espHomeDeviceEntityObject.type == 'Fan' ||
+          espHomeDeviceEntityObject.type == 'Siren') {
         deviceEntityList.add(
           EspHomeSwitchEntity(
             uniqueId: CoreUniqueId(),
