@@ -9,6 +9,7 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_bro
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_in_node.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_out_node.dart';
 import 'package:cbj_hub/injection.dart';
+import 'package:cbj_hub/utils.dart';
 
 class EspHomeNodeRedApi {
   static String module = 'node-red-contrib-esphome';
@@ -18,7 +19,7 @@ class EspHomeNodeRedApi {
   static String outputDeviceProperty = 'outputDeviceProperty';
 
   // Returns the espHome device node id
-  static Future<String> setNewEspHomeDeviceNode({
+  static Future<void> setNewGlobalEspHomeDeviceNode({
     required String deviceMdnsName,
     required String password,
     String? espHomeDeviceId,
@@ -41,12 +42,13 @@ class EspHomeNodeRedApi {
     nodes += '\n]';
 
     /// Setting the flow
-    final String flowId = await getIt<INodeRedRepository>().setGlobalNodes(
+    final String response = await getIt<INodeRedRepository>().setGlobalNodes(
       moduleToUse: module,
       nodes: nodes,
     );
-
-    return flowId;
+    if (response != 'ok') {
+      logger.e('Error setting ESPHome device node\n$response');
+    }
   }
 
   static Future<String> setNewStateNodes({

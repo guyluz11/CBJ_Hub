@@ -39,7 +39,7 @@ class EspHomeNodeRedServerApiCalls {
     return listOfDevices;
   }
 
-  static Future<List<EspHomeDeviceEntityObject>> getEspHomeDeviceEntites(
+  static Future<List<EspHomeDeviceEntityObject>> getEspHomeDeviceEntities(
     String espHomeDeviceId,
   ) async {
     final Response entitiesOfDevice = await post(

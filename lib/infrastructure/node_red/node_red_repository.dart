@@ -172,7 +172,6 @@ class NodeRedRepository extends INodeRedRepository {
     return "";
   }
 
-  // TODO: not working
   @override
   Future<String> setGlobalNodes({
     required String? moduleToUse,
@@ -191,8 +190,9 @@ class NodeRedRepository extends INodeRedRepository {
       }
     } catch (e) {
       logger.e('Node-RED setting global node with module $moduleToUse\n$e');
+      return e.toString();
     }
-    return "";
+    return "ok";
   }
 
   @override

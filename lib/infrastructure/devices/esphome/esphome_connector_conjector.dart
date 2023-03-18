@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_light/esphome_light_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_switch/esphome_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
@@ -19,6 +21,8 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
   static String? espHomeDevicePass;
+
+  Map<String, DeviceEntityAbstract> get getAllCompanyDevices => companyDevices;
 
   Future<String> accountLogin(
       GenericEspHomeLoginDE genericEspHomeDeviceLoginDE) async {
@@ -37,8 +41,6 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     required String port,
     required String address,
   }) async {
-    // espHomeDeviceEntityObject.config['uniqueId'
-
     if (espHomeDevicePass == null) {
       logger.w('ESPHome device got found but missing a password, please add '
           'password for it in the app UI');
@@ -53,17 +55,6 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
       devicePassword: espHomeDevicePass!,
     );
 
-    /// Making sure entity will get uploaded only once
-    for (final DeviceEntityAbstract device in espDevice) {
-      if (companyDevices[device.vendorUniqueId] != null) {
-        espDevice.remove(device);
-      }
-    }
-
-    if (espDevice.isEmpty) {
-      return;
-    }
-
     for (final DeviceEntityAbstract entityAsDevice in espDevice) {
       final DeviceEntityAbstract deviceToAdd =
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
@@ -77,13 +68,16 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
         'New ESPHome devices name:${entityAsDevice.defaultName.getOrCrash()}',
       );
     }
+    // Save state locally so that nodeRED flows will not get created again
+    // after restart
+    getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
   }
 
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract espHomeDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[espHomeDE.getDeviceId()];
+        companyDevices[espHomeDE.vendorUniqueId.getOrCrash()];
 
     if (device is EspHomeLightEntity) {
       device.executeDeviceAction(newEntity: espHomeDE);
