@@ -25,8 +25,6 @@ class EspHomeNodeRedApi {
   }) async {
     String nodes = '[\n';
 
-    // Flow does not change to this id for some reason
-    final String flowIdTemp = UniqueId().getOrCrash();
     final String espHomeDeviceIdTemp =
         espHomeDeviceId ?? UniqueId().getOrCrash();
 
@@ -43,9 +41,7 @@ class EspHomeNodeRedApi {
     nodes += '\n]';
 
     /// Setting the flow
-    final String flowId = await getIt<INodeRedRepository>().setFlowWithModule(
-      flowId: flowIdTemp,
-      label: 'espHome device node',
+    final String flowId = await getIt<INodeRedRepository>().setGlobalNodes(
       moduleToUse: module,
       nodes: nodes,
     );
@@ -56,9 +52,7 @@ class EspHomeNodeRedApi {
   static Future<String> setNewStateNodes({
     required String flowId,
     required String entityId,
-    required String deviceMdnsName,
-    required String password,
-    String? espHomeDeviceId,
+    required String espHomeDeviceId,
   }) async {
     String nodes = '[\n';
 
@@ -73,23 +67,11 @@ class EspHomeNodeRedApi {
     final String topic =
         '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/$entityId/$deviceStateProperty';
 
-    final String espHomeDeviceIdTemp = UniqueId().getOrCrash();
-
-    /// Device connection
-    final NodeRedEspHomeDeviceNode nodeRedEspHomeDeviceNode =
-        NodeRedEspHomeDeviceNode(
-      tempId: espHomeDeviceIdTemp,
-      host: '$deviceMdnsName.local',
-      name: 'ESPHome $deviceMdnsName device id $espHomeDeviceIdTemp',
-      password: password,
-    );
-    nodes += nodeRedEspHomeDeviceNode.toString();
-
     /// Mqtt broker
     final NodeRedMqttBrokerNode mqttBrokerNode =
         NodeRedMqttBrokerNode(name: 'Cbj NodeRed plugs Api Broker');
 
-    nodes += ', ${mqttBrokerNode.toString()}';
+    nodes += mqttBrokerNode.toString();
 
     /// Mqtt out
 
@@ -107,7 +89,7 @@ class EspHomeNodeRedApi {
           mqttOutNode.id,
         ]
       ],
-      espHomeNodeDeviceId: espHomeDeviceIdTemp,
+      espHomeNodeDeviceId: espHomeDeviceId,
       name: 'ESPHome $entityId in type',
       epsHomeDeviceEntityId: entityId,
     );
@@ -116,8 +98,9 @@ class EspHomeNodeRedApi {
     /// Create an EspHome out node
     final NodeRedEspHomeOutNode nodeRedEspHomeOutNode = NodeRedEspHomeOutNode(
       wires: [[]],
-      espHomeNodeDeviceId: espHomeDeviceIdTemp,
+      espHomeNodeDeviceId: espHomeDeviceId,
       name: 'ESPHome $entityId out type',
+      espHomeEntityId: entityId,
     );
     nodes += ', ${nodeRedEspHomeOutNode.toString()}';
 

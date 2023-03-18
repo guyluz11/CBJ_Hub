@@ -39,8 +39,6 @@ class EspHomeHelpers {
       final String deviceKey =
           (espHomeDeviceEntityObject.config['key'] as int).toString();
       await EspHomeNodeRedApi.setNewStateNodes(
-        deviceMdnsName: mDnsName,
-        password: 'MyPassword',
         espHomeDeviceId: espHomeNodeDeviceId,
         flowId: flowId,
         entityId: deviceKey,

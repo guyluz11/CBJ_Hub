@@ -132,10 +132,10 @@ class NodeRedAPI {
         "subflows": $nodes
       }
       ''';
-    return post(
-      Uri.parse('$requestsUrl/flows'),
+    return put(
+      Uri.parse('$requestsUrl/flow/global'),
       headers: {'Content-Type': 'application/json'},
-      body: nodes,
+      body: jsonStringWithFields,
     );
   }
 
