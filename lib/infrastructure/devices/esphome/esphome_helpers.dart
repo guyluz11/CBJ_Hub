@@ -13,13 +13,14 @@ class EspHomeHelpers {
   static Future<List<DeviceEntityAbstract>> addDiscoverdEntities({
     required String address,
     required String mDnsName,
+    required String devicePassword,
     String port = '6053',
   }) async {
     final String espHomeNodeDeviceId = UniqueId().getOrCrash();
 
     final String flowId = await EspHomeNodeRedApi.setNewEspHomeDeviceNode(
       deviceMdnsName: mDnsName,
-      password: 'MyPassword',
+      password: devicePassword,
       espHomeDeviceId: espHomeNodeDeviceId,
     );
     await Future.delayed(const Duration(milliseconds: 500));

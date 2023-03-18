@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
@@ -158,6 +159,8 @@ class CompaniesConnectorConjector {
   static void setVendorLoginCredentials(LoginEntityAbstract loginEntity) {
     if (loginEntity is GenericLifxLoginDE) {
       getIt<LifxConnectorConjector>().accountLogin(loginEntity);
+    } else if (loginEntity is GenericEspHomeLoginDE) {
+      getIt<EspHomeConnectorConjector>().accountLogin(loginEntity);
     } else if (loginEntity is GenericTuyaLoginDE) {
       getIt<TuyaSmartConnectorConjector>()
           .accountLogin(genericTuyaLoginDE: loginEntity);

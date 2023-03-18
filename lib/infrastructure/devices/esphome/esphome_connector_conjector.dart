@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_light/esphome_light_entity.dart';
@@ -17,6 +18,18 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
 
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
+  static String? espHomeDevicePass;
+
+  Future<String> accountLogin(
+      GenericEspHomeLoginDE genericEspHomeDeviceLoginDE) async {
+    espHomeDevicePass =
+        genericEspHomeDeviceLoginDE.espHomeDevicePass.getOrCrash();
+    // We can start a search of devices in node red using a request to
+    // /esphome/discovery but for now lets just let the devices get found by
+    // the global mdns search
+    return 'Success';
+  }
+
   /// Add new devices to [companyDevices] if not exist
   Future<void> addNewDeviceByMdnsName({
     required String mDnsName,
@@ -26,11 +39,18 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   }) async {
     // espHomeDeviceEntityObject.config['uniqueId'
 
+    if (espHomeDevicePass == null) {
+      logger.w('ESPHome device got found but missing a password, please add '
+          'password for it in the app UI');
+      return;
+    }
+
     final List<DeviceEntityAbstract> espDevice =
         await EspHomeHelpers.addDiscoverdEntities(
       mDnsName: mDnsName,
       port: port,
       address: address,
+      devicePassword: espHomeDevicePass!,
     );
 
     /// Making sure entity will get uploaded only once
