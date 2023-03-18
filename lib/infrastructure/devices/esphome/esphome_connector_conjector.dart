@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
@@ -17,7 +16,6 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   static const List<String> mdnsTypes = ['_esphomelib._tcp'];
 
   static Map<String, DeviceEntityAbstract> companyDevices = {};
-  static HashSet<String> discoverdDevicesByMdsn = HashSet<String>();
 
   /// Add new devices to [companyDevices] if not exist
   Future<void> addNewDeviceByMdnsName({
@@ -26,14 +24,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     required String port,
     required String address,
   }) async {
-    // Python process take so much that the same result can arrive again
-    // before the device completed the process and got add
-    // This fixe it
-    if (discoverdDevicesByMdsn.contains(mDnsName)) {
-      return;
-    }
-
-    discoverdDevicesByMdsn.add(mDnsName);
+    // espHomeDeviceEntityObject.config['uniqueId'
 
     final List<DeviceEntityAbstract> espDevice =
         await EspHomeHelpers.addDiscoverdEntities(
@@ -41,6 +32,13 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
       port: port,
       address: address,
     );
+
+    /// Making sure entity will get uploaded only once
+    for (final DeviceEntityAbstract device in espDevice) {
+      if (companyDevices[device.vendorUniqueId] != null) {
+        espDevice.remove(device);
+      }
+    }
 
     if (espDevice.isEmpty) {
       return;
