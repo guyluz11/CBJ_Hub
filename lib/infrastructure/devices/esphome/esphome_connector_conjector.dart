@@ -49,7 +49,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
       final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-          MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+          MapEntry(deviceToAdd.vendorUniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
 
