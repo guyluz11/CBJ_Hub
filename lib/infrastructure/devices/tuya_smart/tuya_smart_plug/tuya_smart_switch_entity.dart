@@ -16,14 +16,16 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
   TuyaSmartPlugEntity({
     required super.uniqueId,
     required super.vendorUniqueId,
-    required super.defaultName,
-    required super.entityStateGRPC,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
     required super.powerConsumption,
+    required super.entityStateGRPC,
     required super.smartPlugState,
     required this.cloudTuya,
   }) : super(

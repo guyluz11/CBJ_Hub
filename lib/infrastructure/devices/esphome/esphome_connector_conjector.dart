@@ -66,7 +66,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
       companyDevices.addEntries([deviceAsEntry]);
 
       logger.i(
-        'New ESPHome devices name:${entityAsDevice.defaultName.getOrCrash()}',
+        'New ESPHome devices name:${entityAsDevice.cbjEntityName.getOrCrash()}',
       );
     }
     // Save state locally so that nodeRED flows will not get created again

@@ -70,7 +70,7 @@ class TasmotaIpConnectorConjector implements AbstractCompanyConnectorConjector {
       companyDevices.addEntries([deviceAsEntry]);
 
       logger.v(
-        'New Tasmota Ip device name:${entityAsDevice.defaultName.getOrCrash()}',
+        'New Tasmota Ip device name:${entityAsDevice.cbjEntityName.getOrCrash()}',
       );
     }
   }

@@ -157,7 +157,7 @@ class IsarRepository extends ILocalDbRepository {
       for (final RoomsIsarModel roomIsar in roomsIsarModelFromDb) {
         final RoomEntity roomEntity = RoomEntity(
           uniqueId: RoomUniqueId.fromUniqueString(roomIsar.roomUniqueId),
-          defaultName: RoomDefaultName(roomIsar.roomDefaultName),
+          cbjEntityName: RoomDefaultName(roomIsar.roomDefaultName),
           background: RoomBackground(roomIsar.roomBackground),
           roomTypes: RoomTypes(roomIsar.roomTypes),
           roomDevicesId: RoomDevicesId(roomIsar.roomDevicesId),
@@ -354,7 +354,7 @@ class IsarRepository extends ILocalDbRepository {
       for (final RoomEntityDtos roomEntityDtos in roomsListDto) {
         final RoomsIsarModel roomsIsarModel = RoomsIsarModel()
           ..roomUniqueId = roomEntityDtos.uniqueId
-          ..roomDefaultName = roomEntityDtos.defaultName
+          ..roomDefaultName = roomEntityDtos.cbjEntityName
           ..roomBackground = roomEntityDtos.background
           ..roomDevicesId = roomEntityDtos.roomDevicesId
           ..roomScenesId = roomEntityDtos.roomScenesId

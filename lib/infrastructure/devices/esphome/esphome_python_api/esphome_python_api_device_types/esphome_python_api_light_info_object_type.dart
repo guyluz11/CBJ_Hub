@@ -47,7 +47,7 @@
 //     return EspHomeLightEntity(
 //       uniqueId: CoreUniqueId(),
 //       vendorUniqueId: VendorUniqueId.fromUniqueString(uniqueId!),
-//       defaultName: DeviceDefaultName(name),
+//       cbjEntityName: CbjEntityName(name),
 //       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
 //       stateMassage: DeviceStateMassage('EspHome Created'),
 //       senderDeviceOs: DeviceSenderDeviceOs('ESPHome'),

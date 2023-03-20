@@ -14,8 +14,9 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.uniqueId,
     required super.vendorUniqueId,
     required super.deviceVendor,
-    required super.defaultName,
-    required super.entityStateGRPC,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -23,6 +24,8 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.compUuid,
     required super.smartComputerSuspendState,
     required super.smartComputerShutDownState,
+    required super.entityStateGRPC,
+    required super.powerConsumption,
     required this.lastKnownIp,
   });
 

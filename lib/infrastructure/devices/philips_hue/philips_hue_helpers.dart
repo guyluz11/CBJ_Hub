@@ -42,15 +42,16 @@ class PhilipsHueHelpers {
       final LightState? lightState = light.state;
 
       if (light.type != null && light.type == 'Dimmable light') {
+        final String deviceName = (light.name != null && light.name != '')
+            ? light.name!
+            : 'PhilipsHue test 2';
         final PhilipsHueE26Entity philipsHueDE = PhilipsHueE26Entity(
           uniqueId: uniqueDeviceIdTemp,
           vendorUniqueId:
               VendorUniqueId.fromUniqueString(light.uniqueId.toString()),
-          defaultName: DeviceDefaultName(
-            light.name != null && light.name != ''
-                ? light.name
-                : 'PhilipsHue test 2',
-          ),
+          cbjEntityName: CbjEntityName(deviceName),
+          entityOriginalName: EntityOriginalName(deviceName),
+          deviceOriginalName: DeviceOriginalName(deviceName),
           entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('philips_hue'),
           senderDeviceModel: DeviceSenderDeviceModel(light.modelId),

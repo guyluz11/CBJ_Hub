@@ -22,7 +22,7 @@ class CbjDevicesHelpers {
       final CbjDeviceTypes deviceType =
           smartDeviceInfo.deviceTypesActions.deviceType;
       final String deviceId = smartDeviceInfo.id;
-      final String defaultName = smartDeviceInfo.defaultName;
+      final String cbjEntityName = smartDeviceInfo.cbjEntityName;
       // final String deviceState = smartDeviceInfo.state;
       final String deviceStateMassage = smartDeviceInfo.stateMassage.isEmpty
           ? 'ok'
@@ -42,9 +42,7 @@ class CbjDevicesHelpers {
           deviceVendor: DeviceVendor(
             VendorsAndServices.cbjDevices.toString(),
           ),
-          defaultName: DeviceDefaultName(
-            defaultName,
-          ),
+          cbjEntityName: CbjEntityName(cbjEntityName),
           entityStateGRPC: EntityState(deviceStateGrpc.toString()),
           stateMassage: DeviceStateMassage(deviceStateMassage),
           senderDeviceOs: DeviceSenderDeviceOs(deviceOs),
@@ -58,6 +56,9 @@ class CbjDevicesHelpers {
             DeviceActions.itIsFalse.toString(),
           ),
           lastKnownIp: DeviceLastKnownIp(deviceAddress),
+          entityOriginalName: EntityOriginalName(cbjEntityName),
+          deviceOriginalName: DeviceOriginalName(cbjEntityName),
+          powerConsumption: DevicePowerConsumption('0'),
         );
       } else {
         logger.w('Cbj Smart Device type is not supported ${deviceType.name}');

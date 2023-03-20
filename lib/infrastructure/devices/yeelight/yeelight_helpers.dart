@@ -19,13 +19,18 @@ class YeelightHelpers {
       uniqueDeviceIdTemp = CoreUniqueId();
     }
 
+    final String deviceName =
+        yeelightDevice.name != null && yeelightDevice.name != ''
+            ? yeelightDevice.name!
+            : 'Yeelight test 2';
+
     final Yeelight1SeEntity yeelightDE = Yeelight1SeEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId:
           VendorUniqueId.fromUniqueString(yeelightDevice.id.toString()),
-      defaultName: DeviceDefaultName(
-        yeelightDevice.name != '' ? yeelightDevice.name : 'Yeelight test 2',
-      ),
+      cbjEntityName: CbjEntityName(deviceName),
+      entityOriginalName: EntityOriginalName(deviceName),
+      deviceOriginalName: DeviceOriginalName(deviceName),
       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('yeelight'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),

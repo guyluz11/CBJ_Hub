@@ -17,12 +17,15 @@ class LifxHelpers {
     } else {
       uniqueDeviceIdTemp = CoreUniqueId();
     }
+    final String deviceName =
+        lifxDevice.label != '' ? lifxDevice.label : 'Lifx test 2';
+
     final LifxWhiteEntity lifxDE = LifxWhiteEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(lifxDevice.id),
-      defaultName: DeviceDefaultName(
-        lifxDevice.label != '' ? lifxDevice.label : 'Lifx test 2',
-      ),
+      cbjEntityName: CbjEntityName(deviceName),
+      entityOriginalName: EntityOriginalName(deviceName),
+      deviceOriginalName: DeviceOriginalName(deviceName),
       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('Lifx'),
       senderDeviceModel: DeviceSenderDeviceModel('Cloud'),

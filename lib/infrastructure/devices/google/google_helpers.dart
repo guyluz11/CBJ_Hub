@@ -23,7 +23,9 @@ class GoogleHelpers {
     final ChromeCastEntity googleDE = ChromeCastEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-      defaultName: DeviceDefaultName('Chromecast'),
+      cbjEntityName: CbjEntityName('Chromecast'),
+      entityOriginalName: EntityOriginalName('Chromecast'),
+      deviceOriginalName: DeviceOriginalName('Chromecast'),
       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('Android'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),

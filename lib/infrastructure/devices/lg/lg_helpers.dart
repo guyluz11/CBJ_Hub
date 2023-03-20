@@ -21,7 +21,7 @@ class LgHelpers {
     // final LgWebosTvEntity lgDE = LgWebosTvEntity(
     //   uniqueId: uniqueDeviceIdTemp,
     //   vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-    //   defaultName: DeviceDefaultName('LG TV'),
+    //   cbjEntityName: CbjEntityName('LG TV'),
     //   entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
     //   senderDeviceOs: DeviceSenderDeviceOs('WebOs'),
     //   senderDeviceModel: DeviceSenderDeviceModel('UP7550PVG'),

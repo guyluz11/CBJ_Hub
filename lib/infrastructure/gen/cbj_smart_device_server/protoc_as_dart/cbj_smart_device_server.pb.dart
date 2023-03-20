@@ -735,8 +735,8 @@ class CbjSmartDeviceInfo extends $pb.GeneratedMessage {
         14,
         const $core.bool.fromEnvironment('protobuf.omit_field_names')
             ? ''
-            : 'defaultName',
-        protoName: 'defaultName')
+            : 'cbjEntityName',
+        protoName: 'cbjEntityName')
     ..aOS(
         15,
         const $core.bool.fromEnvironment('protobuf.omit_field_names')
@@ -806,7 +806,7 @@ class CbjSmartDeviceInfo extends $pb.GeneratedMessage {
   factory CbjSmartDeviceInfo({
     $core.String? id,
     $core.String? state,
-    $core.String? defaultName,
+    $core.String? cbjEntityName,
     $core.String? roomId,
     $core.String? senderDeviceModel,
     $core.String? senderDeviceOs,
@@ -825,8 +825,8 @@ class CbjSmartDeviceInfo extends $pb.GeneratedMessage {
     if (state != null) {
       _result.state = state;
     }
-    if (defaultName != null) {
-      _result.defaultName = defaultName;
+    if (cbjEntityName != null) {
+      _result.cbjEntityName = cbjEntityName;
     }
     if (roomId != null) {
       _result.roomId = roomId;
@@ -912,9 +912,9 @@ class CbjSmartDeviceInfo extends $pb.GeneratedMessage {
   void clearState() => clearField(3);
 
   @$pb.TagNumber(14)
-  $core.String get defaultName => $_getSZ(2);
+  $core.String get cbjEntityName => $_getSZ(2);
   @$pb.TagNumber(14)
-  set defaultName($core.String v) {
+  set cbjEntityName($core.String v) {
     $_setString(2, v);
   }
 

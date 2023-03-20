@@ -90,8 +90,14 @@ class TasmotaIpHelpers {
         vendorUniqueId: VendorUniqueId.fromUniqueString(
           '$deviceHostName-$componentInDeviceNumberLabel}',
         ),
-        defaultName: DeviceDefaultName(
+        cbjEntityName: CbjEntityName(
           '$deviceHostName-${componentInDeviceUiLabelAndComment![0]}',
+        ),
+        entityOriginalName: EntityOriginalName(
+          '$deviceHostName-${componentInDeviceUiLabelAndComment[0]}',
+        ),
+        deviceOriginalName: DeviceOriginalName(
+          '$deviceHostName-${componentInDeviceUiLabelAndComment[0]}',
         ),
         entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('Tasmota'),

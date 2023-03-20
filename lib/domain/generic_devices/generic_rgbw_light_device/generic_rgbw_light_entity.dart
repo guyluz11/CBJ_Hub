@@ -16,13 +16,16 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
     required super.uniqueId,
     required super.vendorUniqueId,
     required super.deviceVendor,
-    required super.defaultName,
-    required super.entityStateGRPC,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
+    required super.entityStateGRPC,
+    required super.powerConsumption,
     required this.lightSwitchState,
     required this.lightColorTemperature,
     required this.lightColorAlpha,
@@ -30,7 +33,6 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
     required this.lightColorSaturation,
     required this.lightColorValue,
     required this.lightBrightness,
-    DevicePowerConsumption? powerConsumption,
   }) : super(
           entityTypes: EntityType(DeviceTypes.rgbwLights.toString()),
         );
@@ -39,7 +41,9 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
   factory GenericRgbwLightDE.empty() => GenericRgbwLightDE(
         uniqueId: CoreUniqueId(),
         vendorUniqueId: VendorUniqueId(),
-        defaultName: DeviceDefaultName(''),
+        cbjEntityName: CbjEntityName(''),
+        entityOriginalName: EntityOriginalName(''),
+        deviceOriginalName: DeviceOriginalName(''),
         entityStateGRPC: EntityState(''),
         senderDeviceOs: DeviceSenderDeviceOs(''),
         senderDeviceModel: DeviceSenderDeviceModel(''),
@@ -92,7 +96,7 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
   // /// Will return failure if any of the fields failed or return unit if fields
   // /// have legit values
   // Option<CoreFailure<dynamic>> get failureOption {
-  //   return defaultName!.value.fold((f) => some(f), (_) => none());
+  //   return cbjEntityName!.value.fold((f) => some(f), (_) => none());
   //
   // return body.failureOrUnit
   //     .andThen(todos.failureOrUnit)
@@ -126,7 +130,9 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
       deviceDtoClass: (GenericRgbwLightDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
       vendorUniqueId: vendorUniqueId.getOrCrash(),
-      defaultName: defaultName.getOrCrash(),
+      cbjEntityName: cbjEntityName.getOrCrash(),
+      entityOriginalName: entityOriginalName.getOrCrash(),
+      deviceOriginalName: deviceOriginalName.getOrCrash(),
       entityStateGRPC: entityStateGRPC.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
       senderDeviceOs: senderDeviceOs.getOrCrash(),
@@ -134,8 +140,10 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
       senderId: senderId.getOrCrash(),
       entityTypes: entityTypes.getOrCrash(),
       compUuid: compUuid.getOrCrash(),
-      lightSwitchState: lightSwitchState!.getOrCrash(),
       deviceVendor: deviceVendor.getOrCrash(),
+      powerConsumption: powerConsumption.getOrCrash(),
+      lightSwitchState: lightSwitchState!.getOrCrash(),
+
       lightColorTemperature: lightColorTemperature.getOrCrash(),
       lightBrightness: lightBrightness.getOrCrash(),
       lightColorAlpha: lightColorAlpha.getOrCrash(),

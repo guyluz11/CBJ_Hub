@@ -68,7 +68,9 @@ class ShellyHelpers {
             ShellyColorLightEntity(
           uniqueId: uniqueDeviceIdTemp,
           vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-          defaultName: DeviceDefaultName(mDnsName),
+          cbjEntityName: CbjEntityName(mDnsName),
+          entityOriginalName: EntityOriginalName(mDnsName),
+          deviceOriginalName: DeviceOriginalName(mDnsName),
           entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('Shelly'),
           senderDeviceModel: DeviceSenderDeviceModel('d1'),
@@ -98,7 +100,9 @@ class ShellyHelpers {
             ShellyRelaySwitchEntity(
           uniqueId: uniqueDeviceIdTemp,
           vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-          defaultName: DeviceDefaultName(mDnsName),
+          cbjEntityName: CbjEntityName(mDnsName),
+          entityOriginalName: EntityOriginalName(mDnsName),
+          deviceOriginalName: DeviceOriginalName(mDnsName),
           entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('Shelly'),
           senderDeviceModel: DeviceSenderDeviceModel('d1'),

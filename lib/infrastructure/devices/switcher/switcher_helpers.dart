@@ -42,7 +42,9 @@ class SwitcherHelpers {
         uniqueId: uniqueDeviceIdTemp,
         vendorUniqueId:
             VendorUniqueId.fromUniqueString(switcherDevice.deviceId),
-        defaultName: DeviceDefaultName(switcherDevice.switcherName),
+        cbjEntityName: CbjEntityName(switcherDevice.switcherName),
+        entityOriginalName: EntityOriginalName(switcherDevice.switcherName),
+        deviceOriginalName: DeviceOriginalName(switcherDevice.switcherName),
         entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('switcher'),
         senderDeviceModel:
@@ -76,7 +78,9 @@ class SwitcherHelpers {
         uniqueId: uniqueDeviceIdTemp,
         vendorUniqueId:
             VendorUniqueId.fromUniqueString(switcherDevice.deviceId),
-        defaultName: DeviceDefaultName(switcherDevice.switcherName),
+        cbjEntityName: CbjEntityName(switcherDevice.switcherName),
+        entityOriginalName: EntityOriginalName(switcherDevice.switcherName),
+        deviceOriginalName: DeviceOriginalName(switcherDevice.switcherName),
         entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('switcher'),
         senderDeviceModel:
@@ -106,7 +110,9 @@ class SwitcherHelpers {
         uniqueId: uniqueDeviceIdTemp,
         vendorUniqueId:
             VendorUniqueId.fromUniqueString(switcherDevice.deviceId),
-        defaultName: DeviceDefaultName(switcherDevice.switcherName),
+        cbjEntityName: CbjEntityName(switcherDevice.switcherName),
+        entityOriginalName: EntityOriginalName(switcherDevice.switcherName),
+        deviceOriginalName: DeviceOriginalName(switcherDevice.switcherName),
         entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('switcher'),
         senderDeviceModel:

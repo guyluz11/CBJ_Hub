@@ -117,7 +117,11 @@ class EspHomeHelpers {
             vendorUniqueId: VendorUniqueId.fromUniqueString(
               espHomeDeviceEntityObject.config['uniqueId'] as String,
             ),
-            defaultName: DeviceDefaultName(espHomeDeviceEntityObject.name),
+            cbjEntityName: CbjEntityName(espHomeDeviceEntityObject.name),
+            entityOriginalName:
+                EntityOriginalName(espHomeDeviceEntityObject.name),
+            deviceOriginalName:
+                DeviceOriginalName(espHomeDeviceEntityObject.name),
             entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
             stateMassage: DeviceStateMassage('Test'),
             senderDeviceOs: DeviceSenderDeviceOs('EspHome'),
@@ -141,7 +145,11 @@ class EspHomeHelpers {
             vendorUniqueId: VendorUniqueId.fromUniqueString(
               espHomeDeviceEntityObject.config['uniqueId'] as String,
             ),
-            defaultName: DeviceDefaultName(espHomeDeviceEntityObject.name),
+            cbjEntityName: CbjEntityName(espHomeDeviceEntityObject.name),
+            entityOriginalName:
+                EntityOriginalName(espHomeDeviceEntityObject.name),
+            deviceOriginalName:
+                DeviceOriginalName(espHomeDeviceEntityObject.name),
             entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
             stateMassage: DeviceStateMassage('Test'),
             senderDeviceOs: DeviceSenderDeviceOs('EspHome'),

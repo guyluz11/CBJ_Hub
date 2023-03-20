@@ -17,8 +17,10 @@ import 'package:dartz/dartz.dart';
 class SwitcherV2Entity extends GenericBoilerDE {
   SwitcherV2Entity({
     required super.uniqueId,
-    required VendorUniqueId vendorUniqueId,
-    required DeviceDefaultName defaultName,
+    required super.vendorUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
@@ -31,8 +33,6 @@ class SwitcherV2Entity extends GenericBoilerDE {
     required this.lastKnownIp,
     required this.switcherPort,
   }) : super(
-          vendorUniqueId: vendorUniqueId,
-          defaultName: defaultName,
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
         ) {
@@ -40,9 +40,9 @@ class SwitcherV2Entity extends GenericBoilerDE {
       deviceType: SwitcherDevicesTypes.switcherV2Esp,
       deviceId: vendorUniqueId.getOrCrash(),
       switcherIp: lastKnownIp.getOrCrash(),
-      switcherName: defaultName.getOrCrash()!,
+      switcherName: cbjEntityName.getOrCrash()!,
       macAddress: switcherMacAddress.getOrCrash(),
-      powerConsumption: powerConsumption?.getOrCrash() ?? '0',
+      powerConsumption: powerConsumption.getOrCrash(),
     );
   }
 

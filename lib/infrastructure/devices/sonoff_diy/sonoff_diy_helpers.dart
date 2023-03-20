@@ -28,7 +28,9 @@ class SonoffDiyHelpers {
             SonoffDiyRelaySwitchEntity(
           uniqueId: uniqueDeviceIdTemp,
           vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-          defaultName: DeviceDefaultName(mDnsName),
+          cbjEntityName: CbjEntityName(mDnsName),
+          entityOriginalName: EntityOriginalName(mDnsName),
+          deviceOriginalName: DeviceOriginalName(mDnsName),
           entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('SonoffDiy'),
           senderDeviceModel: DeviceSenderDeviceModel('d1'),

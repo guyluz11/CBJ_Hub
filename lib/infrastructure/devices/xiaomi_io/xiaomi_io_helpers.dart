@@ -19,13 +19,17 @@ class XiaomiIoHelpers {
       uniqueDeviceIdTemp = CoreUniqueId();
     }
 
+    final String deviceName =
+        xiaomiIoDevice.name != null && xiaomiIoDevice.name != ''
+            ? xiaomiIoDevice.name!
+            : 'XiaomiIo test 2';
     final XiaomiIoGpx4021GlEntity xiaomiIoDE = XiaomiIoGpx4021GlEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId:
           VendorUniqueId.fromUniqueString(xiaomiIoDevice.id.toString()),
-      defaultName: DeviceDefaultName(
-        xiaomiIoDevice.name != '' ? xiaomiIoDevice.name : 'XiaomiIo test 2',
-      ),
+      cbjEntityName: CbjEntityName(deviceName),
+      entityOriginalName: EntityOriginalName(deviceName),
+      deviceOriginalName: DeviceOriginalName(deviceName),
       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('xiaomi_io'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),

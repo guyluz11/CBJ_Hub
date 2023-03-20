@@ -21,7 +21,9 @@ class HpHelpers {
     final HpPrinterEntity lgDE = HpPrinterEntity(
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
-      defaultName: DeviceDefaultName(mDnsName),
+      cbjEntityName: CbjEntityName(mDnsName),
+      entityOriginalName: EntityOriginalName(mDnsName),
+      deviceOriginalName: DeviceOriginalName(mDnsName),
       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('HP'),
       senderDeviceModel: DeviceSenderDeviceModel('UP7550PVG'),

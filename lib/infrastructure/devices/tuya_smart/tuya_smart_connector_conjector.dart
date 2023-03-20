@@ -125,7 +125,7 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
 
             logger.i(
               'New Tuya device got added named '
-              '${addDevice.defaultName.getOrCrash()}',
+              '${addDevice.cbjEntityName.getOrCrash()}',
             );
           }
         }

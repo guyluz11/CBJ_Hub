@@ -17,8 +17,9 @@ class LifxWhiteEntity extends GenericLightDE {
   LifxWhiteEntity({
     required super.uniqueId,
     required super.vendorUniqueId,
-    required super.defaultName,
-    required super.entityStateGRPC,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -26,6 +27,7 @@ class LifxWhiteEntity extends GenericLightDE {
     required super.compUuid,
     required super.powerConsumption,
     required super.lightSwitchState,
+    required super.entityStateGRPC,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.lifx.toString()),
         );

@@ -18,8 +18,9 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
   SwitcherSmartPlugEntity({
     required super.uniqueId,
     required super.vendorUniqueId,
-    required super.defaultName,
-    required super.entityStateGRPC,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -27,6 +28,7 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
     required super.compUuid,
     required super.powerConsumption,
     required super.smartPlugState,
+    required super.entityStateGRPC,
     required this.switcherMacAddress,
     required this.lastKnownIp,
     required this.switcherPort,
@@ -38,9 +40,9 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
       deviceType: SwitcherDevicesTypes.switcherPowerPlug,
       deviceId: vendorUniqueId.getOrCrash(),
       switcherIp: lastKnownIp.getOrCrash(),
-      switcherName: defaultName.getOrCrash()!,
+      switcherName: cbjEntityName.getOrCrash()!,
       macAddress: switcherMacAddress.getOrCrash(),
-      powerConsumption: powerConsumption?.getOrCrash() ?? '0',
+      powerConsumption: powerConsumption.getOrCrash(),
     );
   }
 
