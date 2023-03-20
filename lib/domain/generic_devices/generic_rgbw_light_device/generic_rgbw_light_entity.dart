@@ -92,12 +92,11 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
   int sendNewBrightnessEachMiliseconds = 200;
   bool doesWaitingToSendBrightnessRequest = false;
 
-  //
   // /// Will return failure if any of the fields failed or return unit if fields
   // /// have legit values
-  // Option<CoreFailure<dynamic>> get failureOption {
-  //   return cbjEntityName!.value.fold((f) => some(f), (_) => none());
-  //
+  Option<CoreFailure<dynamic>> get failureOption =>
+      cbjEntityName.value.fold((f) => some(f), (_) => none());
+
   // return body.failureOrUnit
   //     .andThen(todos.failureOrUnit)
   //     .andThen(
