@@ -51,14 +51,16 @@ class EspHomeHelpers {
 
     /// 4. Compere device entities with already added entities to retrieve
     ///  only the new once
+    final List<EspHomeDeviceEntityObject> tempAllEntities = [];
+
     for (final EspHomeDeviceEntityObject entity in allEntities) {
-      if (getIt<EspHomeConnectorConjector>()
+      if (!getIt<EspHomeConnectorConjector>()
           .getAllCompanyDevices
           .containsKey(entity.config['uniqueId'])) {
-        allEntities.remove(entity);
+        tempAllEntities.add(entity);
       }
     }
-    return allEntities;
+    return tempAllEntities;
   }
 
   static Future<List<DeviceEntityAbstract>> addDiscoverdEntities({
