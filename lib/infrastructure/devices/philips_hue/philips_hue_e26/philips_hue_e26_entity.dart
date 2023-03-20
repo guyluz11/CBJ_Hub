@@ -19,7 +19,7 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
     required super.uniqueId,
     required super.vendorUniqueId,
     required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -67,7 +67,7 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         final DeviceActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
@@ -97,14 +97,14 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
           logger.w('actionToPreform is not set correctly on PhilipsHue E26');
         }
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
 
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
@@ -155,7 +155,9 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
         GenericLightWithBrightnessBrightness(brightnessInt.toString());
 
     await philipsHueApiLight.setLightBrightness(
-        vendorUniqueId.getOrCrash(), brightnessInt,);
+      vendorUniqueId.getOrCrash(),
+      brightnessInt,
+    );
 
     return left(
       const CoreFailure.actionExcecuter(

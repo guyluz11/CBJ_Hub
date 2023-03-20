@@ -19,7 +19,7 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
     required super.uniqueId,
     required super.vendorUniqueId,
     required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -74,7 +74,7 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
     }
 
     try {
-      if (newEntity.deviceStateGRPC.getOrCrash() !=
+      if (newEntity.entityStateGRPC.getOrCrash() !=
           DeviceStateGRPC.ack.toString()) {
         if (newEntity.smartPlugState!.getOrCrash() !=
             smartPlugState!.getOrCrash()) {
@@ -109,7 +109,7 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
             );
           }
         }
-        deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+        entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
 
         getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
           entityFromTheHub: this,
@@ -117,7 +117,7 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
       }
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
 
       getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
         entityFromTheHub: this,

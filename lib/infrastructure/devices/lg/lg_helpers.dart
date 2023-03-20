@@ -22,7 +22,7 @@ class LgHelpers {
     //   uniqueId: uniqueDeviceIdTemp,
     //   vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
     //   defaultName: DeviceDefaultName('LG TV'),
-    //   deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+    //   entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
     //   senderDeviceOs: DeviceSenderDeviceOs('WebOs'),
     //   senderDeviceModel: DeviceSenderDeviceModel('UP7550PVG'),
     //   senderId: DeviceSenderId(),

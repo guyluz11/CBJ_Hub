@@ -17,7 +17,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
     required super.uniqueId,
     required super.vendorUniqueId,
     required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -54,7 +54,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         final DeviceActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
@@ -68,7 +68,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
             },
             (r) {
               logger.d('Tuya light turn on success');
-              deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+              entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
             },
           );
         } else if (actionToPreform == DeviceActions.off) {
@@ -79,7 +79,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
             },
             (r) {
               logger.d('Tuya light turn off success');
-              deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+              entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
             },
           );
         } else {
@@ -92,7 +92,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
 
       if (newEntity.lightColorTemperature.getOrCrash() !=
               lightColorTemperature.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         (await changeColorTemperature(
           lightColorTemperatureNewValue:
               newEntity.lightColorTemperature.getOrCrash(),
@@ -115,7 +115,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
               lightColorSaturation.getOrCrash() ||
           newEntity.lightColorValue.getOrCrash() !=
               lightColorValue.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         (await changeColorHsv(
           lightColorAlphaNewValue: newEntity.lightColorAlpha.getOrCrash(),
           lightColorHueNewValue: newEntity.lightColorHue.getOrCrash(),
@@ -146,13 +146,13 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
           },
         );
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );

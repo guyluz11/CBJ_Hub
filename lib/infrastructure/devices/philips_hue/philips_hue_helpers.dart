@@ -51,7 +51,7 @@ class PhilipsHueHelpers {
                 ? light.name
                 : 'PhilipsHue test 2',
           ),
-          deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+          entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('philips_hue'),
           senderDeviceModel: DeviceSenderDeviceModel(light.modelId),
           senderId: DeviceSenderId(),

@@ -22,7 +22,7 @@ class HpHelpers {
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
       defaultName: DeviceDefaultName(mDnsName),
-      deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+      entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('HP'),
       senderDeviceModel: DeviceSenderDeviceModel('UP7550PVG'),
       senderId: DeviceSenderId(),

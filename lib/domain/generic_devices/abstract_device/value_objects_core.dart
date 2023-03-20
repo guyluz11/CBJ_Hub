@@ -86,15 +86,15 @@ class DeviceDefaultName extends ValueObjectCore<String?> {
   static const maxLength = 1000;
 }
 
-class DeviceState extends ValueObjectCore<String> {
-  factory DeviceState(String? input) {
-    return DeviceState._(
+class EntityState extends ValueObjectCore<String> {
+  factory EntityState(String? input) {
+    return EntityState._(
       validateDeviceNotEmpty(input!)
           .flatMap((a) => validateDeviceStateExist(input)),
     );
   }
 
-  const DeviceState._(this.value);
+  const EntityState._(this.value);
 
   @override
   final Either<CoreFailure<String>, String> value;
@@ -179,16 +179,16 @@ class DeviceAction extends ValueObjectCore<String> {
   final Either<CoreFailure<String>, String> value;
 }
 
-class DeviceType extends ValueObjectCore<String> {
-  factory DeviceType(String? input) {
+class EntityType extends ValueObjectCore<String> {
+  factory EntityType(String? input) {
     assert(input != null);
-    return DeviceType._(
+    return EntityType._(
       validateDeviceNotEmpty(input!)
           .flatMap((a) => validateDeviceTypeExist(input)),
     );
   }
 
-  const DeviceType._(this.value);
+  const EntityType._(this.value);
 
   @override
   final Either<CoreFailure<String>, String> value;

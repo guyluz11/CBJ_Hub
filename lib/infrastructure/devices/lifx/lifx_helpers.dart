@@ -23,7 +23,7 @@ class LifxHelpers {
       defaultName: DeviceDefaultName(
         lifxDevice.label != '' ? lifxDevice.label : 'Lifx test 2',
       ),
-      deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+      entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('Lifx'),
       senderDeviceModel: DeviceSenderDeviceModel('Cloud'),
       senderId: DeviceSenderId(),

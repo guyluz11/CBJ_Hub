@@ -15,7 +15,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.vendorUniqueId,
     required super.deviceVendor,
     required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -83,7 +83,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
       smartComputerShutDownState =
           GenericSmartComputerShutdownState(DeviceActions.itIsFalse.toString());
 
-      // deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      // entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
       //
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
@@ -91,7 +91,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
 
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
 
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,

@@ -19,7 +19,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
     required super.uniqueId,
     required VendorUniqueId vendorUniqueId,
     required DeviceDefaultName defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -76,7 +76,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
     }
 
     try {
-      if (newEntity.deviceStateGRPC.getOrCrash() !=
+      if (newEntity.entityStateGRPC.getOrCrash() !=
           DeviceStateGRPC.ack.toString()) {
         if (newEntity.boilerSwitchState!.getOrCrash() !=
             boilerSwitchState!.getOrCrash()) {
@@ -109,7 +109,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
             logger.e('actionToPreform is not set correctly on Switcher V2');
           }
         }
-        deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+        entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
 
         getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
           entityFromTheHub: this,
@@ -117,7 +117,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
       }
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
 
       getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
         entityFromTheHub: this,

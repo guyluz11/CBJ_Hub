@@ -166,7 +166,7 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
       device.executeDeviceAction(newEntity: tuyaSmartDE);
     } else {
       logger.w(
-        'TuyaSmart device type does not exist ${device?.deviceTypes.getOrCrash()}',
+        'TuyaSmart device type does not exist ${device?.entityTypes.getOrCrash()}',
       );
     }
   }

@@ -29,7 +29,7 @@ class SonoffDiyHelpers {
           uniqueId: uniqueDeviceIdTemp,
           vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
           defaultName: DeviceDefaultName(mDnsName),
-          deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+          entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('SonoffDiy'),
           senderDeviceModel: DeviceSenderDeviceModel('d1'),
           senderId: DeviceSenderId(),

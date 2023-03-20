@@ -15,7 +15,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     required super.uniqueId,
     required super.vendorUniqueId,
     required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -66,7 +66,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     }
 
     try {
-      // if (deviceStateGRPC.getOrCrash() == DeviceStateGRPC.ack.toString()) {
+      // if (entityStateGRPC.getOrCrash() == DeviceStateGRPC.ack.toString()) {
       //   return right(unit);
       // }
 
@@ -150,13 +150,13 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
           },
         );
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );

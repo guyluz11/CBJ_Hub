@@ -6,13 +6,13 @@ class WizHelpers {
     // required WizBulb wizDevice,
     required CoreUniqueId? uniqueDeviceId,
   }) {
-    CoreUniqueId uniqueDeviceIdTemp;
-
-    if (uniqueDeviceId != null) {
-      uniqueDeviceIdTemp = uniqueDeviceId;
-    } else {
-      uniqueDeviceIdTemp = CoreUniqueId();
-    }
+    // CoreUniqueId uniqueDeviceIdTemp;
+    //
+    // if (uniqueDeviceId != null) {
+    //   uniqueDeviceIdTemp = uniqueDeviceId;
+    // } else {
+    //   uniqueDeviceIdTemp = CoreUniqueId();
+    // }
     return null;
     // final WizWhiteEntity wizDE = WizWhiteEntity(
     //   uniqueId: uniqueDeviceIdTemp,
@@ -20,7 +20,7 @@ class WizHelpers {
     //   defaultName: DeviceDefaultName(
     //     wizDevice.label != '' ? wizDevice.label : 'Wiz test 2',
     //   ),
-    //   deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+    //   entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
     //   senderDeviceOs: DeviceSenderDeviceOs('Wiz'),
     //   senderDeviceModel: DeviceSenderDeviceModel('Cloud'),
     //   senderId: DeviceSenderId(),

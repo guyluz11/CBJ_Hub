@@ -314,8 +314,8 @@ class HiveRepository extends ILocalDbRepository {
 
         devices.add(
           deviceEntity
-            ..deviceStateGRPC =
-                DeviceState(DeviceStateGRPC.waitingInComp.toString()),
+            ..entityStateGRPC =
+                EntityState(DeviceStateGRPC.waitingInComp.toString()),
         );
       }
       return right(devices);
@@ -769,7 +769,7 @@ class HiveRepository extends ILocalDbRepository {
 
         scenes.add(
           sceneEntity.copyWith(
-            deviceStateGRPC: SceneCbjDeviceStateGRPC(
+            entityStateGRPC: SceneCbjDeviceStateGRPC(
               DeviceStateGRPC.waitingInComp.toString(),
             ),
           ),
@@ -803,7 +803,7 @@ class HiveRepository extends ILocalDbRepository {
 
         routines.add(
           routineEntity.copyWith(
-            deviceStateGRPC: RoutineCbjDeviceStateGRPC(
+            entityStateGRPC: RoutineCbjDeviceStateGRPC(
               DeviceStateGRPC.waitingInComp.toString(),
             ),
           ),
@@ -837,7 +837,7 @@ class HiveRepository extends ILocalDbRepository {
 
         bindings.add(
           bindingEntity.copyWith(
-            deviceStateGRPC: BindingCbjDeviceStateGRPC(
+            entityStateGRPC: BindingCbjDeviceStateGRPC(
               DeviceStateGRPC.waitingInComp.toString(),
             ),
           ),

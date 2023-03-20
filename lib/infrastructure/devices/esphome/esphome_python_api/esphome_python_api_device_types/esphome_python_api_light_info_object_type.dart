@@ -48,7 +48,7 @@
 //       uniqueId: CoreUniqueId(),
 //       vendorUniqueId: VendorUniqueId.fromUniqueString(uniqueId!),
 //       defaultName: DeviceDefaultName(name),
-//       deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+//       entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
 //       stateMassage: DeviceStateMassage('EspHome Created'),
 //       senderDeviceOs: DeviceSenderDeviceOs('ESPHome'),
 //       senderDeviceModel: DeviceSenderDeviceModel('ESPHome model'),

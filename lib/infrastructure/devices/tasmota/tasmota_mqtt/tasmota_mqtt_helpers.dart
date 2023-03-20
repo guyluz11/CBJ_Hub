@@ -54,7 +54,7 @@ class TasmotaMqttHelpers {
         uniqueId: uniqueDeviceIdTemp,
         vendorUniqueId: VendorUniqueId.fromUniqueString(mac),
         defaultName: DeviceDefaultName(name),
-        deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+        entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('TasmotaMqtt'),
         senderDeviceModel: DeviceSenderDeviceModel('LED'),
         senderId: DeviceSenderId(),

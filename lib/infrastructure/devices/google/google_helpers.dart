@@ -24,7 +24,7 @@ class GoogleHelpers {
       uniqueId: uniqueDeviceIdTemp,
       vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
       defaultName: DeviceDefaultName('Chromecast'),
-      deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+      entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('Android'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),
       senderId: DeviceSenderId(),

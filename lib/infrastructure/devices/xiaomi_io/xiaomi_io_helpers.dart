@@ -26,7 +26,7 @@ class XiaomiIoHelpers {
       defaultName: DeviceDefaultName(
         xiaomiIoDevice.name != '' ? xiaomiIoDevice.name : 'XiaomiIo test 2',
       ),
-      deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+      entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('xiaomi_io'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),
       senderId: DeviceSenderId(),

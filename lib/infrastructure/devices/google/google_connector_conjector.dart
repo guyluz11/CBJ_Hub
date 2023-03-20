@@ -94,7 +94,7 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
       device.executeDeviceAction(newEntity: googleDE);
     } else {
       logger.w(
-        'Google device type does not exist ${device?.deviceTypes.getOrCrash()}',
+        'Google device type does not exist ${device?.entityTypes.getOrCrash()}',
       );
     }
   }

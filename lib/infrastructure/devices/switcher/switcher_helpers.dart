@@ -43,7 +43,7 @@ class SwitcherHelpers {
         vendorUniqueId:
             VendorUniqueId.fromUniqueString(switcherDevice.deviceId),
         defaultName: DeviceDefaultName(switcherDevice.switcherName),
-        deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+        entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('switcher'),
         senderDeviceModel:
             DeviceSenderDeviceModel(switcherDevice.deviceType.toString()),
@@ -77,7 +77,7 @@ class SwitcherHelpers {
         vendorUniqueId:
             VendorUniqueId.fromUniqueString(switcherDevice.deviceId),
         defaultName: DeviceDefaultName(switcherDevice.switcherName),
-        deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+        entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('switcher'),
         senderDeviceModel:
             DeviceSenderDeviceModel(switcherDevice.deviceType.toString()),
@@ -107,7 +107,7 @@ class SwitcherHelpers {
         vendorUniqueId:
             VendorUniqueId.fromUniqueString(switcherDevice.deviceId),
         defaultName: DeviceDefaultName(switcherDevice.switcherName),
-        deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+        entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('switcher'),
         senderDeviceModel:
             DeviceSenderDeviceModel(switcherDevice.deviceType.toString()),

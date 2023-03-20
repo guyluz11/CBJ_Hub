@@ -19,7 +19,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     required super.uniqueId,
     required VendorUniqueId vendorUniqueId,
     required DeviceDefaultName defaultName,
-    required super.deviceStateGRPC,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
@@ -78,7 +78,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     }
 
     try {
-      if (newEntity.deviceStateGRPC.getOrCrash() !=
+      if (newEntity.entityStateGRPC.getOrCrash() !=
           DeviceStateGRPC.ack.toString()) {
         if (newEntity.blindsSwitchState!.getOrCrash() !=
             blindsSwitchState!.getOrCrash()) {
@@ -112,7 +112,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
             logger.e('actionToPreform is not set correctly on Switcher Runner');
           }
         }
-        deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+        entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
 
         getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
           entityFromTheHub: this,
@@ -120,7 +120,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
       }
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
 
       getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
         entityFromTheHub: this,

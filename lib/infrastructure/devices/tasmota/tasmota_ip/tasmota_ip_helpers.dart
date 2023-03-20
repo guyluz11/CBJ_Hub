@@ -76,7 +76,6 @@ class TasmotaIpHelpers {
     } else if (componentInDeviceNumberLabelAsInt >= 32 &&
         componentInDeviceNumberLabelAsInt <= 39) {
       // UI Label: Button
-
     } else if (componentInDeviceNumberLabelAsInt >= 64 &&
         componentInDeviceNumberLabelAsInt <= 71) {
       // UI Label: Button_n
@@ -94,7 +93,7 @@ class TasmotaIpHelpers {
         defaultName: DeviceDefaultName(
           '$deviceHostName-${componentInDeviceUiLabelAndComment![0]}',
         ),
-        deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+        entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
         senderDeviceOs: DeviceSenderDeviceOs('Tasmota'),
         senderDeviceModel: DeviceSenderDeviceModel('Tasmota'),
         senderId: DeviceSenderId(),
