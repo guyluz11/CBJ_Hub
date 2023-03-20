@@ -25,7 +25,8 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   Map<String, DeviceEntityAbstract> get getAllCompanyDevices => companyDevices;
 
   Future<String> accountLogin(
-      GenericEspHomeLoginDE genericEspHomeDeviceLoginDE) async {
+    GenericEspHomeLoginDE genericEspHomeDeviceLoginDE,
+  ) async {
     espHomeDevicePass =
         genericEspHomeDeviceLoginDE.espHomeDevicePass.getOrCrash();
     // We can start a search of devices in node red using a request to

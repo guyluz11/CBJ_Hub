@@ -121,7 +121,13 @@ class CompaniesConnectorConjector {
     } else if (deviceVendor == VendorsAndServices.tasmota.toString()) {
       TasmotaIpConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.espHome.toString()) {
-      EspHomeConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      final MapEntry<String, DeviceEntityAbstract> deviceEntityAbstractTemp =
+          MapEntry(
+        devicesEntry.value.vendorUniqueId.getOrCrash(),
+        devicesEntry.value,
+      );
+      EspHomeConnectorConjector.companyDevices
+          .addEntries([deviceEntityAbstractTemp]);
     } else if (deviceVendor ==
         VendorsAndServices.switcherSmartHome.toString()) {
       SwitcherConnectorConjector.companyDevices.addEntries([devicesEntry]);
