@@ -50,15 +50,15 @@ class TasmotaMqttConnectorConjector
 
       for (final DeviceEntityAbstract savedDevice in companyDevices.values) {
         if (savedDevice is TasmotaMqttLedEntity &&
-            deviceId == savedDevice.vendorUniqueId.getOrCrash()) {
+            deviceId == savedDevice.entityUniqueId.getOrCrash()) {
           deviceExist = true;
           break;
         } else if (savedDevice is GenericLightDE &&
-            deviceId == savedDevice.vendorUniqueId.getOrCrash()) {
+            deviceId == savedDevice.entityUniqueId.getOrCrash()) {
           /// Device exist as generic and needs to get converted to non generic type for this vendor
           tempCoreUniqueId = savedDevice.uniqueId;
           break;
-        } else if (deviceId == savedDevice.vendorUniqueId.getOrCrash()) {
+        } else if (deviceId == savedDevice.entityUniqueId.getOrCrash()) {
           logger.e(
             'Tasmota Mqtt device type supported but implementation is missing here',
           );

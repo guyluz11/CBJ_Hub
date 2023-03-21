@@ -38,15 +38,15 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
           for (final DeviceEntityAbstract savedDevice
               in companyDevices.values) {
             if (savedDevice is LifxWhiteEntity &&
-                lifxDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+                lifxDevice.id == savedDevice.entityUniqueId.getOrCrash()) {
               deviceExist = true;
               break;
             } else if (savedDevice is GenericLightDE &&
-                lifxDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+                lifxDevice.id == savedDevice.entityUniqueId.getOrCrash()) {
               tempCoreUniqueId = savedDevice.uniqueId;
               break;
             } else if (lifxDevice.id ==
-                savedDevice.vendorUniqueId.getOrCrash()) {
+                savedDevice.entityUniqueId.getOrCrash()) {
               logger.w(
                 'Lifx device type supported but implementation is missing here',
               );

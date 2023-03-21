@@ -31,16 +31,16 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
 
     for (final DeviceEntityAbstract device in companyDevices.values) {
       if (device is ChromeCastEntity &&
-          (mDnsName == device.vendorUniqueId.getOrCrash() ||
+          (mDnsName == device.entityUniqueId.getOrCrash() ||
               ip == device.lastKnownIp!.getOrCrash())) {
         return;
       } // Same tv can have multiple mDns names so we can't compere it without ip in the object
       // else if (device is GenericSmartTvDE &&
-      //     (mDnsName == device.vendorUniqueId.getOrCrash() ||
+      //     (mDnsName == device.entityUniqueId.getOrCrash() ||
       //         ip == device.lastKnownIp!.getOrCrash())) {
       //   return;
       // }
-      else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+      else if (mDnsName == device.entityUniqueId.getOrCrash()) {
         logger.w(
           'Google device type supported but implementation is missing here',
         );
@@ -94,7 +94,7 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
       device.executeDeviceAction(newEntity: googleDE);
     } else {
       logger.w(
-        'Google device type does not exist ${device?.deviceTypes.getOrCrash()}',
+        'Google device type does not exist ${device?.entityTypes.getOrCrash()}',
       );
     }
   }

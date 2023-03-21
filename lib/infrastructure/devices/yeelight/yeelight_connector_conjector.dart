@@ -29,17 +29,17 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
               in companyDevices.values) {
             if (savedDevice is Yeelight1SeEntity &&
                 yeelightDevice.id.toString() ==
-                    savedDevice.vendorUniqueId.getOrCrash()) {
+                    savedDevice.entityUniqueId.getOrCrash()) {
               deviceExist = true;
               break;
             } else if (savedDevice is GenericRgbwLightDE &&
                 yeelightDevice.id.toString() ==
-                    savedDevice.vendorUniqueId.getOrCrash()) {
+                    savedDevice.entityUniqueId.getOrCrash()) {
               /// Device exist as generic and needs to get converted to non generic type for this vendor
               tempCoreUniqueId = savedDevice.uniqueId;
               break;
             } else if (yeelightDevice.id.toString() ==
-                savedDevice.vendorUniqueId.getOrCrash()) {
+                savedDevice.entityUniqueId.getOrCrash()) {
               logger.w(
                 'Yeelight Mqtt device type supported but implementation is missing here',
               );

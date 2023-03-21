@@ -14,31 +14,30 @@ import 'package:dartz/dartz.dart';
 class EspHomeLightEntity extends GenericLightDE {
   EspHomeLightEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
-    required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
+    required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.lightSwitchState,
-    required this.deviceMdnsName,
-    required this.devicePort,
-    required this.espHomeKey,
-    this.lastKnownIp,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.espHome.toString()),
         );
-
-  DeviceLastKnownIp? lastKnownIp;
-
-  DeviceMdnsName deviceMdnsName;
-
-  DevicePort devicePort;
-
-  EspHomeKey espHomeKey;
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({
@@ -55,7 +54,7 @@ class EspHomeLightEntity extends GenericLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         final DeviceActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
@@ -79,13 +78,13 @@ class EspHomeLightEntity extends GenericLightDE {
           logger.e('actionToPreform is not set correctly ESPHome light');
         }
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
       //
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
@@ -105,7 +104,7 @@ class EspHomeLightEntity extends GenericLightDE {
       final String nodeRedDevicesTopic =
           getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
       final String topic =
-          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${espHomeKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
 
       getIt<IMqttServerRepository>()
           .publishMessage(topic, """{"state":true}""");
@@ -125,7 +124,7 @@ class EspHomeLightEntity extends GenericLightDE {
       final String nodeRedDevicesTopic =
           getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
       final String topic =
-          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${espHomeKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
 
       getIt<IMqttServerRepository>()
           .publishMessage(topic, """{"state":false}""");

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_smart_device/cbj_smart_device_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_smart_device_client/cbj_smart_device_client.dart';
@@ -22,15 +21,13 @@ class CbjDevicesConnectorConjector
   Future<void> addNewDeviceByHostInfo({
     required ActiveHost activeHost,
   }) async {
-    final List<CoreUniqueId?> tempCoreUniqueId = [];
-
     for (final DeviceEntityAbstract savedDevice in companyDevices.values) {
       if ((savedDevice is CbjSmartComputerEntity) &&
           await activeHost.hostName ==
-              savedDevice.vendorUniqueId.getOrCrash()) {
+              savedDevice.entityUniqueId.getOrCrash()) {
         return;
       } else if (await activeHost.hostName ==
-          savedDevice.vendorUniqueId.getOrCrash()) {
+          savedDevice.entityUniqueId.getOrCrash()) {
         logger.w(
           'Cbj device type supported but implementation is missing here',
         );
@@ -58,7 +55,7 @@ class CbjDevicesConnectorConjector
       companyDevices.addEntries([deviceAsEntry]);
 
       logger.v(
-        'New Cbj Smart Device name:${entityAsDevice.defaultName.getOrCrash()}',
+        'New Cbj Smart Device name:${entityAsDevice.cbjEntityName.getOrCrash()}',
       );
     }
   }
@@ -101,7 +98,7 @@ class CbjDevicesConnectorConjector
   // // Future<void> setTheSameDeviceFromAllDevices(
   // //   DeviceEntityAbstract cbjDevicesDE,
   // // ) async {
-  // //   final String deviceVendorUniqueId = cbjDevicesDE.vendorUniqueId.getOrCrash();
+  // //   final String deviceEntityUniqueId = cbjDevicesDE.entityUniqueId.getOrCrash();
   // //   for(a)
   // // }
 
@@ -117,7 +114,7 @@ class CbjDevicesConnectorConjector
   Future<List<CbjSmartDeviceInfo?>> getAllComponentsOfDevice(
     ActiveHost activeHost,
   ) async {
-    final String deviceIp = activeHost.address;
+    activeHost.address;
     final List<CbjSmartDeviceInfo?> devicesInfo =
         await CbjSmartDeviceClient.getCbjSmartDeviceHostDevicesInfo(activeHost);
     return devicesInfo;

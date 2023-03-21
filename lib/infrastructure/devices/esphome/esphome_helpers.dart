@@ -114,11 +114,15 @@ class EspHomeHelpers {
         deviceEntityList.add(
           EspHomeLightEntity(
             uniqueId: CoreUniqueId(),
-            vendorUniqueId: VendorUniqueId.fromUniqueString(
+            entityUniqueId: EntityUniqueId(
               espHomeDeviceEntityObject.config['uniqueId'] as String,
             ),
-            defaultName: DeviceDefaultName(espHomeDeviceEntityObject.name),
-            deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+            cbjEntityName: CbjEntityName(espHomeDeviceEntityObject.name),
+            entityOriginalName:
+                EntityOriginalName(espHomeDeviceEntityObject.name),
+            deviceOriginalName:
+                DeviceOriginalName(espHomeDeviceEntityObject.name),
+            entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
             stateMassage: DeviceStateMassage('Test'),
             senderDeviceOs: DeviceSenderDeviceOs('EspHome'),
             senderDeviceModel: DeviceSenderDeviceModel('Probably esp8266'),
@@ -126,10 +130,16 @@ class EspHomeHelpers {
             compUuid: DeviceCompUuid('test'),
             powerConsumption: DevicePowerConsumption('0'),
             lightSwitchState: GenericLightSwitchState('on'),
-            deviceMdnsName: DeviceMdnsName(mDnsName),
+            deviceMdns: DeviceMdns(mDnsName),
             devicePort: DevicePort(port),
-            espHomeKey: EspHomeKey(deviceKey),
-            lastKnownIp: DeviceLastKnownIp(address),
+            entityKey: EntityKey(deviceKey),
+            deviceLastKnownIp: DeviceLastKnownIp(address),
+            deviceUniqueId: DeviceUniqueId('0'),
+            deviceHostName: DeviceHostName('0'),
+            devicesMacAddress: DevicesMacAddress('0'),
+            requestTimeStamp: RequestTimeStamp('0'),
+            lastResponseFromDeviceTimeStamp:
+                LastResponseFromDeviceTimeStamp('0'),
           ),
         );
       } else if (espHomeDeviceEntityObject.type == 'Switch' ||
@@ -138,22 +148,32 @@ class EspHomeHelpers {
         deviceEntityList.add(
           EspHomeSwitchEntity(
             uniqueId: CoreUniqueId(),
-            vendorUniqueId: VendorUniqueId.fromUniqueString(
+            entityUniqueId: EntityUniqueId(
               espHomeDeviceEntityObject.config['uniqueId'] as String,
             ),
-            defaultName: DeviceDefaultName(espHomeDeviceEntityObject.name),
-            deviceStateGRPC: DeviceState(DeviceStateGRPC.ack.toString()),
+            cbjEntityName: CbjEntityName(espHomeDeviceEntityObject.name),
+            entityOriginalName:
+                EntityOriginalName(espHomeDeviceEntityObject.name),
+            deviceOriginalName:
+                DeviceOriginalName(espHomeDeviceEntityObject.name),
+            entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
             stateMassage: DeviceStateMassage('Test'),
             senderDeviceOs: DeviceSenderDeviceOs('EspHome'),
             senderDeviceModel: DeviceSenderDeviceModel('Probably esp8266'),
             senderId: DeviceSenderId.fromUniqueString('Test'),
             compUuid: DeviceCompUuid('test'),
             powerConsumption: DevicePowerConsumption('0'),
-            deviceMdnsName: DeviceMdnsName(mDnsName),
+            deviceMdns: DeviceMdns(mDnsName),
             devicePort: DevicePort(port),
-            espHomeKey: EspHomeKey(deviceKey),
-            lastKnownIp: DeviceLastKnownIp(address),
+            entityKey: EntityKey(deviceKey),
+            deviceLastKnownIp: DeviceLastKnownIp(address),
             switchState: GenericSwitchSwitchState('on'),
+            deviceUniqueId: DeviceUniqueId('0'),
+            deviceHostName: DeviceHostName('0'),
+            devicesMacAddress: DevicesMacAddress('0'),
+            requestTimeStamp: RequestTimeStamp('0'),
+            lastResponseFromDeviceTimeStamp:
+                LastResponseFromDeviceTimeStamp('0'),
           ),
         );
       }

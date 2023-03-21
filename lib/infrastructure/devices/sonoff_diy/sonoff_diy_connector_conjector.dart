@@ -28,14 +28,14 @@ class SonoffDiyConnectorConjector implements AbstractCompanyConnectorConjector {
 
     for (final DeviceEntityAbstract device in companyDevices.values) {
       if (device is SonoffDiyRelaySwitchEntity &&
-          mDnsName == device.vendorUniqueId.getOrCrash()) {
+          mDnsName == device.entityUniqueId.getOrCrash()) {
         return;
       } else if (device is GenericSwitchDE &&
-          mDnsName == device.vendorUniqueId.getOrCrash()) {
+          mDnsName == device.entityUniqueId.getOrCrash()) {
         /// Device exist as generic and needs to get converted to non generic type for this vendor
         tempCoreUniqueId = device.uniqueId;
         break;
-      } else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+      } else if (mDnsName == device.entityUniqueId.getOrCrash()) {
         logger.w(
           'Sonoff device type supported but implementation is missing here',
         );

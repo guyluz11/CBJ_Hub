@@ -16,15 +16,26 @@ import 'package:lifx_http_api/lifx_http_api.dart';
 class LifxWhiteEntity extends GenericLightDE {
   LifxWhiteEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
-    required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
+    required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.lightSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.lifx.toString()),
@@ -48,7 +59,7 @@ class LifxWhiteEntity extends GenericLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         final DeviceActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
@@ -72,13 +83,13 @@ class LifxWhiteEntity extends GenericLightDE {
           logger.w('actionToPreform is not set correctly on Lifx White');
         }
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
@@ -92,7 +103,7 @@ class LifxWhiteEntity extends GenericLightDE {
     try {
       final setStateBodyResponse =
           await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(vendorUniqueId.getOrCrash()),
+        Selector.id(entityUniqueId.getOrCrash()),
         power: 'on',
         fast: true,
       );
@@ -116,7 +127,7 @@ class LifxWhiteEntity extends GenericLightDE {
     try {
       final setStateBodyResponse =
           await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(vendorUniqueId.getOrCrash()),
+        Selector.id(entityUniqueId.getOrCrash()),
         power: 'off',
         fast: true,
       );

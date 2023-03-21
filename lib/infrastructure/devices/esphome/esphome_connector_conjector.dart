@@ -61,12 +61,12 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
       final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-          MapEntry(deviceToAdd.vendorUniqueId.getOrCrash(), deviceToAdd);
+          MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
 
       logger.i(
-        'New ESPHome devices name:${entityAsDevice.defaultName.getOrCrash()}',
+        'New ESPHome devices name:${entityAsDevice.cbjEntityName.getOrCrash()}',
       );
     }
     // Save state locally so that nodeRED flows will not get created again
@@ -78,7 +78,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     DeviceEntityAbstract espHomeDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[espHomeDE.vendorUniqueId.getOrCrash()];
+        companyDevices[espHomeDE.entityUniqueId.getOrCrash()];
 
     if (device is EspHomeLightEntity) {
       device.executeDeviceAction(newEntity: espHomeDE);

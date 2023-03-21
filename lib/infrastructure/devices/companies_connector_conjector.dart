@@ -123,7 +123,7 @@ class CompaniesConnectorConjector {
     } else if (deviceVendor == VendorsAndServices.espHome.toString()) {
       final MapEntry<String, DeviceEntityAbstract> deviceEntityAbstractTemp =
           MapEntry(
-        devicesEntry.value.vendorUniqueId.getOrCrash(),
+        devicesEntry.value.entityUniqueId.getOrCrash(),
         devicesEntry.value,
       );
       EspHomeConnectorConjector.companyDevices

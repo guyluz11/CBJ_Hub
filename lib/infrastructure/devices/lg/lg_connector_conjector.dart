@@ -31,17 +31,17 @@ class LgConnectorConjector implements AbstractCompanyConnectorConjector {
 
     for (final DeviceEntityAbstract device in companyDevices.values) {
       if (device is LgWebosTvEntity &&
-          (mDnsName == device.vendorUniqueId.getOrCrash() ||
-              ip == device.lastKnownIp!.getOrCrash())) {
+          (mDnsName == device.entityUniqueId.getOrCrash() ||
+              ip == device.deviceLastKnownIp.getOrCrash())) {
         return;
       }
       // Same tv can have multiple mDns names so we can't compere it without ip in the object
       // else if (device is GenericSmartTvDE &&
-      //     (mDnsName == device.vendorUniqueId.getOrCrash() ||
+      //     (mDnsName == device.entityUniqueId.getOrCrash() ||
       //         ip == device.lastKnownIp!.getOrCrash())) {
       //   return;
       // }
-      else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+      else if (mDnsName == device.entityUniqueId.getOrCrash()) {
         logger.w(
           'LG device type supported but implementation is missing here',
         );
@@ -69,7 +69,7 @@ class LgConnectorConjector implements AbstractCompanyConnectorConjector {
 
       companyDevices.addEntries([deviceAsEntry]);
       logger.i(
-        'New LG device got added ${entityAsDevice.defaultName.getOrCrash()}',
+        'New LG device got added ${entityAsDevice.cbjEntityName.getOrCrash()}',
       );
     }
   }
