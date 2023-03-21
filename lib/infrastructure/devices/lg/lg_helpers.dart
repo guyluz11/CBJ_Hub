@@ -20,7 +20,7 @@ class LgHelpers {
     //
     // final LgWebosTvEntity lgDE = LgWebosTvEntity(
     //   uniqueId: uniqueDeviceIdTemp,
-    //   vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
+    //   entityUniqueId: EntityUniqueId.fromUniqueString(mDnsName),
     //   cbjEntityName: CbjEntityName('LG TV'),
     //   entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
     //   senderDeviceOs: DeviceSenderDeviceOs('WebOs'),

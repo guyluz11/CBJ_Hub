@@ -14,7 +14,7 @@ class GenericPrinterDE extends DeviceEntityAbstract {
   /// All public field of GenericPrinter entity
   GenericPrinterDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -26,8 +26,16 @@ class GenericPrinterDE extends DeviceEntityAbstract {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required this.printerSwitchState,
-    required this.lastKnownIp,
   }) : super(
           entityTypes: EntityType(DeviceTypes.printer.toString()),
         );
@@ -35,7 +43,7 @@ class GenericPrinterDE extends DeviceEntityAbstract {
   /// Empty instance of GenericPrinterEntity
   factory GenericPrinterDE.empty() => GenericPrinterDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -45,17 +53,23 @@ class GenericPrinterDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         printerSwitchState:
             GenericPrinterSwitchState(DeviceActions.off.toString()),
-        lastKnownIp: DeviceLastKnownIp(''),
       );
 
   /// State of the printer on/off
   GenericPrinterSwitchState? printerSwitchState;
-
-  DeviceLastKnownIp? lastKnownIp;
 
   //
   // /// Will return failure if any of the fields failed or return unit if fields
@@ -94,7 +108,7 @@ class GenericPrinterDE extends DeviceEntityAbstract {
     return GenericPrinterDeviceDtos(
       deviceDtoClass: (GenericPrinterDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),
@@ -108,7 +122,7 @@ class GenericPrinterDE extends DeviceEntityAbstract {
       deviceVendor: deviceVendor.getOrCrash(),
       powerConsumption: powerConsumption.getOrCrash(),
       printerSwitchState: printerSwitchState!.getOrCrash(),
-      lastKnownIp: lastKnownIp!.getOrCrash(),
+      lastKnownIp: deviceLastKnownIp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }

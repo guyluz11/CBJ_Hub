@@ -14,7 +14,7 @@ class GenericEmptyDE extends DeviceEntityAbstract {
   /// All public field of GenericEmpty entity
   GenericEmptyDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -26,6 +26,15 @@ class GenericEmptyDE extends DeviceEntityAbstract {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required this.emptySwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.emptyDevice.toString()),
@@ -33,8 +42,11 @@ class GenericEmptyDE extends DeviceEntityAbstract {
 
   /// Empty instance of GenericEmptyEntity
   factory GenericEmptyDE.empty() => GenericEmptyDE(
+        deviceVendor: DeviceVendor(
+          VendorsAndServices.vendorsAndServicesNotSupported.toString(),
+        ),
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName('Empty device'),
         entityOriginalName: EntityOriginalName('Missing entity original name'),
         deviceOriginalName: DeviceOriginalName('Missing device original name'),
@@ -43,11 +55,17 @@ class GenericEmptyDE extends DeviceEntityAbstract {
         senderDeviceModel: DeviceSenderDeviceModel('Hub'),
         stateMassage: DeviceStateMassage('Test'),
         senderId: DeviceSenderId(),
-        deviceVendor: DeviceVendor(
-          VendorsAndServices.vendorsAndServicesNotSupported.toString(),
-        ),
         compUuid: DeviceCompUuid('Test'),
         powerConsumption: DevicePowerConsumption('Test'),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         emptySwitchState: GenericEmptySwitchState(DeviceActions.off.toString()),
       );
 
@@ -91,7 +109,7 @@ class GenericEmptyDE extends DeviceEntityAbstract {
     return GenericEmptyDeviceDtos(
       deviceDtoClass: (GenericEmptyDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

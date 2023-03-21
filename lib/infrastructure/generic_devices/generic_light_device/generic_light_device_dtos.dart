@@ -14,7 +14,7 @@ abstract class GenericLightDeviceDtos
   factory GenericLightDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -39,7 +39,7 @@ abstract class GenericLightDeviceDtos
     return GenericLightDeviceDtos(
       deviceDtoClass: (GenericLightDeviceDtos).toString(),
       id: genericLightDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericLightDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericLightDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericLightDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericLightDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericLightDE.deviceOriginalName.getOrCrash(),
@@ -68,7 +68,7 @@ abstract class GenericLightDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericLightDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

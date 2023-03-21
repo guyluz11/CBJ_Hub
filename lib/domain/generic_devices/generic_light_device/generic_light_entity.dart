@@ -14,7 +14,7 @@ class GenericLightDE extends DeviceEntityAbstract {
   /// All public field of GenericLight entity
   GenericLightDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -26,6 +26,15 @@ class GenericLightDE extends DeviceEntityAbstract {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required this.lightSwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.light.toString()),
@@ -34,7 +43,7 @@ class GenericLightDE extends DeviceEntityAbstract {
   /// Empty instance of GenericLightEntity
   factory GenericLightDE.empty() => GenericLightDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -44,8 +53,17 @@ class GenericLightDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         lightSwitchState: GenericLightSwitchState(DeviceActions.off.toString()),
       );
 
@@ -89,7 +107,7 @@ class GenericLightDE extends DeviceEntityAbstract {
     return GenericLightDeviceDtos(
       deviceDtoClass: (GenericLightDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

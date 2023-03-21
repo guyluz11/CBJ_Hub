@@ -14,7 +14,7 @@ abstract class GenericEmptyDeviceDtos
   factory GenericEmptyDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -39,7 +39,7 @@ abstract class GenericEmptyDeviceDtos
     return GenericEmptyDeviceDtos(
       deviceDtoClass: (GenericEmptyDeviceDtos).toString(),
       id: genericEmptyDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericEmptyDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericEmptyDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericEmptyDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericEmptyDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericEmptyDE.deviceOriginalName.getOrCrash(),
@@ -68,7 +68,7 @@ abstract class GenericEmptyDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericEmptyDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

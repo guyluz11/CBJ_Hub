@@ -14,7 +14,7 @@ abstract class GenericPingDeviceDtos
   factory GenericPingDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -39,7 +39,7 @@ abstract class GenericPingDeviceDtos
     return GenericPingDeviceDtos(
       deviceDtoClass: (GenericPingDeviceDtos).toString(),
       id: genericPingDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericPingDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericPingDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericPingDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericPingDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericPingDE.deviceOriginalName.getOrCrash(),
@@ -68,7 +68,7 @@ abstract class GenericPingDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericPingDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

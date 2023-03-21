@@ -35,7 +35,7 @@ class TuyaSmartHelpers {
           : 'TuyaSmart test 2';
       tuyaSmartDE = TuyaSmartJbtA70RgbcwWfEntity(
         uniqueId: uniqueDeviceIdTemp,
-        vendorUniqueId: VendorUniqueId.fromUniqueString(tuyaSmartDevice.id),
+        entityUniqueId: EntityUniqueId(tuyaSmartDevice.id),
         cbjEntityName: CbjEntityName(deviceName),
         entityOriginalName: EntityOriginalName(deviceName),
         deviceOriginalName: DeviceOriginalName(deviceName),
@@ -58,6 +58,15 @@ class TuyaSmartHelpers {
         lightColorSaturation: GenericRgbwLightColorSaturation('1.0'),
         lightColorValue: GenericRgbwLightColorValue('1.0'),
         cloudTuya: cloudTuyaOrSmartLifeOrJinvooSmart,
+        deviceUniqueId: DeviceUniqueId('0'),
+        devicePort: DevicePort('0'),
+        deviceLastKnownIp: DeviceLastKnownIp('0'),
+        deviceHostName: DeviceHostName('0'),
+        deviceMdns: DeviceMdns('0'),
+        devicesMacAddress: DevicesMacAddress('0'),
+        entityKey: EntityKey('0'),
+        requestTimeStamp: RequestTimeStamp('0'),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
       );
     } else if (tuyaSmartDevice is TuyaSwitch &&
         (tuyaSmartDevice.icon ==
@@ -76,7 +85,7 @@ class TuyaSmartHelpers {
 
       tuyaSmartDE = TuyaSmartPlugEntity(
         uniqueId: uniqueDeviceIdTemp,
-        vendorUniqueId: VendorUniqueId.fromUniqueString(tuyaSmartDevice.id),
+        entityUniqueId: EntityUniqueId(tuyaSmartDevice.id),
         cbjEntityName: CbjEntityName(deviceName),
         entityOriginalName: EntityOriginalName(deviceName),
         deviceOriginalName: DeviceOriginalName(deviceName),
@@ -89,6 +98,15 @@ class TuyaSmartHelpers {
         powerConsumption: DevicePowerConsumption('0'),
         smartPlugState: GenericSmartPlugState(tuyaSmartDevice.state.toString()),
         cloudTuya: cloudTuyaOrSmartLifeOrJinvooSmart,
+        deviceUniqueId: DeviceUniqueId('0'),
+        devicePort: DevicePort('0'),
+        deviceLastKnownIp: DeviceLastKnownIp('0'),
+        deviceHostName: DeviceHostName('0'),
+        deviceMdns: DeviceMdns('0'),
+        devicesMacAddress: DevicesMacAddress('0'),
+        entityKey: EntityKey('0'),
+        requestTimeStamp: RequestTimeStamp('0'),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
       );
     } else if (tuyaSmartDevice is TuyaSwitch) {
       final String deviceName = tuyaSmartDevice.name != ''
@@ -97,7 +115,7 @@ class TuyaSmartHelpers {
 
       tuyaSmartDE = TuyaSmartSwitchEntity(
         uniqueId: uniqueDeviceIdTemp,
-        vendorUniqueId: VendorUniqueId.fromUniqueString(tuyaSmartDevice.id),
+        entityUniqueId: EntityUniqueId(tuyaSmartDevice.id),
         cbjEntityName: CbjEntityName(deviceName),
         entityOriginalName: EntityOriginalName(deviceName),
         deviceOriginalName: DeviceOriginalName(deviceName),
@@ -110,6 +128,15 @@ class TuyaSmartHelpers {
         powerConsumption: DevicePowerConsumption('0'),
         switchState: GenericSwitchSwitchState(tuyaSmartDevice.state.toString()),
         cloudTuya: cloudTuyaOrSmartLifeOrJinvooSmart,
+        deviceUniqueId: DeviceUniqueId('0'),
+        devicePort: DevicePort('0'),
+        deviceLastKnownIp: DeviceLastKnownIp('0'),
+        deviceHostName: DeviceHostName('0'),
+        deviceMdns: DeviceMdns('0'),
+        devicesMacAddress: DevicesMacAddress('0'),
+        entityKey: EntityKey('0'),
+        requestTimeStamp: RequestTimeStamp('0'),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
       );
     } else {
       logger.i(

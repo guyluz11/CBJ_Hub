@@ -38,7 +38,7 @@ class CbjDevicesHelpers {
       if (deviceType == CbjDeviceTypes.smartComputer) {
         entityAbstract = CbjSmartComputerEntity(
           uniqueId: CoreUniqueId(),
-          vendorUniqueId: VendorUniqueId.fromUniqueString(deviceId),
+          entityUniqueId: EntityUniqueId(deviceId),
           deviceVendor: DeviceVendor(
             VendorsAndServices.cbjDevices.toString(),
           ),
@@ -59,6 +59,15 @@ class CbjDevicesHelpers {
           entityOriginalName: EntityOriginalName(cbjEntityName),
           deviceOriginalName: DeviceOriginalName(cbjEntityName),
           powerConsumption: DevicePowerConsumption('0'),
+          deviceUniqueId: DeviceUniqueId('0'),
+          devicePort: DevicePort('0'),
+          deviceLastKnownIp: DeviceLastKnownIp('0'),
+          deviceHostName: DeviceHostName('0'),
+          deviceMdns: DeviceMdns('0'),
+          devicesMacAddress: DevicesMacAddress('0'),
+          entityKey: EntityKey('0'),
+          requestTimeStamp: RequestTimeStamp('0'),
+          lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
         );
       } else {
         logger.w('Cbj Smart Device type is not supported ${deviceType.name}');

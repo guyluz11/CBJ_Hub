@@ -2,7 +2,6 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_ip/tasmota_ip_api/tasmota_ip_api_components.dart';
-import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_ip/tasmota_ip_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_ip/tasmota_ip_switch/tasmota_ip_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbenum.dart';
 import 'package:cbj_hub/utils.dart';
@@ -87,7 +86,7 @@ class TasmotaIpHelpers {
       // UI Label: Relay
       return TasmotaIpSwitchEntity(
         uniqueId: coreUniqueIdTemp,
-        vendorUniqueId: VendorUniqueId.fromUniqueString(
+        entityUniqueId: EntityUniqueId(
           '$deviceHostName-$componentInDeviceNumberLabel}',
         ),
         cbjEntityName: CbjEntityName(
@@ -107,8 +106,15 @@ class TasmotaIpHelpers {
         stateMassage: DeviceStateMassage('Hello World'),
         powerConsumption: DevicePowerConsumption('0'),
         switchState: GenericSwitchSwitchState(DeviceActions.off.toString()),
-        tasmotaIpDeviceHostName: TasmotaIpHostName(deviceHostName),
-        tasmotaIpLastIp: TasmotaIpLastIp(activeHost.address),
+        deviceHostName: DeviceHostName(deviceHostName),
+        deviceLastKnownIp: DeviceLastKnownIp(activeHost.address),
+        deviceUniqueId: DeviceUniqueId('0'),
+        devicePort: DevicePort('0'),
+        deviceMdns: DeviceMdns('0'),
+        devicesMacAddress: DevicesMacAddress('0'),
+        entityKey: EntityKey('0'),
+        requestTimeStamp: RequestTimeStamp('0'),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
       );
     } else if (componentInDeviceNumberLabelAsInt >= 256 &&
         componentInDeviceNumberLabelAsInt <= 283) {

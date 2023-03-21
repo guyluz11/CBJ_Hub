@@ -14,7 +14,7 @@ abstract class GenericBoilerDeviceDtos
   factory GenericBoilerDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -39,7 +39,7 @@ abstract class GenericBoilerDeviceDtos
     return GenericBoilerDeviceDtos(
       deviceDtoClass: (GenericBoilerDeviceDtos).toString(),
       id: genericBoilerDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericBoilerDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericBoilerDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericBoilerDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericBoilerDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericBoilerDE.deviceOriginalName.getOrCrash(),
@@ -68,7 +68,7 @@ abstract class GenericBoilerDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericBoilerDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

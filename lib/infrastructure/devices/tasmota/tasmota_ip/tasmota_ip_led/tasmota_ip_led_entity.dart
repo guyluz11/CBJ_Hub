@@ -5,7 +5,6 @@ import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_value_objects.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_ip/tasmota_ip_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -26,7 +25,7 @@ import 'package:dartz/dartz.dart';
 class TasmotaIpLedEntity extends GenericLightDE {
   TasmotaIpLedEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -37,15 +36,19 @@ class TasmotaIpLedEntity extends GenericLightDE {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.lightSwitchState,
-    required this.tasmotaIpDeviceHostName,
-    required this.tasmotaIpLastIp,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.tasmota.toString()),
         );
-
-  TasmotaIpHostName tasmotaIpDeviceHostName;
-  TasmotaIpLastIp tasmotaIpLastIp;
 
   /// Please override the following methods
   @override
@@ -113,7 +116,7 @@ class TasmotaIpLedEntity extends GenericLightDE {
 
     try {
       getIt<IMqttServerRepository>().publishMessage(
-        'cmnd/${tasmotaIpDeviceHostName.getOrCrash()}/Power',
+        'cmnd/${deviceHostName.getOrCrash()}/Power',
         'ON',
       );
       return right(unit);
@@ -128,7 +131,7 @@ class TasmotaIpLedEntity extends GenericLightDE {
 
     try {
       getIt<IMqttServerRepository>().publishMessage(
-        'cmnd/${tasmotaIpDeviceHostName.getOrCrash()}/Power',
+        'cmnd/${deviceHostName.getOrCrash()}/Power',
         'OFF',
       );
       return right(unit);

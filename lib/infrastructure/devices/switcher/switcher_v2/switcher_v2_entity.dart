@@ -8,7 +8,6 @@ import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boi
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_value_objects.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_api_object.dart';
-import 'package:cbj_hub/infrastructure/devices/switcher/switcher_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -17,7 +16,7 @@ import 'package:dartz/dartz.dart';
 class SwitcherV2Entity extends GenericBoilerDE {
   SwitcherV2Entity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -28,30 +27,29 @@ class SwitcherV2Entity extends GenericBoilerDE {
     required super.senderId,
     required super.compUuid,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.boilerSwitchState,
-    required this.switcherMacAddress,
-    required this.lastKnownIp,
-    required this.switcherPort,
   }) : super(
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
         ) {
     switcherObject = SwitcherApiObject(
       deviceType: SwitcherDevicesTypes.switcherV2Esp,
-      deviceId: vendorUniqueId.getOrCrash(),
-      switcherIp: lastKnownIp.getOrCrash(),
+      deviceId: entityUniqueId.getOrCrash(),
+      switcherIp: deviceLastKnownIp.getOrCrash(),
       switcherName: cbjEntityName.getOrCrash()!,
-      macAddress: switcherMacAddress.getOrCrash(),
+      macAddress: devicesMacAddress.getOrCrash(),
       powerConsumption: powerConsumption.getOrCrash(),
     );
   }
-
-  SwitcherMacAddress switcherMacAddress;
-
-  /// Switcher communication port
-  SwitcherPort? switcherPort;
-
-  DeviceLastKnownIp lastKnownIp;
 
   /// Switcher package object require to close previews request before new one
   SwitcherApiObject? switcherObject;

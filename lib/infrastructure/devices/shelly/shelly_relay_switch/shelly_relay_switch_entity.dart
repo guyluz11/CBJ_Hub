@@ -14,7 +14,7 @@ import 'package:dartz/dartz.dart';
 class ShellyRelaySwitchEntity extends GenericSwitchDE {
   ShellyRelaySwitchEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -23,28 +23,27 @@ class ShellyRelaySwitchEntity extends GenericSwitchDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.switchState,
-    required this.deviceMdnsName,
-    required this.devicePort,
-    required this.lastKnownIp,
-    required String hostName,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.shelly.toString()),
         ) {
     shellyRelaySwitch = ShellyApiRelaySwitch(
-      lastKnownIp: lastKnownIp.getOrCrash(),
-      mDnsName: deviceMdnsName.getOrCrash(),
-      hostName: hostName,
+      lastKnownIp: deviceLastKnownIp.getOrCrash(),
+      mDnsName: deviceMdns.getOrCrash(),
+      hostName: deviceHostName.getOrCrash(),
     );
   }
-
-  DeviceLastKnownIp lastKnownIp;
-
-  DeviceMdnsName deviceMdnsName;
-
-  DevicePort devicePort;
 
   late ShellyApiRelaySwitch shellyRelaySwitch;
 

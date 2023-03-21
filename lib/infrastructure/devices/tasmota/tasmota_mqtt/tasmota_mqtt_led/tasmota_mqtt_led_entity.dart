@@ -14,7 +14,7 @@ import 'package:dartz/dartz.dart';
 class TasmotaMqttLedEntity extends GenericLightDE {
   TasmotaMqttLedEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -25,6 +25,15 @@ class TasmotaMqttLedEntity extends GenericLightDE {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.lightSwitchState,
     required this.tasmotaMqttDeviceTopicName,
   }) : super(

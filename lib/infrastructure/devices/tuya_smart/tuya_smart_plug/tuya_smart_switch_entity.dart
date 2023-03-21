@@ -15,7 +15,7 @@ import 'package:dartz/dartz.dart';
 class TuyaSmartPlugEntity extends GenericSmartPlugDE {
   TuyaSmartPlugEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -24,8 +24,17 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.smartPlugState,
     required this.cloudTuya,
   }) : super(
@@ -100,7 +109,7 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
     smartPlugState = GenericSmartPlugState(DeviceActions.on.toString());
     try {
       final String requestResponse = await cloudTuya.turnOn(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {
@@ -113,7 +122,7 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
 
     try {
       final String requestResponse = await cloudTuya.turnOff(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {

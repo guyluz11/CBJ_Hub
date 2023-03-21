@@ -14,7 +14,7 @@ abstract class GenericPrinterDeviceDtos
   factory GenericPrinterDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -42,7 +42,7 @@ abstract class GenericPrinterDeviceDtos
     return GenericPrinterDeviceDtos(
       deviceDtoClass: (GenericPrinterDeviceDtos).toString(),
       id: genericPrinterDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericPrinterDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericPrinterDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericPrinterDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericPrinterDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericPrinterDE.deviceOriginalName.getOrCrash(),
@@ -72,7 +72,7 @@ abstract class GenericPrinterDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericPrinterDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

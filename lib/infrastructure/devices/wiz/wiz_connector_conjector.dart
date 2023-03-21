@@ -29,10 +29,10 @@ class WizConnectorConjector implements AbstractCompanyConnectorConjector {
     // for (final DeviceEntityAbstract savedDevice in companyDevices.values) {
     //   if ((savedDevice is WizWhiteEntity) &&
     //       await activeHost.hostName ==
-    //           savedDevice.vendorUniqueId.getOrCrash()) {
+    //           savedDevice.entityUniqueId.getOrCrash()) {
     //     return;
     //   } else if (await activeHost.hostName ==
-    //       savedDevice.vendorUniqueId.getOrCrash()) {
+    //       savedDevice.entityUniqueId.getOrCrash()) {
     //     logger.w(
     //       'Wiz IP device type supported but implementation is missing here',
     //     );
@@ -83,15 +83,15 @@ class WizConnectorConjector implements AbstractCompanyConnectorConjector {
         //   for (final DeviceEntityAbstract savedDevice
         //       in companyDevices.values) {
         //     if (savedDevice is WizWhiteEntity &&
-        //         wizDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+        //         wizDevice.id == savedDevice.entityUniqueId.getOrCrash()) {
         //       deviceExist = true;
         //       break;
         //     } else if (savedDevice is GenericLightDE &&
-        //         wizDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+        //         wizDevice.id == savedDevice.entityUniqueId.getOrCrash()) {
         //       tempCoreUniqueId = savedDevice.uniqueId;
         //       break;
         //     } else if (wizDevice.id ==
-        //         savedDevice.vendorUniqueId.getOrCrash()) {
+        //         savedDevice.entityUniqueId.getOrCrash()) {
         //       logger.w(
         //         'Wiz device type supported but implementation is missing here',
         //       );

@@ -16,7 +16,7 @@ import 'package:dartz/dartz.dart';
 class ChromeCastEntity extends GenericSmartTvDE {
   ChromeCastEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -25,9 +25,18 @@ class ChromeCastEntity extends GenericSmartTvDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
-    required super.smartTvSwitchState,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.smartTvSwitchState,
     required this.googlePort,
     super.openUrl,
     super.pausePlayState,
@@ -46,7 +55,7 @@ class ChromeCastEntity extends GenericSmartTvDE {
 
   DeviceLastKnownIp? lastKnownIp;
 
-  DeviceMdnsName? deviceMdnsName;
+  DeviceMdns? deviceMdnsName;
 
   late ChromecastNodeRedApi chromecastNodeRedApi;
 

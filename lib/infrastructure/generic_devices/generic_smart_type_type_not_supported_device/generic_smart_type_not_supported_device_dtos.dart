@@ -15,7 +15,7 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
   factory GenericSmartTypeNotSupportedDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -41,8 +41,8 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
     return GenericSmartTypeNotSupportedDeviceDtos(
       deviceDtoClass: (GenericSmartTypeNotSupportedDeviceDtos).toString(),
       id: genericSmartTypeNotSupportedDE.uniqueId.getOrCrash(),
-      vendorUniqueId:
-          genericSmartTypeNotSupportedDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId:
+          genericSmartTypeNotSupportedDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericSmartTypeNotSupportedDE.cbjEntityName.getOrCrash(),
       entityOriginalName:
           genericSmartTypeNotSupportedDE.entityOriginalName.getOrCrash(),
@@ -79,7 +79,7 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSmartTypeNotSupportedDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

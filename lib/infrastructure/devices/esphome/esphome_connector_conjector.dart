@@ -61,7 +61,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
       final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-          MapEntry(deviceToAdd.vendorUniqueId.getOrCrash(), deviceToAdd);
+          MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
 
@@ -78,7 +78,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     DeviceEntityAbstract espHomeDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[espHomeDE.vendorUniqueId.getOrCrash()];
+        companyDevices[espHomeDE.entityUniqueId.getOrCrash()];
 
     if (device is EspHomeLightEntity) {
       device.executeDeviceAction(newEntity: espHomeDE);

@@ -10,7 +10,7 @@ import 'package:uuid/uuid.dart';
 abstract class DeviceEntityAbstract {
   DeviceEntityAbstract({
     required this.uniqueId,
-    required this.vendorUniqueId,
+    required this.entityUniqueId,
     required this.deviceVendor,
     required this.entityTypes,
     required this.cbjEntityName,
@@ -23,13 +23,22 @@ abstract class DeviceEntityAbstract {
     required this.entityOriginalName,
     required this.deviceOriginalName,
     required this.powerConsumption,
+    required this.deviceUniqueId,
+    required this.devicePort,
+    required this.deviceLastKnownIp,
+    required this.deviceHostName,
+    required this.deviceMdns,
+    required this.devicesMacAddress,
+    required this.entityKey,
+    required this.requestTimeStamp,
+    required this.lastResponseFromDeviceTimeStamp,
   });
 
   /// The unique id that CyBear Jinni Hub gave the device
   CoreUniqueId uniqueId;
 
   /// The unique id that each company gave their device
-  VendorUniqueId vendorUniqueId;
+  EntityUniqueId entityUniqueId;
 
   /// The name to show in cbj app, can be changed by the use
   CbjEntityName cbjEntityName;
@@ -62,10 +71,38 @@ abstract class DeviceEntityAbstract {
   /// The smart GenericLight type
   DeviceVendor deviceVendor;
 
-  /// Unique id of the computer that the GenericLight located in
+  /// Unique id of the computer
   DeviceCompUuid compUuid;
 
+  /// Power consumption of the device
   DevicePowerConsumption powerConsumption;
+
+  /// Unique id of the device that the entity exists on
+  DeviceUniqueId deviceUniqueId;
+
+  /// Port of the device
+  DevicePort devicePort;
+
+  /// Last known ip
+  DeviceLastKnownIp deviceLastKnownIp;
+
+  /// Device Host name
+  DeviceHostName deviceHostName;
+
+  /// Device Mdns
+  DeviceMdns deviceMdns;
+
+  /// Mac address of the device
+  DevicesMacAddress devicesMacAddress;
+
+  /// Some entities will use key to transmit the states via the api
+  EntityKey entityKey;
+
+  /// Time that the action got sent from the app
+  RequestTimeStamp requestTimeStamp;
+
+  /// Time of the last response from the device
+  LastResponseFromDeviceTimeStamp lastResponseFromDeviceTimeStamp;
 
   String getDeviceId();
 
@@ -126,7 +163,7 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
   DeviceEntityNotAbstract()
       : super(
           uniqueId: CoreUniqueId(),
-          vendorUniqueId: VendorUniqueId(),
+          entityUniqueId: EntityUniqueId('Entity unique id is empty'),
           deviceVendor: DeviceVendor(
             VendorsAndServices.vendorsAndServicesNotSupported.toString(),
           ),
@@ -144,6 +181,16 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
           senderId: DeviceSenderId(),
           stateMassage: DeviceStateMassage('go'),
           powerConsumption: DevicePowerConsumption('0'),
+          deviceUniqueId: DeviceUniqueId('Device unique id is empty'),
+          devicePort: DevicePort('1'),
+          deviceLastKnownIp: DeviceLastKnownIp('1.1.1.1'),
+          deviceHostName: DeviceHostName('deviceHostName is empty'),
+          deviceMdns: DeviceMdns('deviceMdns is empty'),
+          devicesMacAddress: DevicesMacAddress('devicesMacAddress is empty'),
+          entityKey: EntityKey('entityKey is empty'),
+          requestTimeStamp: RequestTimeStamp('requestTimeStamp is empty'),
+          lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(
+              'lastResponseFromDeviceTimeStamp is empty'),
         );
 
   @override
@@ -179,12 +226,6 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
   List<String> getListOfPropertiesToChange() {
     return [];
   }
-
-  /// The smart device id
-// DeviceUniqueId? id;
-//
-// /// The default name of the device
-// CbjEntityName? cbjEntityName;
 }
 
 //
@@ -197,7 +238,7 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
 //   /// All public field of device entity
 //   const factory DeviceEntityAbstract({
 //     /// The smart device id
-//     required DeviceUniqueId? id,
+//     required EntityUniqueId? id,
 //
 //     /// The default name of the device
 //     required CbjEntityName? cbjEntityName,
@@ -207,7 +248,7 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
 //
 //   /// Empty instance of DeviceEntity
 //   factory DeviceEntityAbstract.empty() => DeviceEntityAbstract(
-//         id: DeviceUniqueId(),
+//         id: EntityUniqueId(),
 //         cbjEntityName: CbjEntityName(''),
 //       );
 //

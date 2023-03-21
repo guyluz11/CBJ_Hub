@@ -22,7 +22,7 @@ class LifxHelpers {
 
     final LifxWhiteEntity lifxDE = LifxWhiteEntity(
       uniqueId: uniqueDeviceIdTemp,
-      vendorUniqueId: VendorUniqueId.fromUniqueString(lifxDevice.id),
+      entityUniqueId: EntityUniqueId(lifxDevice.id),
       cbjEntityName: CbjEntityName(deviceName),
       entityOriginalName: EntityOriginalName(deviceName),
       deviceOriginalName: DeviceOriginalName(deviceName),
@@ -36,6 +36,15 @@ class LifxHelpers {
       lightSwitchState: GenericLightSwitchState(
         (lifxDevice.power == LIFXPower.on).toString(),
       ),
+      deviceUniqueId: DeviceUniqueId('0'),
+      devicePort: DevicePort('0'),
+      deviceLastKnownIp: DeviceLastKnownIp('0'),
+      deviceHostName: DeviceHostName('0'),
+      deviceMdns: DeviceMdns('0'),
+      devicesMacAddress: DevicesMacAddress('0'),
+      entityKey: EntityKey('0'),
+      requestTimeStamp: RequestTimeStamp('0'),
+      lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
     );
 
     return lifxDE;

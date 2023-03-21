@@ -8,7 +8,6 @@ import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_bli
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_value_objects.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_api_object.dart';
-import 'package:cbj_hub/infrastructure/devices/switcher/switcher_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -17,7 +16,7 @@ import 'package:dartz/dartz.dart';
 class SwitcherRunnerEntity extends GenericBlindsDE {
   SwitcherRunnerEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -27,42 +26,37 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.blindsSwitchState,
     required super.powerConsumption,
-    required this.switcherMacAddress,
-    required this.lastKnownIp,
-    this.switcherPort,
+    required super.deviceUniqueId,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.blindsSwitchState,
+    required super.devicePort,
   }) : super(
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
         ) {
-    switcherPort ??=
-        SwitcherPort(SwitcherApiObject.switcherTcpPort2.toString());
     switcherObject = SwitcherApiObject(
       deviceType: SwitcherDevicesTypes.switcherRunner,
-      deviceId: vendorUniqueId.getOrCrash(),
-      switcherIp: lastKnownIp.getOrCrash(),
+      deviceId: entityUniqueId.getOrCrash(),
+      switcherIp: deviceLastKnownIp.getOrCrash(),
       switcherName: cbjEntityName.getOrCrash()!,
-      macAddress: switcherMacAddress.getOrCrash(),
-      port: int.parse(switcherPort!.getOrCrash()),
+      macAddress: devicesMacAddress.getOrCrash(),
+      port: int.parse(devicePort.getOrCrash()),
       powerConsumption: powerConsumption.getOrCrash(),
     );
   }
-
-  SwitcherMacAddress switcherMacAddress;
-
-  /// Switcher communication port
-  SwitcherPort? switcherPort;
-
-  DeviceLastKnownIp lastKnownIp;
 
   /// Switcher package object require to close previews request before new one
   SwitcherApiObject? switcherObject;
 
   String? autoShutdown;
   String? electricCurrent;
-  String? lastDataUpdate;
-  String? macAddress;
   String? remainingTime;
 
   /// Please override the following methods

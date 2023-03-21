@@ -15,7 +15,7 @@ import 'package:dartz/dartz.dart';
 class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
   TuyaSmartJbtA70RgbcwWfEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -24,15 +24,24 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required super.lightSwitchState,
     required super.lightColorTemperature,
-    required super.lightBrightness,
     required super.lightColorAlpha,
     required super.lightColorHue,
     required super.lightColorSaturation,
     required super.lightColorValue,
+    required super.lightBrightness,
     required this.cloudTuya,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.tuyaSmart.toString()),
@@ -167,7 +176,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
     lightSwitchState = GenericRgbwLightSwitchState(DeviceActions.on.toString());
     try {
       final String requestResponse = await cloudTuya.turnOn(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {
@@ -182,7 +191,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
 
     try {
       final String requestResponse = await cloudTuya.turnOff(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {
@@ -196,7 +205,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
 
     try {
       final String requestResponse = await cloudTuya.setBrightness(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
         lightBrightness.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
@@ -214,7 +223,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
 
     try {
       final String requestResponse = await cloudTuya.setColorTemperature(
-        deviceId: vendorUniqueId.getOrCrash(),
+        deviceId: entityUniqueId.getOrCrash(),
         newTemperature: lightColorTemperatureNewValue,
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
@@ -238,7 +247,7 @@ class TuyaSmartJbtA70RgbcwWfEntity extends GenericRgbwLightDE {
 
     try {
       final String requestResponse = await cloudTuya.setColorHsv(
-        deviceId: vendorUniqueId.getOrCrash(),
+        deviceId: entityUniqueId.getOrCrash(),
         hue: lightColorHue.getOrCrash(),
         saturation: lightColorSaturation.getOrCrash(),
         brightness: lightBrightness.getOrCrash(),

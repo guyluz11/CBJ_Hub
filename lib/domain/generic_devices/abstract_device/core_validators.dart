@@ -52,7 +52,7 @@ Either<CoreFailure<String>, String> validatePortNotEmpty(String input) {
   return right(input);
 }
 
-Either<CoreFailure<String>, String> validateEspHomeKeyNotEmpty(String input) {
+Either<CoreFailure<String>, String> validateKeyNotEmpty(String input) {
   return right(input);
 }
 

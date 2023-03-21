@@ -13,7 +13,7 @@ class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
   /// All public field of GenericSmartTypeNotSupported entity
   GenericSmartTypeNotSupportedDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -25,6 +25,15 @@ class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
     required super.senderId,
     required super.compUuid,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
   }) : super(
           entityTypes: EntityType(DeviceTypes.smartTypeNotSupported.toString()),
         );
@@ -33,7 +42,7 @@ class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
   factory GenericSmartTypeNotSupportedDE.empty() =>
       GenericSmartTypeNotSupportedDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -43,8 +52,17 @@ class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
       );
 
   //
@@ -84,7 +102,7 @@ class GenericSmartTypeNotSupportedDE extends DeviceEntityAbstract {
     return GenericSmartTypeNotSupportedDeviceDtos(
       deviceDtoClass: (GenericSmartTypeNotSupportedDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

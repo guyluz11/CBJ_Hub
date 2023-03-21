@@ -14,7 +14,7 @@ abstract class GenericBlindsDeviceDtos
   factory GenericBlindsDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -39,7 +39,7 @@ abstract class GenericBlindsDeviceDtos
     return GenericBlindsDeviceDtos(
       deviceDtoClass: (GenericBlindsDeviceDtos).toString(),
       id: genericBlindsDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericBlindsDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericBlindsDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericBlindsDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericBlindsDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericBlindsDE.deviceOriginalName.getOrCrash(),
@@ -67,7 +67,7 @@ abstract class GenericBlindsDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericBlindsDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

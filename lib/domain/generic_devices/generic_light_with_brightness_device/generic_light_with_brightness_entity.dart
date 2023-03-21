@@ -14,7 +14,7 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
   /// All public field of GenericLightWithBrightness entity
   GenericLightWithBrightnessDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -26,6 +26,15 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required this.lightSwitchState,
     required this.lightBrightness,
   }) : super(
@@ -36,7 +45,7 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
   /// Empty instance of GenericLightWithBrightnessEntity
   factory GenericLightWithBrightnessDE.empty() => GenericLightWithBrightnessDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -46,8 +55,17 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         lightSwitchState:
             GenericLightWithBrightnessSwitchState(DeviceActions.off.toString()),
         lightBrightness: GenericLightWithBrightnessBrightness(''),
@@ -95,7 +113,7 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
     return GenericLightWithBrightnessDeviceDtos(
       deviceDtoClass: (GenericLightWithBrightnessDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

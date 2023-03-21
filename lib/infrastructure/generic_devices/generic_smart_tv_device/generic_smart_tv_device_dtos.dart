@@ -14,7 +14,7 @@ abstract class GenericSmartTvDeviceDtos
   factory GenericSmartTvDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -45,7 +45,7 @@ abstract class GenericSmartTvDeviceDtos
     return GenericSmartTvDeviceDtos(
       deviceDtoClass: (GenericSmartTvDeviceDtos).toString(),
       id: genericSmartTvDE.uniqueId.getOrCrash(),
-      vendorUniqueId: genericSmartTvDE.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericSmartTvDE.entityUniqueId.getOrCrash(),
       cbjEntityName: genericSmartTvDE.cbjEntityName.getOrCrash(),
       entityOriginalName: genericSmartTvDE.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericSmartTvDE.deviceOriginalName.getOrCrash(),
@@ -78,7 +78,7 @@ abstract class GenericSmartTvDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSmartTvDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

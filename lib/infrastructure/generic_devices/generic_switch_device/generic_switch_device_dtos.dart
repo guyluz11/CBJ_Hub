@@ -14,7 +14,7 @@ abstract class GenericSwitchDeviceDtos
   factory GenericSwitchDeviceDtos({
     // @JsonKey(ignore: true)
     required String id,
-    required String vendorUniqueId,
+    required String entityUniqueId,
     required String? cbjEntityName,
     required String? entityOriginalName,
     required String? deviceOriginalName,
@@ -39,7 +39,7 @@ abstract class GenericSwitchDeviceDtos
     return GenericSwitchDeviceDtos(
       deviceDtoClass: (GenericSwitchDeviceDtos).toString(),
       id: genericSwitchDe.uniqueId.getOrCrash(),
-      vendorUniqueId: genericSwitchDe.vendorUniqueId.getOrCrash(),
+      entityUniqueId: genericSwitchDe.entityUniqueId.getOrCrash(),
       cbjEntityName: genericSwitchDe.cbjEntityName.getOrCrash(),
       entityOriginalName: genericSwitchDe.entityOriginalName.getOrCrash(),
       deviceOriginalName: genericSwitchDe.deviceOriginalName.getOrCrash(),
@@ -68,7 +68,7 @@ abstract class GenericSwitchDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSwitchDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      vendorUniqueId: VendorUniqueId.fromUniqueString(vendorUniqueId),
+      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),

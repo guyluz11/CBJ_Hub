@@ -14,7 +14,7 @@ import 'package:dartz/dartz.dart';
 class EspHomeLightEntity extends GenericLightDE {
   EspHomeLightEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -23,24 +23,21 @@ class EspHomeLightEntity extends GenericLightDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
-    required super.lightSwitchState,
     required super.entityStateGRPC,
-    required this.deviceMdnsName,
-    required this.devicePort,
-    required this.espHomeKey,
-    this.lastKnownIp,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.lightSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.espHome.toString()),
         );
-
-  DeviceLastKnownIp? lastKnownIp;
-
-  DeviceMdnsName deviceMdnsName;
-
-  DevicePort devicePort;
-
-  EspHomeKey espHomeKey;
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({
@@ -107,7 +104,7 @@ class EspHomeLightEntity extends GenericLightDE {
       final String nodeRedDevicesTopic =
           getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
       final String topic =
-          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${espHomeKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
 
       getIt<IMqttServerRepository>()
           .publishMessage(topic, """{"state":true}""");
@@ -127,7 +124,7 @@ class EspHomeLightEntity extends GenericLightDE {
       final String nodeRedDevicesTopic =
           getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
       final String topic =
-          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${espHomeKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
 
       getIt<IMqttServerRepository>()
           .publishMessage(topic, """{"state":false}""");

@@ -14,7 +14,7 @@ class GenericPingDE extends DeviceEntityAbstract {
   /// All public field of GenericPing entity
   GenericPingDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -24,9 +24,18 @@ class GenericPingDE extends DeviceEntityAbstract {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
-    required this.pingSwitchState,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required this.pingSwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.pingDevice.toString()),
         );
@@ -34,7 +43,7 @@ class GenericPingDE extends DeviceEntityAbstract {
   /// Ping instance of GenericPingEntity
   factory GenericPingDE.empty() => GenericPingDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName('Ping device'),
         entityOriginalName: EntityOriginalName('Missing entity original name'),
         deviceOriginalName: DeviceOriginalName('Missing device original name'),
@@ -48,6 +57,15 @@ class GenericPingDE extends DeviceEntityAbstract {
         ),
         compUuid: DeviceCompUuid('Test'),
         powerConsumption: DevicePowerConsumption('Test'),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         pingSwitchState: GenericPingSwitchState(DeviceActions.off.toString()),
       );
 
@@ -91,7 +109,7 @@ class GenericPingDE extends DeviceEntityAbstract {
     return GenericPingDeviceDtos(
       deviceDtoClass: (GenericPingDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

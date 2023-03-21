@@ -14,7 +14,7 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
   /// All public field of GenericSmartComputer entity
   GenericSmartComputerDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -26,6 +26,15 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
     required super.compUuid,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required this.smartComputerSuspendState,
     required this.smartComputerShutDownState,
   }) : super(
@@ -35,7 +44,7 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
   /// Empty instance of GenericSmartComputerEntity
   factory GenericSmartComputerDE.empty() => GenericSmartComputerDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -45,8 +54,17 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         smartComputerSuspendState: GenericSmartComputerSuspendState(
           DeviceActions.itIsFalse.toString(),
         ),
@@ -98,7 +116,7 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
     return GenericSmartComputerDeviceDtos(
       deviceDtoClass: (GenericSmartComputerDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

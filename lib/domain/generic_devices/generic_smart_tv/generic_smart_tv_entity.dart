@@ -14,7 +14,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   /// All public field of GenericSmartTv entity
   GenericSmartTvDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -25,12 +25,21 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
     required super.senderId,
     required super.compUuid,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
     required this.smartTvSwitchState,
     this.openUrl,
     this.pausePlayState,
     this.skip,
     this.volume,
-    required super.powerConsumption,
   }) : super(
           entityTypes: EntityType(DeviceTypes.smartTV.toString()),
         );
@@ -38,7 +47,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   /// Empty instance of GenericSmartTvEntity
   factory GenericSmartTvDE.empty() => GenericSmartTvDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -48,8 +57,17 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         smartTvSwitchState:
             GenericSmartTvSwitchState(DeviceActions.off.toString()),
       );
@@ -98,7 +116,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
     return GenericSmartTvDeviceDtos(
       deviceDtoClass: (GenericSmartTvDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

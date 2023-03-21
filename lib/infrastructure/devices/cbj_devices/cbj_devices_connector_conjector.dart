@@ -24,10 +24,10 @@ class CbjDevicesConnectorConjector
     for (final DeviceEntityAbstract savedDevice in companyDevices.values) {
       if ((savedDevice is CbjSmartComputerEntity) &&
           await activeHost.hostName ==
-              savedDevice.vendorUniqueId.getOrCrash()) {
+              savedDevice.entityUniqueId.getOrCrash()) {
         return;
       } else if (await activeHost.hostName ==
-          savedDevice.vendorUniqueId.getOrCrash()) {
+          savedDevice.entityUniqueId.getOrCrash()) {
         logger.w(
           'Cbj device type supported but implementation is missing here',
         );
@@ -98,7 +98,7 @@ class CbjDevicesConnectorConjector
   // // Future<void> setTheSameDeviceFromAllDevices(
   // //   DeviceEntityAbstract cbjDevicesDE,
   // // ) async {
-  // //   final String deviceVendorUniqueId = cbjDevicesDE.vendorUniqueId.getOrCrash();
+  // //   final String deviceEntityUniqueId = cbjDevicesDE.entityUniqueId.getOrCrash();
   // //   for(a)
   // // }
 

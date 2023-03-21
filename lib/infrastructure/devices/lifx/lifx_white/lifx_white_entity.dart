@@ -16,7 +16,7 @@ import 'package:lifx_http_api/lifx_http_api.dart';
 class LifxWhiteEntity extends GenericLightDE {
   LifxWhiteEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -25,9 +25,18 @@ class LifxWhiteEntity extends GenericLightDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
-    required super.lightSwitchState,
     required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.lightSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.lifx.toString()),
         );
@@ -94,7 +103,7 @@ class LifxWhiteEntity extends GenericLightDE {
     try {
       final setStateBodyResponse =
           await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(vendorUniqueId.getOrCrash()),
+        Selector.id(entityUniqueId.getOrCrash()),
         power: 'on',
         fast: true,
       );
@@ -118,7 +127,7 @@ class LifxWhiteEntity extends GenericLightDE {
     try {
       final setStateBodyResponse =
           await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(vendorUniqueId.getOrCrash()),
+        Selector.id(entityUniqueId.getOrCrash()),
         power: 'off',
         fast: true,
       );

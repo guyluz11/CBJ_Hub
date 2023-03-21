@@ -12,7 +12,7 @@ import 'package:dartz/dartz.dart';
 class CbjSmartComputerEntity extends GenericSmartComputerDE {
   CbjSmartComputerEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -22,10 +22,19 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.smartComputerSuspendState,
-    required super.smartComputerShutDownState,
     required super.entityStateGRPC,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.smartComputerShutDownState,
+    required super.smartComputerSuspendState,
     required this.lastKnownIp,
   });
 
@@ -112,7 +121,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
 
     await CbjSmartDeviceClient.suspendCbjSmartDeviceHostDevice(
       lastKnownIp.getOrCrash(),
-      vendorUniqueId.getOrCrash(),
+      entityUniqueId.getOrCrash(),
     );
 
     return left(
@@ -130,7 +139,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
 
     await CbjSmartDeviceClient.shutDownCbjSmartDeviceHostDevice(
       lastKnownIp.getOrCrash(),
-      vendorUniqueId.getOrCrash(),
+      entityUniqueId.getOrCrash(),
     );
 
     return left(

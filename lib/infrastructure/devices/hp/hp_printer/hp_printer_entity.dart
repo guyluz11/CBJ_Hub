@@ -8,7 +8,7 @@ import 'package:dartz/dartz.dart';
 class HpPrinterEntity extends GenericPrinterDE {
   HpPrinterEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -17,12 +17,18 @@ class HpPrinterEntity extends GenericPrinterDE {
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required super.powerConsumption,
-    required super.printerSwitchState,
     required super.entityStateGRPC,
-    required this.deviceMdnsName,
-    required this.devicePort,
-    required super.lastKnownIp,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.printerSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.hp.toString()),
         );
@@ -30,10 +36,6 @@ class HpPrinterEntity extends GenericPrinterDE {
   static const List<String> mdnsTypes = [
     '_ipp._tcp',
   ];
-
-  DeviceMdnsName deviceMdnsName;
-
-  DevicePort devicePort;
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({

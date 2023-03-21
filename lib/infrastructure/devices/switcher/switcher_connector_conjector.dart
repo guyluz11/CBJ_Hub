@@ -30,17 +30,17 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
               savedDevice is SwitcherRunnerEntity ||
               savedDevice is SwitcherSmartPlugEntity) &&
           switcherApiObject.deviceId ==
-              savedDevice.vendorUniqueId.getOrCrash()) {
+              savedDevice.entityUniqueId.getOrCrash()) {
         return;
       } else if (savedDevice is GenericBoilerDE ||
           savedDevice is GenericBlindsDE &&
               switcherApiObject.deviceId ==
-                  savedDevice.vendorUniqueId.getOrCrash()) {
+                  savedDevice.entityUniqueId.getOrCrash()) {
         /// Device exist as generic and needs to get converted to non generic type for this vendor
         tempCoreUniqueId = savedDevice.uniqueId;
         break;
       } else if (switcherApiObject.deviceId ==
-          savedDevice.vendorUniqueId.getOrCrash()) {
+          savedDevice.entityUniqueId.getOrCrash()) {
         logger.w(
           'Switcher device type supported but implementation is missing here',
         );
@@ -107,7 +107,7 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
   // Future<void> setTheSameDeviceFromAllDevices(
   //   DeviceEntityAbstract switcherDE,
   // ) async {
-  //   final String deviceVendorUniqueId = switcherDE.vendorUniqueId.getOrCrash();
+  //   final String deviceEntityUniqueId = switcherDE.entityUniqueId.getOrCrash();
   //   for(a)
   // }
 

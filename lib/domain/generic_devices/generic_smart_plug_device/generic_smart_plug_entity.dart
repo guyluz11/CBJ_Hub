@@ -14,7 +14,7 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
   /// All public field of GenericSmartPlug entity
   GenericSmartPlugDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
@@ -25,8 +25,17 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
     required super.senderId,
     required super.compUuid,
     required super.entityStateGRPC,
-    required this.smartPlugState,
     required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required this.smartPlugState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.smartPlug.toString()),
         );
@@ -34,7 +43,7 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
   /// Empty instance of GenericSmartPlugEntity
   factory GenericSmartPlugDE.empty() => GenericSmartPlugDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
+        entityUniqueId: EntityUniqueId(''),
         cbjEntityName: CbjEntityName(''),
         entityOriginalName: EntityOriginalName(''),
         deviceOriginalName: DeviceOriginalName(''),
@@ -44,8 +53,17 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
         smartPlugState: GenericSmartPlugState(DeviceActions.off.toString()),
       );
 
@@ -89,7 +107,7 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
     return GenericSmartPlugDeviceDtos(
       deviceDtoClass: (GenericSmartPlugDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
       cbjEntityName: cbjEntityName.getOrCrash(),
       entityOriginalName: entityOriginalName.getOrCrash(),
       deviceOriginalName: deviceOriginalName.getOrCrash(),

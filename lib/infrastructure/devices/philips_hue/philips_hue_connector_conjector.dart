@@ -36,10 +36,10 @@ class PhilipsHueConnectorConjector
 
     for (final DeviceEntityAbstract device in companyDevices.values) {
       if (device is PhilipsHueE26Entity &&
-          (mDnsName == device.vendorUniqueId.getOrCrash() ||
-              ip == device.lastKnownIp!.getOrCrash())) {
+          (mDnsName == device.entityUniqueId.getOrCrash() ||
+              ip == device.deviceLastKnownIp.getOrCrash())) {
         return;
-      } else if (mDnsName == device.vendorUniqueId.getOrCrash()) {
+      } else if (mDnsName == device.entityUniqueId.getOrCrash()) {
         logger.w(
           'HP device type supported but implementation is missing here',
         );

@@ -67,7 +67,7 @@ class ShellyHelpers {
         final ShellyColorLightEntity shellyColorLightEntity =
             ShellyColorLightEntity(
           uniqueId: uniqueDeviceIdTemp,
-          vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
+          entityUniqueId: EntityUniqueId(mDnsName),
           cbjEntityName: CbjEntityName(mDnsName),
           entityOriginalName: EntityOriginalName(mDnsName),
           deviceOriginalName: DeviceOriginalName(mDnsName),
@@ -89,17 +89,22 @@ class ShellyHelpers {
               GenericRgbwLightColorSaturation(hsvColor.s.toString()),
           lightColorValue: GenericRgbwLightColorValue(hsvColor.v.toString()),
           devicePort: DevicePort(port),
-          hostName: mDnsName.toLowerCase(),
-          deviceMdnsName: DeviceMdnsName(mDnsName),
-          lastKnownIp: DeviceLastKnownIp(ip),
+          deviceHostName: DeviceHostName(mDnsName.toLowerCase()),
+          deviceMdns: DeviceMdns(mDnsName),
+          deviceLastKnownIp: DeviceLastKnownIp(ip),
           bulbeMode: shellyApiDeviceAbstract,
+          deviceUniqueId: DeviceUniqueId('0'),
+          devicesMacAddress: DevicesMacAddress('0'),
+          entityKey: EntityKey('0'),
+          requestTimeStamp: RequestTimeStamp('0'),
+          lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
         );
         deviceEntityList.add(shellyColorLightEntity);
       } else if (mDnsName.contains('shelly1-C45BBE78005D')) {
         final ShellyRelaySwitchEntity shellyRelaySwitchEntity =
             ShellyRelaySwitchEntity(
           uniqueId: uniqueDeviceIdTemp,
-          vendorUniqueId: VendorUniqueId.fromUniqueString(mDnsName),
+          entityUniqueId: EntityUniqueId(mDnsName),
           cbjEntityName: CbjEntityName(mDnsName),
           entityOriginalName: EntityOriginalName(mDnsName),
           deviceOriginalName: DeviceOriginalName(mDnsName),
@@ -111,10 +116,15 @@ class ShellyHelpers {
           stateMassage: DeviceStateMassage('Hello World'),
           powerConsumption: DevicePowerConsumption('0'),
           devicePort: DevicePort(port),
-          hostName: mDnsName.toLowerCase(),
-          deviceMdnsName: DeviceMdnsName(mDnsName),
-          lastKnownIp: DeviceLastKnownIp(ip),
+          deviceHostName: DeviceHostName(mDnsName.toLowerCase()),
+          deviceMdns: DeviceMdns(mDnsName),
+          deviceLastKnownIp: DeviceLastKnownIp(ip),
           switchState: GenericSwitchSwitchState(false.toString()),
+          deviceUniqueId: DeviceUniqueId('0'),
+          devicesMacAddress: DevicesMacAddress('0'),
+          entityKey: EntityKey('0'),
+          requestTimeStamp: RequestTimeStamp('0'),
+          lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
         );
         deviceEntityList.add(shellyRelaySwitchEntity);
       } else {

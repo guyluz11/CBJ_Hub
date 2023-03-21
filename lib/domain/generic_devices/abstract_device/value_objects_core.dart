@@ -54,16 +54,15 @@ class CoreUniqueId extends ValueObjectCore<String> {
 }
 
 /// Object that will store the unique id of the device that each vendor send
-class VendorUniqueId extends ValueObjectCore<String> {
-  factory VendorUniqueId() {
-    return VendorUniqueId._(right(const Uuid().v1()));
+class EntityUniqueId extends ValueObjectCore<String> {
+  factory EntityUniqueId(String? input) {
+    assert(input != null);
+    return EntityUniqueId._(
+      validateNotEmpty(input!),
+    );
   }
 
-  factory VendorUniqueId.fromUniqueString(String uniqueId) {
-    return VendorUniqueId._(right(uniqueId));
-  }
-
-  const VendorUniqueId._(this.value);
+  const EntityUniqueId._(this.value);
 
   @override
   final Either<CoreFailure<String>, String> value;
@@ -282,29 +281,15 @@ class DevicePowerConsumption extends ValueObjectCore<String> {
   final Either<CoreFailure<String>, String> value;
 }
 
-class DeviceMdnsName extends ValueObjectCore<String> {
-  factory DeviceMdnsName(String? input) {
+class DeviceMdns extends ValueObjectCore<String> {
+  factory DeviceMdns(String? input) {
     assert(input != null);
-    return DeviceMdnsName._(
+    return DeviceMdns._(
       validateMdnsNameNotEmpty(input!),
     );
   }
 
-  const DeviceMdnsName._(this.value);
-
-  @override
-  final Either<CoreFailure<String>, String> value;
-}
-
-class DeviceSecondWiFiName extends ValueObjectCore<String> {
-  factory DeviceSecondWiFiName(String? input) {
-    assert(input != null);
-    return DeviceSecondWiFiName._(
-      validateWiFiNameNotEmpty(input!),
-    );
-  }
-
-  const DeviceSecondWiFiName._(this.value);
+  const DeviceMdns._(this.value);
 
   @override
   final Either<CoreFailure<String>, String> value;
@@ -324,15 +309,85 @@ class DevicePort extends ValueObjectCore<String> {
   final Either<CoreFailure<String>, String> value;
 }
 
-class EspHomeKey extends ValueObjectCore<String> {
-  factory EspHomeKey(String? input) {
+class EntityKey extends ValueObjectCore<String> {
+  factory EntityKey(String? input) {
     assert(input != null);
-    return EspHomeKey._(
-      validateEspHomeKeyNotEmpty(input!),
+    return EntityKey._(
+      validateKeyNotEmpty(input!),
     );
   }
 
-  const EspHomeKey._(this.value);
+  const EntityKey._(this.value);
+
+  @override
+  final Either<CoreFailure<String>, String> value;
+}
+
+class DeviceUniqueId extends ValueObjectCore<String> {
+  factory DeviceUniqueId(String? input) {
+    assert(input != null);
+    return DeviceUniqueId._(
+      validateNotEmpty(input!),
+    );
+  }
+
+  const DeviceUniqueId._(this.value);
+
+  @override
+  final Either<CoreFailure<String>, String> value;
+}
+
+class DeviceHostName extends ValueObjectCore<String> {
+  factory DeviceHostName(String? input) {
+    assert(input != null);
+    return DeviceHostName._(
+      validateNotEmpty(input!),
+    );
+  }
+
+  const DeviceHostName._(this.value);
+
+  @override
+  final Either<CoreFailure<String>, String> value;
+}
+
+class RequestTimeStamp extends ValueObjectCore<String> {
+  factory RequestTimeStamp(String? input) {
+    assert(input != null);
+    return RequestTimeStamp._(
+      validateNotEmpty(input!),
+    );
+  }
+
+  const RequestTimeStamp._(this.value);
+
+  @override
+  final Either<CoreFailure<String>, String> value;
+}
+
+class LastResponseFromDeviceTimeStamp extends ValueObjectCore<String> {
+  factory LastResponseFromDeviceTimeStamp(String? input) {
+    assert(input != null);
+    return LastResponseFromDeviceTimeStamp._(
+      validateNotEmpty(input!),
+    );
+  }
+
+  const LastResponseFromDeviceTimeStamp._(this.value);
+
+  @override
+  final Either<CoreFailure<String>, String> value;
+}
+
+class DevicesMacAddress extends ValueObjectCore<String> {
+  factory DevicesMacAddress(String? input) {
+    assert(input != null);
+    return DevicesMacAddress._(
+      validateNotEmpty(input!),
+    );
+  }
+
+  const DevicesMacAddress._(this.value);
 
   @override
   final Either<CoreFailure<String>, String> value;

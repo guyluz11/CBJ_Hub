@@ -16,7 +16,7 @@ class WizHelpers {
     return null;
     // final WizWhiteEntity wizDE = WizWhiteEntity(
     //   uniqueId: uniqueDeviceIdTemp,
-    //   vendorUniqueId: VendorUniqueId.fromUniqueString(wizDevice.id),
+    //   entityUniqueId: EntityUniqueId.fromUniqueString(wizDevice.id),
     //   cbjEntityName: CbjEntityName(
     //     wizDevice.label != '' ? wizDevice.label : 'Wiz test 2',
     //   ),
