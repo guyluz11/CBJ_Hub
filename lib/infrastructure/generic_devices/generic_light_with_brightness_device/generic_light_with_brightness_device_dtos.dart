@@ -28,6 +28,15 @@ abstract class GenericLightWithBrightnessDeviceDtos
     required String? deviceVendor,
     required String? powerConsumption,
     required String? lightBrightness,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -65,6 +74,20 @@ abstract class GenericLightWithBrightnessDeviceDtos
       powerConsumption:
           genericLightWithBrightnessDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericLightWithBrightnessDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericLightWithBrightnessDE.devicePort.getOrCrash(),
+      deviceLastKnownIp:
+          genericLightWithBrightnessDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericLightWithBrightnessDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericLightWithBrightnessDE.deviceMdns.getOrCrash(),
+      devicesMacAddress:
+          genericLightWithBrightnessDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericLightWithBrightnessDE.entityKey.getOrCrash(),
+      requestTimeStamp:
+          genericLightWithBrightnessDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp: genericLightWithBrightnessDE
+          .lastResponseFromDeviceTimeStamp
+          .getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -81,7 +104,7 @@ abstract class GenericLightWithBrightnessDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericLightWithBrightnessDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -95,6 +118,16 @@ abstract class GenericLightWithBrightnessDeviceDtos
       lightSwitchState: GenericLightWithBrightnessSwitchState(lightSwitchState),
       lightBrightness: GenericLightWithBrightnessBrightness(lightBrightness),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

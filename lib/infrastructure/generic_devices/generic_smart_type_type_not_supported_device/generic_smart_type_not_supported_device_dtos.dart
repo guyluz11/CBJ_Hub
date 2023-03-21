@@ -27,6 +27,15 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -62,6 +71,22 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
       powerConsumption:
           genericSmartTypeNotSupportedDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId:
+          genericSmartTypeNotSupportedDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericSmartTypeNotSupportedDE.devicePort.getOrCrash(),
+      deviceLastKnownIp:
+          genericSmartTypeNotSupportedDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName:
+          genericSmartTypeNotSupportedDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericSmartTypeNotSupportedDE.deviceMdns.getOrCrash(),
+      devicesMacAddress:
+          genericSmartTypeNotSupportedDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericSmartTypeNotSupportedDE.entityKey.getOrCrash(),
+      requestTimeStamp:
+          genericSmartTypeNotSupportedDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp: genericSmartTypeNotSupportedDE
+          .lastResponseFromDeviceTimeStamp
+          .getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -79,7 +104,7 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSmartTypeNotSupportedDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -91,6 +116,16 @@ abstract class GenericSmartTypeNotSupportedDeviceDtos
       deviceVendor: DeviceVendor(deviceVendor),
       compUuid: DeviceCompUuid(compUuid),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

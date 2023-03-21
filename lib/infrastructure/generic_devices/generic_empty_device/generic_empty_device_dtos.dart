@@ -27,6 +27,15 @@ abstract class GenericEmptyDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -54,6 +63,16 @@ abstract class GenericEmptyDeviceDtos
       deviceVendor: genericEmptyDE.deviceVendor.getOrCrash(),
       powerConsumption: genericEmptyDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericEmptyDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericEmptyDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericEmptyDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericEmptyDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericEmptyDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericEmptyDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericEmptyDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericEmptyDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericEmptyDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -68,7 +87,7 @@ abstract class GenericEmptyDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericEmptyDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -81,6 +100,16 @@ abstract class GenericEmptyDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       emptySwitchState: GenericEmptySwitchState(emptySwitchState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

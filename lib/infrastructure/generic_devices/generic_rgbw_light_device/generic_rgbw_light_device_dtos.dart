@@ -26,6 +26,15 @@ abstract class GenericRgbwLightDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     required String? lightSwitchState,
     required String? lightColorTemperature,
     required String? lightBrightness,
@@ -62,6 +71,17 @@ abstract class GenericRgbwLightDeviceDtos
       deviceVendor: genericRgbwLightDE.deviceVendor.getOrCrash(),
       powerConsumption: genericRgbwLightDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericRgbwLightDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericRgbwLightDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericRgbwLightDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericRgbwLightDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericRgbwLightDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericRgbwLightDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericRgbwLightDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericRgbwLightDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericRgbwLightDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
+
       lightColorTemperature:
           genericRgbwLightDE.lightColorTemperature.getOrCrash(),
       lightBrightness: genericRgbwLightDE.lightBrightness.getOrCrash(),
@@ -84,7 +104,7 @@ abstract class GenericRgbwLightDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericRgbwLightDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -105,6 +125,16 @@ abstract class GenericRgbwLightDeviceDtos
           GenericRgbwLightColorSaturation(lightColorSaturation),
       lightColorValue: GenericRgbwLightColorValue(lightColorValue),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

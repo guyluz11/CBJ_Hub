@@ -27,6 +27,15 @@ abstract class GenericBlindsDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -53,6 +62,16 @@ abstract class GenericBlindsDeviceDtos
       compUuid: genericBlindsDE.compUuid.getOrCrash(),
       deviceVendor: genericBlindsDE.deviceVendor.getOrCrash(),
       powerConsumption: genericBlindsDE.powerConsumption.getOrCrash(),
+      deviceUniqueId: genericBlindsDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericBlindsDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericBlindsDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericBlindsDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericBlindsDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericBlindsDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericBlindsDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericBlindsDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericBlindsDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -80,6 +99,16 @@ abstract class GenericBlindsDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       blindsSwitchState: GenericBlindsSwitchState(blindsSwitchState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

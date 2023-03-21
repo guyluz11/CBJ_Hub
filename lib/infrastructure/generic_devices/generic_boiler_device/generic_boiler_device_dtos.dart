@@ -27,6 +27,15 @@ abstract class GenericBoilerDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -54,6 +63,16 @@ abstract class GenericBoilerDeviceDtos
       deviceVendor: genericBoilerDE.deviceVendor.getOrCrash(),
       powerConsumption: genericBoilerDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericBoilerDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericBoilerDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericBoilerDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericBoilerDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericBoilerDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericBoilerDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericBoilerDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericBoilerDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericBoilerDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -68,7 +87,7 @@ abstract class GenericBoilerDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericBoilerDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -81,6 +100,16 @@ abstract class GenericBoilerDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       boilerSwitchState: GenericBoilerSwitchState(boilerSwitchState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

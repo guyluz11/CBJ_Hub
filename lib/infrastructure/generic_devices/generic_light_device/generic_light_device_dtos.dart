@@ -27,6 +27,15 @@ abstract class GenericLightDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -54,6 +63,16 @@ abstract class GenericLightDeviceDtos
       deviceVendor: genericLightDE.deviceVendor.getOrCrash(),
       powerConsumption: genericLightDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericLightDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericLightDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericLightDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericLightDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericLightDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericLightDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericLightDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericLightDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericLightDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -68,7 +87,7 @@ abstract class GenericLightDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericLightDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -81,6 +100,16 @@ abstract class GenericLightDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       lightSwitchState: GenericLightSwitchState(lightSwitchState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

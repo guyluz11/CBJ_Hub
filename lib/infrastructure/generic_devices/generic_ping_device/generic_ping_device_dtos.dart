@@ -27,6 +27,15 @@ abstract class GenericPingDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -54,6 +63,16 @@ abstract class GenericPingDeviceDtos
       deviceVendor: genericPingDE.deviceVendor.getOrCrash(),
       powerConsumption: genericPingDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericPingDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericPingDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericPingDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericPingDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericPingDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericPingDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericPingDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericPingDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericPingDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -68,7 +87,7 @@ abstract class GenericPingDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericPingDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -81,6 +100,16 @@ abstract class GenericPingDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       pingSwitchState: GenericPingSwitchState(pingSwitchState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

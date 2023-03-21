@@ -27,6 +27,15 @@ abstract class GenericSwitchDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage,
 
@@ -54,6 +63,16 @@ abstract class GenericSwitchDeviceDtos
       deviceVendor: genericSwitchDe.deviceVendor.getOrCrash(),
       powerConsumption: genericSwitchDe.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericSwitchDe.deviceUniqueId.getOrCrash(),
+      devicePort: genericSwitchDe.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericSwitchDe.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericSwitchDe.deviceHostName.getOrCrash(),
+      deviceMdns: genericSwitchDe.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericSwitchDe.devicesMacAddress.getOrCrash(),
+      entityKey: genericSwitchDe.entityKey.getOrCrash(),
+      requestTimeStamp: genericSwitchDe.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericSwitchDe.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -68,7 +87,7 @@ abstract class GenericSwitchDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSwitchDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -81,6 +100,16 @@ abstract class GenericSwitchDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       switchState: GenericSwitchSwitchState(switchState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

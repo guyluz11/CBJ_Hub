@@ -27,6 +27,15 @@ abstract class GenericSmartPlugDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     String? deviceDtoClass,
     String? stateMassage
     // required ServerTimestampConverter() FieldValue serverTimeStamp,
@@ -56,6 +65,16 @@ abstract class GenericSmartPlugDeviceDtos
       deviceVendor: genericSmartPlugDe.deviceVendor.getOrCrash(),
       powerConsumption: genericSmartPlugDe.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericSmartPlugDe.deviceUniqueId.getOrCrash(),
+      devicePort: genericSmartPlugDe.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericSmartPlugDe.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericSmartPlugDe.deviceHostName.getOrCrash(),
+      deviceMdns: genericSmartPlugDe.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericSmartPlugDe.devicesMacAddress.getOrCrash(),
+      entityKey: genericSmartPlugDe.entityKey.getOrCrash(),
+      requestTimeStamp: genericSmartPlugDe.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericSmartPlugDe.lastResponseFromDeviceTimeStamp.getOrCrash(),
       // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
@@ -70,7 +89,7 @@ abstract class GenericSmartPlugDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSmartPlugDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -83,6 +102,16 @@ abstract class GenericSmartPlugDeviceDtos
       compUuid: DeviceCompUuid(compUuid),
       smartPlugState: GenericSmartPlugState(smartPlugState),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }

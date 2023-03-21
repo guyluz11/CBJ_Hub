@@ -121,6 +121,16 @@ class GenericBoilerDE extends DeviceEntityAbstract {
       compUuid: compUuid.getOrCrash(),
       deviceVendor: deviceVendor.getOrCrash(),
       powerConsumption: powerConsumption.getOrCrash(),
+      deviceUniqueId: deviceUniqueId.getOrCrash(),
+      devicePort: devicePort.getOrCrash(),
+      deviceLastKnownIp: deviceLastKnownIp.getOrCrash(),
+      deviceHostName: deviceHostName.getOrCrash(),
+      deviceMdns: deviceMdns.getOrCrash(),
+      devicesMacAddress: devicesMacAddress.getOrCrash(),
+      entityKey: entityKey.getOrCrash(),
+      requestTimeStamp: requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          lastResponseFromDeviceTimeStamp.getOrCrash(),
       boilerSwitchState: boilerSwitchState!.getOrCrash(),
 
       // serverTimeStamp: FieldValue.serverTimestamp(),

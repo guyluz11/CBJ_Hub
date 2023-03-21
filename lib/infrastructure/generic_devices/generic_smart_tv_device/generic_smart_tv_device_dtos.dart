@@ -27,6 +27,15 @@ abstract class GenericSmartTvDeviceDtos
     required String? compUuid,
     required String? deviceVendor,
     required String? powerConsumption,
+    required String? deviceUniqueId,
+    required String? devicePort,
+    required String? deviceLastKnownIp,
+    required String? deviceHostName,
+    required String? deviceMdns,
+    required String? devicesMacAddress,
+    required String? entityKey,
+    required String? requestTimeStamp,
+    required String? lastResponseFromDeviceTimeStamp,
     required String? openUrl,
     required String? pausePlayState,
     required String? skip,
@@ -60,6 +69,17 @@ abstract class GenericSmartTvDeviceDtos
       deviceVendor: genericSmartTvDE.deviceVendor.getOrCrash(),
       powerConsumption: genericSmartTvDE.powerConsumption.getOrCrash(),
 
+      deviceUniqueId: genericSmartTvDE.deviceUniqueId.getOrCrash(),
+      devicePort: genericSmartTvDE.devicePort.getOrCrash(),
+      deviceLastKnownIp: genericSmartTvDE.deviceLastKnownIp.getOrCrash(),
+      deviceHostName: genericSmartTvDE.deviceHostName.getOrCrash(),
+      deviceMdns: genericSmartTvDE.deviceMdns.getOrCrash(),
+      devicesMacAddress: genericSmartTvDE.devicesMacAddress.getOrCrash(),
+      entityKey: genericSmartTvDE.entityKey.getOrCrash(),
+      requestTimeStamp: genericSmartTvDE.requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          genericSmartTvDE.lastResponseFromDeviceTimeStamp.getOrCrash(),
+
       openUrl: genericSmartTvDE.openUrl?.getOrCrash(),
       pausePlayState: genericSmartTvDE.pausePlayState?.getOrCrash(),
       skip: genericSmartTvDE.skip?.getOrCrash(),
@@ -78,7 +98,7 @@ abstract class GenericSmartTvDeviceDtos
   DeviceEntityAbstract toDomain() {
     return GenericSmartTvDE(
       uniqueId: CoreUniqueId.fromUniqueString(id),
-      entityUniqueId: EntityUniqueId.fromUniqueString(entityUniqueId),
+      entityUniqueId: EntityUniqueId(entityUniqueId),
       cbjEntityName: CbjEntityName(cbjEntityName),
       entityOriginalName: EntityOriginalName(cbjEntityName),
       deviceOriginalName: DeviceOriginalName(cbjEntityName),
@@ -97,6 +117,16 @@ abstract class GenericSmartTvDeviceDtos
       skip: skip == null ? null : GenericSmartTvSkipBackOrForward(skip),
       volume: volume == null ? null : GenericSmartTvVolume(volume),
       powerConsumption: DevicePowerConsumption(powerConsumption),
+      deviceUniqueId: DeviceUniqueId(deviceUniqueId),
+      devicePort: DevicePort(devicePort),
+      deviceLastKnownIp: DeviceLastKnownIp(deviceLastKnownIp),
+      deviceHostName: DeviceHostName(deviceHostName),
+      deviceMdns: DeviceMdns(deviceMdns),
+      devicesMacAddress: DevicesMacAddress(devicesMacAddress),
+      entityKey: EntityKey(entityKey),
+      requestTimeStamp: RequestTimeStamp(requestTimeStamp),
+      lastResponseFromDeviceTimeStamp:
+          LastResponseFromDeviceTimeStamp(lastResponseFromDeviceTimeStamp),
     );
   }
 }
