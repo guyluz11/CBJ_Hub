@@ -98,6 +98,7 @@ class ShellyHelpers {
           entityKey: EntityKey('0'),
           requestTimeStamp: RequestTimeStamp('0'),
           lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+          deviceCbjUniqueId: CoreUniqueId(),
         );
         deviceEntityList.add(shellyColorLightEntity);
       } else if (mDnsName.contains('shelly1-C45BBE78005D')) {
@@ -125,6 +126,7 @@ class ShellyHelpers {
           entityKey: EntityKey('0'),
           requestTimeStamp: RequestTimeStamp('0'),
           lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+          deviceCbjUniqueId: CoreUniqueId(),
         );
         deviceEntityList.add(shellyRelaySwitchEntity);
       } else {

@@ -35,6 +35,7 @@ class GenericPingDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.pingSwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.pingDevice.toString()),
@@ -66,6 +67,7 @@ class GenericPingDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         pingSwitchState: GenericPingSwitchState(DeviceActions.off.toString()),
       );
 
@@ -132,9 +134,8 @@ class GenericPingDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       pingSwitchState: pingSwitchState!.getOrCrash(),
-
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

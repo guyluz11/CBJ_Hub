@@ -35,6 +35,7 @@ class GenericSwitchDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.switchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.switch_.toString()),
@@ -64,6 +65,7 @@ class GenericSwitchDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         switchState: GenericSwitchSwitchState(DeviceActions.off.toString()),
       );
 
@@ -130,9 +132,8 @@ class GenericSwitchDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
-
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       switchState: switchState!.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

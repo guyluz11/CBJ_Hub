@@ -55,8 +55,6 @@ abstract class RoutineCbjDtos implements _$RoutineCbjDtos {
       repeateDateDays: routineCbj.repeateDateDays.getOrCrash(),
       repeateDateHour: routineCbj.repeateDateHour.getOrCrash(),
       repeateDateMinute: routineCbj.repeateDateMinute.getOrCrash(),
-
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

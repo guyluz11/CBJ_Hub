@@ -45,6 +45,7 @@ class TasmotaIpLedEntity extends GenericLightDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.lightSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.tasmota.toString()),

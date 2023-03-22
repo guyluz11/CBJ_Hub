@@ -56,7 +56,6 @@ class BindingCbjEntity with _$BindingCbjEntity {
       senderId: senderId.getOrCrash(),
       compUuid: compUuid.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 }

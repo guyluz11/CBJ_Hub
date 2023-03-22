@@ -36,6 +36,7 @@ class SwitcherV2Entity extends GenericBoilerDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.boilerSwitchState,
   }) : super(
           deviceVendor:
@@ -48,6 +49,35 @@ class SwitcherV2Entity extends GenericBoilerDE {
       switcherName: cbjEntityName.getOrCrash()!,
       macAddress: devicesMacAddress.getOrCrash(),
       powerConsumption: powerConsumption.getOrCrash(),
+    );
+  }
+
+  factory SwitcherV2Entity.fromGeneric(GenericBoilerDE genericDevice) {
+    return SwitcherV2Entity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      boilerSwitchState: genericDevice.boilerSwitchState,
     );
   }
 

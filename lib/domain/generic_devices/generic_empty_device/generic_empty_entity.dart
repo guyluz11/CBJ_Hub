@@ -35,6 +35,7 @@ class GenericEmptyDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.emptySwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.emptyDevice.toString()),
@@ -66,6 +67,7 @@ class GenericEmptyDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         emptySwitchState: GenericEmptySwitchState(DeviceActions.off.toString()),
       );
 
@@ -132,9 +134,8 @@ class GenericEmptyDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       emptySwitchState: emptySwitchState!.getOrCrash(),
-
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

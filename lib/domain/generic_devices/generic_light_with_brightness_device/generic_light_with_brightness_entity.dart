@@ -35,6 +35,7 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.lightSwitchState,
     required this.lightBrightness,
   }) : super(
@@ -66,6 +67,7 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         lightSwitchState:
             GenericLightWithBrightnessSwitchState(DeviceActions.off.toString()),
         lightBrightness: GenericLightWithBrightnessBrightness(''),
@@ -136,9 +138,9 @@ class GenericLightWithBrightnessDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       lightSwitchState: lightSwitchState!.getOrCrash(),
       lightBrightness: lightBrightness.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

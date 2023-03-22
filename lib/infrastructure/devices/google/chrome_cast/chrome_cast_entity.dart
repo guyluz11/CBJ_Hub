@@ -36,6 +36,7 @@ class ChromeCastEntity extends GenericSmartTvDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.smartTvSwitchState,
     required this.googlePort,
     super.openUrl,

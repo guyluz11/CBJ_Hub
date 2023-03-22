@@ -35,6 +35,7 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.lightSwitchState,
     required this.lightColorTemperature,
     required this.lightColorAlpha,
@@ -70,6 +71,7 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         lightSwitchState:
             GenericRgbwLightSwitchState(DeviceActions.off.toString()),
         lightColorTemperature: GenericRgbwLightColorTemperature(''),
@@ -169,15 +171,14 @@ class GenericRgbwLightDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       lightSwitchState: lightSwitchState!.getOrCrash(),
-
       lightColorTemperature: lightColorTemperature.getOrCrash(),
       lightBrightness: lightBrightness.getOrCrash(),
       lightColorAlpha: lightColorAlpha.getOrCrash(),
       lightColorHue: lightColorHue.getOrCrash(),
       lightColorSaturation: lightColorSaturation.getOrCrash(),
       lightColorValue: lightColorValue.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

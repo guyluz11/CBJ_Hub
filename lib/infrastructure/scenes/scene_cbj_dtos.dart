@@ -47,7 +47,6 @@ abstract class SceneCbjDtos implements _$SceneCbjDtos {
       senderId: sceneCbj.senderId.getOrCrash(),
       compUuid: sceneCbj.compUuid.getOrCrash(),
       stateMassage: sceneCbj.stateMassage.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

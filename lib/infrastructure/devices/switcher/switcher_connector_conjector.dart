@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_api_object.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_helpers.dart';
@@ -13,7 +13,6 @@ import 'package:cbj_hub/infrastructure/devices/switcher/switcher_smart_plug/swit
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_v2/switcher_v2_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
 @singleton
@@ -60,33 +59,18 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
         CompaniesConnectorConjector.addDiscoverdDeviceToHub(addDevice);
 
     final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-        MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+        MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
     companyDevices.addEntries([deviceAsEntry]);
 
     // logger.v('New switcher devices name:${switcherApiObject.switcherName}');
   }
 
-  Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract switcher) {
-    // TODO: implement create
-    throw UnimplementedError();
-  }
-
-  Future<Either<CoreFailure, Unit>> delete(DeviceEntityAbstract switcher) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
-
-  Future<void> initiateHubConnection() {
-    // TODO: implement initiateHubConnection
-    throw UnimplementedError();
-  }
-
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract switcherDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[switcherDE.getDeviceId()];
+        companyDevices[switcherDE.entityUniqueId.getOrCrash()];
 
     // if (device == null) {
     //   setTheSameDeviceFromAllDevices(switcherDE);
@@ -111,12 +95,25 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
   //   for(a)
   // }
 
-  Future<Either<CoreFailure, Unit>> updateDatabase({
-    required String pathOfField,
-    required Map<String, dynamic> fieldsToUpdate,
-    String? forceUpdateLocation,
-  }) async {
-    // TODO: implement updateDatabase
-    throw UnimplementedError();
+  @override
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericBoilerDE) {
+      nonGenericDevice = SwitcherV2Entity.fromGeneric(deviceEntity);
+    } else if (deviceEntity is GenericSmartPlugDE) {
+      nonGenericDevice = SwitcherSmartPlugEntity.fromGeneric(deviceEntity);
+    } else if (deviceEntity is GenericBlindsDE) {
+      nonGenericDevice = SwitcherRunnerEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
   }
 }

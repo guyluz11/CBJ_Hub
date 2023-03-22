@@ -35,6 +35,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.smartTvSwitchState,
     this.openUrl,
     this.pausePlayState,
@@ -68,6 +69,7 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         smartTvSwitchState:
             GenericSmartTvSwitchState(DeviceActions.off.toString()),
       );
@@ -138,13 +140,13 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       smartTvSwitchState: smartTvSwitchState!.getOrCrash(),
       deviceVendor: deviceVendor.getOrCrash(),
       openUrl: openUrl?.getOrCrash(),
       pausePlayState: pausePlayState?.getOrCrash(),
       skip: skip?.getOrCrash(),
       volume: volume?.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

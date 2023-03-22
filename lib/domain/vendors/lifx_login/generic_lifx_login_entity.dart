@@ -57,7 +57,6 @@ class GenericLifxLoginDE extends LoginEntityAbstract {
       senderUniqueId: senderUniqueId.getOrCrash(),
       loginVendor: loginVendor.getOrCrash(),
       lifxApiKey: lifxApiKey.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 }

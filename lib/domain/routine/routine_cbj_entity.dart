@@ -72,7 +72,6 @@ class RoutineCbjEntity with _$RoutineCbjEntity {
       repeateDateDays: repeateDateDays.getOrCrash(),
       repeateDateHour: repeateDateHour.getOrCrash(),
       repeateDateMinute: repeateDateMinute.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 }

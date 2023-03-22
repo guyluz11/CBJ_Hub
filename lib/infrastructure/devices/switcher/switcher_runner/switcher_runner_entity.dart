@@ -35,6 +35,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.blindsSwitchState,
     required super.devicePort,
   }) : super(
@@ -49,6 +50,35 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
       macAddress: devicesMacAddress.getOrCrash(),
       port: int.parse(devicePort.getOrCrash()),
       powerConsumption: powerConsumption.getOrCrash(),
+    );
+  }
+
+  factory SwitcherRunnerEntity.fromGeneric(GenericBlindsDE genericDevice) {
+    return SwitcherRunnerEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      blindsSwitchState: genericDevice.blindsSwitchState,
     );
   }
 

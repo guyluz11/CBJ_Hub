@@ -64,6 +64,7 @@ class SwitcherHelpers {
         entityKey: EntityKey('0'),
         requestTimeStamp: RequestTimeStamp('0'),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
       );
 
       return switcherRunnerDe;
@@ -103,6 +104,7 @@ class SwitcherHelpers {
         entityKey: EntityKey('0'),
         requestTimeStamp: RequestTimeStamp('0'),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
       );
 
       return switcherV2De;
@@ -140,6 +142,7 @@ class SwitcherHelpers {
         entityKey: EntityKey('0'),
         requestTimeStamp: RequestTimeStamp('0'),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
       );
 
       return switcherSmartPlugDe;

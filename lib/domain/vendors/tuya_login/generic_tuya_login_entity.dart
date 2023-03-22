@@ -85,7 +85,6 @@ class GenericTuyaLoginDE extends LoginEntityAbstract {
       countryCode: tuyaCountryCode.getOrCrash(),
       bizType: tuyaBizType.getOrCrash(),
       region: tuyaRegion.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 }

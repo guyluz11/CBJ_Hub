@@ -115,6 +115,7 @@ class TasmotaIpHelpers {
         entityKey: EntityKey('0'),
         requestTimeStamp: RequestTimeStamp('0'),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
       );
     } else if (componentInDeviceNumberLabelAsInt >= 256 &&
         componentInDeviceNumberLabelAsInt <= 283) {

@@ -35,6 +35,7 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.smartComputerSuspendState,
     required this.smartComputerShutDownState,
   }) : super(
@@ -65,6 +66,7 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         smartComputerSuspendState: GenericSmartComputerSuspendState(
           DeviceActions.itIsFalse.toString(),
         ),
@@ -126,7 +128,8 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
       senderDeviceModel: senderDeviceModel.getOrCrash(),
       senderId: senderId.getOrCrash(),
       entityTypes: entityTypes.getOrCrash(),
-      compUuid: compUuid.getOrCrash(), deviceVendor: deviceVendor.getOrCrash(),
+      compUuid: compUuid.getOrCrash(),
+      deviceVendor: deviceVendor.getOrCrash(),
       powerConsumption: powerConsumption.getOrCrash(),
       deviceUniqueId: deviceUniqueId.getOrCrash(),
       devicePort: devicePort.getOrCrash(),
@@ -138,10 +141,9 @@ class GenericSmartComputerDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       smartComputerSuspendState: smartComputerSuspendState!.getOrCrash(),
       smartComputerShutDownState: smartComputerShutDownState!.getOrCrash(),
-
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

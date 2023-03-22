@@ -36,6 +36,7 @@ class PhilipsHueE26Entity extends GenericLightWithBrightnessDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.lightSwitchState,
     required super.lightBrightness,
     required this.philipsHueApiLight,

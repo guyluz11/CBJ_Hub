@@ -68,6 +68,7 @@ class CbjDevicesHelpers {
           entityKey: EntityKey('0'),
           requestTimeStamp: RequestTimeStamp('0'),
           lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+          deviceCbjUniqueId: CoreUniqueId(),
         );
       } else {
         logger.w('Cbj Smart Device type is not supported ${deviceType.name}');

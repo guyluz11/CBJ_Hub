@@ -35,6 +35,7 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.smartPlugState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.smartPlug.toString()),
@@ -64,6 +65,7 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         smartPlugState: GenericSmartPlugState(DeviceActions.off.toString()),
       );
 
@@ -130,8 +132,8 @@ class GenericSmartPlugDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       smartPlugState: smartPlugState!.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

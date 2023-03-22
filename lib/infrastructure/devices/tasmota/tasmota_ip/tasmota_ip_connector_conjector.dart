@@ -131,4 +131,7 @@ class TasmotaIpConnectorConjector implements AbstractCompanyConnectorConjector {
     }
     return componentTypeAndName;
   }
+
+  @override
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
 }

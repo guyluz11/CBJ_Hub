@@ -28,6 +28,7 @@ class HpPrinterEntity extends GenericPrinterDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.printerSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.hp.toString()),
