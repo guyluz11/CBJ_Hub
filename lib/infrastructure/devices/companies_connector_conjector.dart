@@ -121,9 +121,6 @@ class CompaniesConnectorConjector {
       YeelightConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.tasmota.toString()) {
       TasmotaIpConnectorConjector.companyDevices.addEntries([devicesEntry]);
-    } else if (deviceVendor ==
-        VendorsAndServices.switcherSmartHome.toString()) {
-      SwitcherConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.google.toString()) {
       GoogleConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
@@ -425,8 +422,13 @@ class CompaniesConnectorConjector {
     if (vendorName == VendorsAndServices.espHome.toString()) {
       return getIt<EspHomeConnectorConjector>();
     }
+    if (vendorName == VendorsAndServices.switcherSmartHome.toString()) {
+      return getIt<SwitcherConnectorConjector>();
+    }
 
-    logger.w('Please add vendor to support string to connector conjector');
+    logger.w(
+      'Please add vendor to support string $vendorName to connector conjector',
+    );
 
     return null;
   }

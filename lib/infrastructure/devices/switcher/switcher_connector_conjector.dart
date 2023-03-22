@@ -4,6 +4,7 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_api_object.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_helpers.dart';
@@ -69,7 +70,7 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
     DeviceEntityAbstract switcherDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[switcherDE.getDeviceId()];
+        companyDevices[switcherDE.entityUniqueId.getOrCrash()];
 
     // if (device == null) {
     //   setTheSameDeviceFromAllDevices(switcherDE);
@@ -95,5 +96,24 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
   // }
 
   @override
-  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericBoilerDE) {
+      nonGenericDevice = SwitcherV2Entity.fromGeneric(deviceEntity);
+    } else if (deviceEntity is GenericSmartPlugDE) {
+      nonGenericDevice = SwitcherSmartPlugEntity.fromGeneric(deviceEntity);
+    } else if (deviceEntity is GenericBlindsDE) {
+      nonGenericDevice = SwitcherRunnerEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
+  }
 }
