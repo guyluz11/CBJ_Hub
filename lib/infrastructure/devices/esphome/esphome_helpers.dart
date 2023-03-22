@@ -15,11 +15,21 @@ class EspHomeHelpers {
   /// Will create new espHome device node in NodeRed if does not exist.
   /// If already exits it will check if this is the correct one for the given
   /// device and if so will just return the existing one node id
-  static Future<String> createDeviceNodeOrReturnIfExist({
+  static Future<String> createDeviceNodeOrReturnExistingOne({
     required String mDnsName,
     required String devicePassword,
     String? espHomeNodeDeviceId,
   }) async {
+    if (espHomeNodeDeviceId == null) {
+      /// Try to find entity that already got added that contains the same
+      /// mDNS (multiple entities can exist on the device)
+      for (final DeviceEntityAbstract deviceE
+          in getIt<EspHomeConnectorConjector>().getAllCompanyDevices.values) {
+        if (deviceE.deviceMdns.getOrCrash() == mDnsName) {
+          return deviceE.deviceCbjUniqueId.getOrCrash();
+        }
+      }
+    }
     final String tempEspHomeNodeDeviceId =
         espHomeNodeDeviceId ?? UniqueId().getOrCrash();
 
@@ -36,23 +46,23 @@ class EspHomeHelpers {
   static Future<List<EspHomeDeviceEntityObject>> retreveOnlyNewEntities({
     required String mDnsName,
     required String devicePassword,
+    String? espHomeDeviceNodeId,
   }) async {
     /// 1. Add ESPHome Device node to node red
-    final String espHomeDeviceNodeId = await createDeviceNodeOrReturnIfExist(
+    final String espHomeDeviceNodeIdResult =
+        await createDeviceNodeOrReturnExistingOne(
       devicePassword: devicePassword,
       mDnsName: mDnsName,
+      espHomeNodeDeviceId: espHomeDeviceNodeId,
     );
 
     /// 2. Get all entities of this device
     final List<EspHomeDeviceEntityObject> allEntities =
         await EspHomeNodeRedServerApiCalls.getEspHomeDeviceEntities(
-      espHomeDeviceNodeId,
+      espHomeDeviceNodeIdResult,
     );
 
-    // TODO: 3. Remove ESPHome Device node
-    // await getIt<INodeRedRepository>().deleteGlobalNode(nodeId: espHomeDeviceNodeId);
-
-    /// 4. Compere device entities with already added entities to retrieve
+    /// 3. Compere device entities with already added entities to retrieve
     ///  only the new once
     final List<EspHomeDeviceEntityObject> tempAllEntities = [];
 
@@ -72,27 +82,23 @@ class EspHomeHelpers {
     required String devicePassword,
     String port = '6053',
   }) async {
+    final String espHomeDeviceNodeId =
+        await createDeviceNodeOrReturnExistingOne(
+      devicePassword: devicePassword,
+      mDnsName: mDnsName,
+    );
+
     /// Make sure we add only new entities
     final List<EspHomeDeviceEntityObject> entitiesList =
         await retreveOnlyNewEntities(
       mDnsName: mDnsName,
       devicePassword: devicePassword,
+      espHomeDeviceNodeId: espHomeDeviceNodeId,
     );
 
     if (entitiesList.isEmpty) {
       return [];
     }
-
-    final String tempEspHomeNodeDeviceId = UniqueId().getOrCrash();
-
-    // TODO: Fix the extra step where if you add new entities for the same
-    //  device it will create new ESPHome device node specially for that entity
-    //  instead of using the existing global device node and existing flow
-    final String espHomeDeviceNodeId = await createDeviceNodeOrReturnIfExist(
-      devicePassword: devicePassword,
-      mDnsName: mDnsName,
-      espHomeNodeDeviceId: tempEspHomeNodeDeviceId,
-    );
 
     final List<DeviceEntityAbstract> deviceEntityList = [];
 
