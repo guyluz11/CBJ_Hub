@@ -12,7 +12,10 @@ import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub
 import 'package:cbj_hub/injection.dart';
 
 class EspHomeHelpers {
-  static Future<String> createDeviceNode({
+  /// Will create new espHome device node in NodeRed if does not exist.
+  /// If already exits it will check if this is the correct one for the given
+  /// device and if so will just return the existing one node id
+  static Future<String> createDeviceNodeOrReturnIfExist({
     required String mDnsName,
     required String devicePassword,
     String? espHomeNodeDeviceId,
@@ -35,7 +38,7 @@ class EspHomeHelpers {
     required String devicePassword,
   }) async {
     /// 1. Add ESPHome Device node to node red
-    final String espHomeDeviceNodeId = await createDeviceNode(
+    final String espHomeDeviceNodeId = await createDeviceNodeOrReturnIfExist(
       devicePassword: devicePassword,
       mDnsName: mDnsName,
     );
@@ -85,7 +88,7 @@ class EspHomeHelpers {
     // TODO: Fix the extra step where if you add new entities for the same
     //  device it will create new ESPHome device node specially for that entity
     //  instead of using the existing global device node and existing flow
-    final String espHomeDeviceNodeId = await createDeviceNode(
+    final String espHomeDeviceNodeId = await createDeviceNodeOrReturnIfExist(
       devicePassword: devicePassword,
       mDnsName: mDnsName,
       espHomeNodeDeviceId: tempEspHomeNodeDeviceId,
@@ -134,7 +137,7 @@ class EspHomeHelpers {
             devicePort: DevicePort(port),
             entityKey: EntityKey(deviceKey),
             deviceLastKnownIp: DeviceLastKnownIp(address),
-            deviceUniqueId: DeviceUniqueId('0'),
+            deviceUniqueId: DeviceUniqueId(espHomeDeviceNodeId),
             deviceHostName: DeviceHostName('0'),
             devicesMacAddress: DevicesMacAddress('0'),
             requestTimeStamp: RequestTimeStamp('0'),

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
@@ -9,7 +8,6 @@ import 'package:cbj_hub/infrastructure/devices/sonoff_diy/sonoff__diy_wall_switc
 import 'package:cbj_hub/infrastructure/devices/sonoff_diy/sonoff_diy_helpers.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
 @singleton
@@ -80,27 +78,6 @@ class SonoffDiyConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
-  Future<Either<CoreFailure, Unit>> updateDatabase({
-    required String pathOfField,
-    required Map<String, dynamic> fieldsToUpdate,
-    String? forceUpdateLocation,
-  }) async {
-    // TODO: implement updateDatabase
-    throw UnimplementedError();
-  }
-
-  Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract sonoffDiy) {
-    // TODO: implement create
-    throw UnimplementedError();
-  }
-
-  Future<Either<CoreFailure, Unit>> delete(DeviceEntityAbstract sonoffDiy) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
-
-  Future<void> initiateHubConnection() {
-    // TODO: implement initiateHubConnection
-    throw UnimplementedError();
-  }
+  @override
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
 }
