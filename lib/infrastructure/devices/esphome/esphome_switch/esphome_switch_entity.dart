@@ -34,6 +34,7 @@ class EspHomeSwitchEntity extends GenericSwitchDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.switchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.espHome.toString()),
@@ -63,6 +64,7 @@ class EspHomeSwitchEntity extends GenericSwitchDE {
       requestTimeStamp: genericDevice.requestTimeStamp,
       lastResponseFromDeviceTimeStamp:
           genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
       switchState: GenericSwitchSwitchState('off'),
     );
   }

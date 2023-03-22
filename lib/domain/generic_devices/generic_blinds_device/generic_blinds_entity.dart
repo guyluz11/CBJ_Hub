@@ -35,6 +35,7 @@ class GenericBlindsDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.blindsSwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.blinds.toString()),
@@ -64,6 +65,7 @@ class GenericBlindsDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         blindsSwitchState:
             GenericBlindsSwitchState(DeviceActions.off.toString()),
       );
@@ -132,7 +134,7 @@ class GenericBlindsDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
     );
   }
 

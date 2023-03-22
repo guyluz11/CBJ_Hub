@@ -57,7 +57,6 @@ class GenericWizLoginDE extends LoginEntityAbstract {
       senderUniqueId: senderUniqueId.getOrCrash(),
       loginVendor: loginVendor.getOrCrash(),
       wizApiKey: wizApiKey.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 }

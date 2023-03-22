@@ -46,6 +46,7 @@ class TuyaSmartHelpers {
         compUuid: DeviceCompUuid('34asdfrsd23gggg'),
         stateMassage: DeviceStateMassage('Hello World'),
         powerConsumption: DevicePowerConsumption('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
         lightSwitchState:
             GenericRgbwLightSwitchState(tuyaSmartDevice.state.toString()),
         lightColorTemperature: GenericRgbwLightColorTemperature(
@@ -107,6 +108,7 @@ class TuyaSmartHelpers {
         entityKey: EntityKey('0'),
         requestTimeStamp: RequestTimeStamp('0'),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
       );
     } else if (tuyaSmartDevice is TuyaSwitch) {
       final String deviceName = tuyaSmartDevice.name != ''
@@ -137,6 +139,7 @@ class TuyaSmartHelpers {
         entityKey: EntityKey('0'),
         requestTimeStamp: RequestTimeStamp('0'),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
+        deviceCbjUniqueId: CoreUniqueId(),
       );
     } else {
       logger.i(

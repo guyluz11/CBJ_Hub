@@ -32,6 +32,7 @@ abstract class DeviceEntityAbstract {
     required this.entityKey,
     required this.requestTimeStamp,
     required this.lastResponseFromDeviceTimeStamp,
+    required this.deviceCbjUniqueId,
   });
 
   /// The unique id that CyBear Jinni Hub gave the device
@@ -103,6 +104,9 @@ abstract class DeviceEntityAbstract {
 
   /// Time of the last response from the device
   LastResponseFromDeviceTimeStamp lastResponseFromDeviceTimeStamp;
+
+  /// Unique id that cbj creates for the device that the entity is stored on
+  CoreUniqueId deviceCbjUniqueId;
 
   String getDeviceId();
 
@@ -191,6 +195,7 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
           requestTimeStamp: RequestTimeStamp('requestTimeStamp is empty'),
           lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(
               'lastResponseFromDeviceTimeStamp is empty'),
+          deviceCbjUniqueId: CoreUniqueId(),
         );
 
   @override

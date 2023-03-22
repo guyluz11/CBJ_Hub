@@ -35,6 +35,7 @@ class GenericLightDE extends DeviceEntityAbstract {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.lightSwitchState,
   }) : super(
           entityTypes: EntityType(DeviceTypes.light.toString()),
@@ -64,6 +65,7 @@ class GenericLightDE extends DeviceEntityAbstract {
         entityKey: EntityKey(''),
         requestTimeStamp: RequestTimeStamp(''),
         lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         lightSwitchState: GenericLightSwitchState(DeviceActions.off.toString()),
       );
 
@@ -130,8 +132,8 @@ class GenericLightDE extends DeviceEntityAbstract {
       requestTimeStamp: requestTimeStamp.getOrCrash(),
       lastResponseFromDeviceTimeStamp:
           lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       lightSwitchState: lightSwitchState!.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

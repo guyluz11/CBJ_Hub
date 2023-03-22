@@ -35,6 +35,7 @@ class TuyaSmartSwitchEntity extends GenericSwitchDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.switchState,
     required this.cloudTuya,
   }) : super(

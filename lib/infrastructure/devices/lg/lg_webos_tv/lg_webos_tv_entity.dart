@@ -33,6 +33,7 @@ class LgWebosTvEntity extends GenericSmartTvDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.smartTvSwitchState,
     super.openUrl,
     super.pausePlayState,

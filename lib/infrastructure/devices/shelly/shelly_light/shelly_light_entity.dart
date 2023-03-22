@@ -33,6 +33,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.lightSwitchState,
     required super.lightColorTemperature,
     required super.lightColorAlpha,

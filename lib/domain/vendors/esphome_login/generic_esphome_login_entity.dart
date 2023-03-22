@@ -57,7 +57,6 @@ class GenericEspHomeLoginDE extends LoginEntityAbstract {
       senderUniqueId: senderUniqueId.getOrCrash(),
       loginVendor: loginVendor.getOrCrash(),
       esphomeDevicePass: espHomeDevicePass.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 }

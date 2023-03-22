@@ -35,6 +35,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.blindsSwitchState,
     required super.devicePort,
   }) : super(

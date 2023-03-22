@@ -143,6 +143,8 @@ class EspHomeHelpers {
             requestTimeStamp: RequestTimeStamp('0'),
             lastResponseFromDeviceTimeStamp:
                 LastResponseFromDeviceTimeStamp('0'),
+            deviceCbjUniqueId:
+                CoreUniqueId.fromUniqueString(espHomeDeviceNodeId),
           ),
         );
       } else if (espHomeDeviceEntityObject.type == 'Switch' ||
@@ -177,6 +179,8 @@ class EspHomeHelpers {
             requestTimeStamp: RequestTimeStamp('0'),
             lastResponseFromDeviceTimeStamp:
                 LastResponseFromDeviceTimeStamp('0'),
+            deviceCbjUniqueId:
+                CoreUniqueId.fromUniqueString(espHomeDeviceNodeId),
           ),
         );
       }

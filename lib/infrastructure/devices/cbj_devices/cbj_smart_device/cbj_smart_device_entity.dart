@@ -33,6 +33,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.smartComputerShutDownState,
     required super.smartComputerSuspendState,
     required this.lastKnownIp,

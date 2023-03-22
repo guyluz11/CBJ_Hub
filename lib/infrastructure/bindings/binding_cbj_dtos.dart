@@ -47,7 +47,6 @@ abstract class BindingCbjDtos implements _$BindingCbjDtos {
       senderId: bindingCbj.senderId.getOrCrash(),
       compUuid: bindingCbj.compUuid.getOrCrash(),
       stateMassage: bindingCbj.stateMassage.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
     );
   }
 

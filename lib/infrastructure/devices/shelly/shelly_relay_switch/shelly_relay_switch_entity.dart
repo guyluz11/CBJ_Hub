@@ -34,6 +34,7 @@ class ShellyRelaySwitchEntity extends GenericSwitchDE {
     required super.entityKey,
     required super.requestTimeStamp,
     required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required super.switchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.shelly.toString()),
