@@ -66,7 +66,7 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
                 CompaniesConnectorConjector.addDiscoverdDeviceToHub(addDevice);
 
             final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-                MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+                MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
             companyDevices.addEntries([deviceAsEntry]);
 
@@ -84,7 +84,8 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract lifxDE,
   ) async {
-    final DeviceEntityAbstract? device = companyDevices[lifxDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[lifxDE.entityUniqueId.getOrCrash()];
 
     if (device is LifxWhiteEntity) {
       device.executeDeviceAction(newEntity: lifxDE);
@@ -94,5 +95,20 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
   }
 
   @override
-  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericLightDE) {
+      nonGenericDevice = LifxWhiteEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
+  }
 }

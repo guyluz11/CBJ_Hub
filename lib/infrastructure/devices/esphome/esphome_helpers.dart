@@ -48,13 +48,12 @@ class EspHomeHelpers {
     required String devicePassword,
     String? espHomeDeviceNodeId,
   }) async {
-    /// 1. Add ESPHome Device node to node red
-    final String espHomeDeviceNodeIdResult =
+    /// 1. Add ESPHome Device node to node red if not given one
+    final String espHomeDeviceNodeIdResult = espHomeDeviceNodeId ??
         await createDeviceNodeOrReturnExistingOne(
-      devicePassword: devicePassword,
-      mDnsName: mDnsName,
-      espHomeNodeDeviceId: espHomeDeviceNodeId,
-    );
+          devicePassword: devicePassword,
+          mDnsName: mDnsName,
+        );
 
     /// 2. Get all entities of this device
     final List<EspHomeDeviceEntityObject> allEntities =
@@ -106,8 +105,8 @@ class EspHomeHelpers {
         in entitiesList) {
       final String flowId = UniqueId().getOrCrash();
 
-      final String deviceKey =
-          (espHomeDeviceEntityObject.config['key'] as int).toString();
+      final String deviceKey = espHomeDeviceEntityObject.key.toString();
+
       await EspHomeNodeRedApi.setNewStateNodes(
         espHomeDeviceId: espHomeDeviceNodeId,
         flowId: flowId,

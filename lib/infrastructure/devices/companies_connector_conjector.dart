@@ -127,8 +127,6 @@ class CompaniesConnectorConjector {
       XiaomiIoConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.tuyaSmart.toString()) {
       TuyaSmartConnectorConjector.companyDevices.addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.lifx.toString()) {
-      LifxConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
       ShellyConnectorConjector.companyDevices.addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
@@ -424,6 +422,10 @@ class CompaniesConnectorConjector {
     }
     if (vendorName == VendorsAndServices.switcherSmartHome.toString()) {
       return getIt<SwitcherConnectorConjector>();
+    }
+
+    if (vendorName == VendorsAndServices.lifx.toString()) {
+      return getIt<LifxConnectorConjector>();
     }
 
     logger.w(
