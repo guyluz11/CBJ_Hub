@@ -1,6 +1,6 @@
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_light_with_brightness_device/generic_light_with_brightness_value_objects.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_api/philips_hue_api_light.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_e26/philips_hue_e26_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
@@ -60,12 +60,12 @@ class PhilipsHueHelpers {
           stateMassage: DeviceStateMassage('Hello World'),
           powerConsumption: DevicePowerConsumption('0'),
           devicePort: DevicePort(port),
-          lightSwitchState: GenericLightWithBrightnessSwitchState(
+          lightSwitchState: GenericDimmableLightSwitchState(
             lightState != null && lightState.on != null && lightState.on == true
                 ? DeviceActions.on.toString()
                 : DeviceActions.off.toString(),
           ),
-          lightBrightness: GenericLightWithBrightnessBrightness(
+          lightBrightness: GenericDimmableLightBrightness(
             (lightState?.brightness ?? 0).toString(),
           ),
           philipsHueApiLight: PhilipsHueApiLight(

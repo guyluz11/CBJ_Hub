@@ -2,14 +2,13 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dar
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:dartz/dartz.dart';
 
-Either<CoreFailure<String>, String>
-    validateGenericLightWithBrightnessStateNotEmpty(
+Either<CoreFailure<String>, String> validateGenericDimmableLightStateNotEmpty(
   String input,
 ) {
   return right(input);
 }
 
-Either<CoreFailure<String>, String> validateGenericLightBrightnessNotEmpty(
+Either<CoreFailure<String>, String> validateGenericDimmableLightNotEmpty(
   String input,
 ) {
   return right(input);
