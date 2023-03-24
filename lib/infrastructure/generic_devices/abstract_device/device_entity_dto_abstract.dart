@@ -2,6 +2,7 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/generic_blinds_device/generic_blinds_device_dtos.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/generic_boiler_device/generic_boiler_device_dtos.dart';
+import 'package:cbj_hub/infrastructure/generic_devices/generic_dimmable_light_device/generic_dimmable_light_device_dtos.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/generic_empty_device/generic_empty_device_dtos.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/generic_light_device/generic_light_device_dtos.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/generic_ping_device/generic_ping_device_dtos.dart';
@@ -29,6 +30,10 @@ class DeviceEntityDtoAbstract {
     if (jsonDeviceDtoClass == (GenericLightDeviceDtos).toString() ||
         json['entityTypes'] == DeviceTypes.light.toString()) {
       deviceEntityDtoAbstract = GenericLightDeviceDtos.fromJson(json);
+    } else if (jsonDeviceDtoClass ==
+            (GenericDimmableLightDeviceDtos).toString() ||
+        json['entityTypes'] == DeviceTypes.dimmableLight.toString()) {
+      deviceEntityDtoAbstract = GenericDimmableLightDeviceDtos.fromJson(json);
     } else if (jsonDeviceDtoClass == (GenericRgbwLightDeviceDtos).toString() ||
         json['entityTypes'] == DeviceTypes.rgbwLights.toString()) {
       deviceEntityDtoAbstract = GenericRgbwLightDeviceDtos.fromJson(json);

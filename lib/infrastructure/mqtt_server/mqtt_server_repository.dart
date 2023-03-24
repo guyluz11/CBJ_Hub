@@ -5,6 +5,7 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
@@ -424,6 +425,15 @@ class MqttServerRepository extends IMqttServerRepository {
       if (savedDeviceEntity is GenericLightDE &&
           entityFromTheApp is GenericLightDE) {
         savedDeviceEntity.lightSwitchState = entityFromTheApp.lightSwitchState;
+
+        deviceFromApp = MapEntry(
+          savedDeviceEntity.uniqueId.getOrCrash(),
+          savedDeviceEntity,
+        );
+      } else if (savedDeviceEntity is GenericDimmableLightDE &&
+          entityFromTheApp is GenericDimmableLightDE) {
+        savedDeviceEntity.lightSwitchState = entityFromTheApp.lightSwitchState;
+        savedDeviceEntity.lightBrightness = entityFromTheApp.lightBrightness;
 
         deviceFromApp = MapEntry(
           savedDeviceEntity.uniqueId.getOrCrash(),
