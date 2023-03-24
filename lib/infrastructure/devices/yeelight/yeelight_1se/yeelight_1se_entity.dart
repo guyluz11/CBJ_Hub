@@ -83,13 +83,13 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
-        final DeviceActions? actionToPreform =
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
+        final EntityActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
         );
 
-        if (actionToPreform == DeviceActions.on) {
+        if (actionToPreform == EntityActions.on) {
           (await turnOnLight()).fold(
             (l) {
               logger.e('Error turning Yeelight light on\n$l');
@@ -99,7 +99,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
               logger.i('Yeelight light turn on success');
             },
           );
-        } else if (actionToPreform == DeviceActions.off) {
+        } else if (actionToPreform == EntityActions.off) {
           (await turnOffLight()).fold(
             (l) {
               logger.e('Error turning Yeelight light off\n$l');
@@ -116,7 +116,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
 
       if (newEntity.lightColorTemperature.getOrCrash() !=
               lightColorTemperature.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
         (await changeColorTemperature(
           lightColorTemperatureNewValue:
               newEntity.lightColorTemperature.getOrCrash(),
@@ -139,7 +139,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
               lightColorSaturation.getOrCrash() ||
           newEntity.lightColorValue.getOrCrash() !=
               lightColorValue.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
         (await changeColorHsv(
           lightColorAlphaNewValue: newEntity.lightColorAlpha.getOrCrash(),
           lightColorHueNewValue: newEntity.lightColorHue.getOrCrash(),
@@ -160,7 +160,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
 
       if (newEntity.lightBrightness.getOrCrash() !=
               lightBrightness.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
         (await setBrightness(newEntity.lightBrightness.getOrCrash())).fold(
           (l) {
             logger.e('Error changing Yeelight brightness\n$l');
@@ -171,13 +171,13 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
           },
         );
       }
-      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
@@ -187,7 +187,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
-    lightSwitchState = GenericRgbwLightSwitchState(DeviceActions.on.toString());
+    lightSwitchState = GenericRgbwLightSwitchState(EntityActions.on.toString());
     try {
       executeCurrentStatusWithConstDelay();
       return right(unit);
@@ -199,7 +199,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
     lightSwitchState =
-        GenericRgbwLightSwitchState(DeviceActions.off.toString());
+        GenericRgbwLightSwitchState(EntityActions.off.toString());
 
     try {
       executeCurrentStatusWithConstDelay();
@@ -275,7 +275,7 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
         try {
           // TODO: probably all the discovered device if changed IP can be
           //  written only once here and not in each device action we execute
-          if (lightSwitchState?.getOrCrash() == DeviceActions.off.toString()) {
+          if (lightSwitchState?.getOrCrash() == EntityActions.off.toString()) {
             await _sendTurnOffDevice();
           } else {
             await _sendTurnOnDevice();

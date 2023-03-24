@@ -539,9 +539,9 @@ class MqttServerRepository extends IMqttServerRepository {
   }) async {
     // if (entityFromTheHub is Map<String, dynamic>) {
     // if (entityFromTheHub['entityStateGRPC'] !=
-    //         DeviceStateGRPC.waitingInComp.toString() ||
+    //         EntityStateGRPC.waitingInComp.toString() ||
     //     entityFromTheHub['entityStateGRPC'] !=
-    //         DeviceStateGRPC.ack.toString()) {
+    //         EntityStateGRPC.ack.toString()) {
     //   logger.w("Hub didn't confirmed receiving the request yet");
     //   return;
     // }

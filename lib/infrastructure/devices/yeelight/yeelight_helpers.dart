@@ -29,7 +29,7 @@ class YeelightHelpers {
       cbjEntityName: CbjEntityName(deviceName),
       entityOriginalName: EntityOriginalName(deviceName),
       deviceOriginalName: DeviceOriginalName(deviceName),
-      entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
+      entityStateGRPC: EntityState(EntityStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('yeelight'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),
       senderId: DeviceSenderId(),

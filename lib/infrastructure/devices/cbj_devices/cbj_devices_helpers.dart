@@ -22,13 +22,13 @@ class CbjDevicesHelpers {
       final CbjDeviceTypes deviceType =
           smartDeviceInfo.deviceTypesActions.deviceType;
       final String deviceId = smartDeviceInfo.id;
-      final String cbjEntityName = smartDeviceInfo.cbjEntityName;
+      final String cbjEntityName = smartDeviceInfo.defaultName;
       // final String deviceState = smartDeviceInfo.state;
       final String deviceStateMassage = smartDeviceInfo.stateMassage.isEmpty
           ? 'ok'
           : smartDeviceInfo.stateMassage;
       final CbjDeviceStateGRPC deviceStateGrpc =
-          smartDeviceInfo.deviceTypesActions.entityStateGRPC;
+          smartDeviceInfo.deviceTypesActions.deviceStateGRPC;
 
       final String deviceOs = smartDeviceInfo.senderDeviceOs;
       final String deviceModel = smartDeviceInfo.senderDeviceModel;
@@ -40,7 +40,7 @@ class CbjDevicesHelpers {
           uniqueId: CoreUniqueId(),
           entityUniqueId: EntityUniqueId(deviceId),
           deviceVendor: DeviceVendor(
-            VendorsAndServices.cbjDevices.toString(),
+            VendorsAndServices.cbjDeviceSmartEntity.toString(),
           ),
           cbjEntityName: CbjEntityName(cbjEntityName),
           entityStateGRPC: EntityState(deviceStateGrpc.toString()),
@@ -50,10 +50,10 @@ class CbjDevicesHelpers {
           senderId: DeviceSenderId.fromUniqueString(deviceSenderId),
           compUuid: DeviceCompUuid(deviceCompUuid),
           smartComputerSuspendState: GenericSmartComputerSuspendState(
-            DeviceActions.itIsFalse.toString(),
+            EntityActions.itIsFalse.toString(),
           ),
           smartComputerShutDownState: GenericSmartComputerShutdownState(
-            DeviceActions.itIsFalse.toString(),
+            EntityActions.itIsFalse.toString(),
           ),
           lastKnownIp: DeviceLastKnownIp(deviceAddress),
           entityOriginalName: EntityOriginalName(cbjEntityName),

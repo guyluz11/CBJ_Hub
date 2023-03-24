@@ -72,7 +72,8 @@ class CompaniesConnectorConjector {
         } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
           getIt<SonoffDiyConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.cbjDevices.toString()) {
+        } else if (deviceVendor ==
+            VendorsAndServices.cbjDeviceSmartEntity.toString()) {
           getIt<CbjDevicesConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.hp.toString()) {
