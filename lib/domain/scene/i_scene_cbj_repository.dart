@@ -8,16 +8,25 @@ import 'package:kt_dart/collection.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class ISceneCbjRepository {
+  /// Setting up all scenes from db
+  Future<void> setUpAllFromDb();
+
   Future<List<SceneCbjEntity>> getAllScenesAsList();
 
   Future<Map<String, SceneCbjEntity>> getAllScenesAsMap();
 
-  /// Sending the new scene to the hub to get added
+  /// Will add new scene without saving it in the local db
   Future<Either<SceneCbjFailure, String>> addNewScene(
     SceneCbjEntity sceneCbj,
   );
 
-  Future<Either<LocalDbFailures, Unit>> saveAndActivateScenesToDb();
+  /// Sending the new scene to the hub to get added
+  Future<Either<SceneCbjFailure, String>> addNewSceneAndSaveInDb(
+    SceneCbjEntity sceneCbj,
+  );
+
+  Future<Either<LocalDbFailures, Unit>>
+      saveAndActivateScenesAndSmartDevicesToDb();
 
   Future<bool> activateScene(
     SceneCbjEntity sceneCbj,
@@ -44,6 +53,7 @@ abstract class ISceneCbjRepository {
     String sceneName,
     List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         smartDevicesWithActionToAdd,
+    AreaPurposesTypes areaPurposesTypes,
   );
 
   /// Will add all the devices to area scene, for each device will use the preselected

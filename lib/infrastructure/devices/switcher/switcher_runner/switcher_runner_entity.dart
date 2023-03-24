@@ -6,62 +6,87 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_value_objects.dart';
+import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_api_object.dart';
-import 'package:cbj_hub/infrastructure/devices/switcher/switcher_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 
 class SwitcherRunnerEntity extends GenericBlindsDE {
   SwitcherRunnerEntity({
     required super.uniqueId,
-    required VendorUniqueId vendorUniqueId,
-    required DeviceDefaultName defaultName,
-    required super.deviceStateGRPC,
+    required super.entityUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
+    required super.entityStateGRPC,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption powerConsumption,
-    required GenericBlindsSwitchState super.blindsSwitchState,
-    required this.switcherMacAddress,
-    required this.lastKnownIp,
-    this.switcherPort,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
+    required super.blindsSwitchState,
+    required super.devicePort,
   }) : super(
-          vendorUniqueId: vendorUniqueId,
-          defaultName: defaultName,
           deviceVendor:
               DeviceVendor(VendorsAndServices.switcherSmartHome.toString()),
-          powerConsumption: powerConsumption,
         ) {
-    switcherPort ??=
-        SwitcherPort(SwitcherApiObject.switcherTcpPort2.toString());
     switcherObject = SwitcherApiObject(
       deviceType: SwitcherDevicesTypes.switcherRunner,
-      deviceId: vendorUniqueId.getOrCrash(),
-      switcherIp: lastKnownIp.getOrCrash(),
-      switcherName: defaultName.getOrCrash()!,
-      macAddress: switcherMacAddress.getOrCrash(),
+      deviceId: entityUniqueId.getOrCrash(),
+      switcherIp: deviceLastKnownIp.getOrCrash(),
+      switcherName: cbjEntityName.getOrCrash()!,
+      macAddress: devicesMacAddress.getOrCrash(),
+      port: int.parse(devicePort.getOrCrash()),
       powerConsumption: powerConsumption.getOrCrash(),
-      port: int.parse(switcherPort!.getOrCrash()),
     );
   }
 
-  SwitcherMacAddress switcherMacAddress;
-
-  /// Switcher communication port
-  SwitcherPort? switcherPort;
-
-  DeviceLastKnownIp lastKnownIp;
+  factory SwitcherRunnerEntity.fromGeneric(GenericBlindsDE genericDevice) {
+    return SwitcherRunnerEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      blindsSwitchState: genericDevice.blindsSwitchState,
+    );
+  }
 
   /// Switcher package object require to close previews request before new one
   SwitcherApiObject? switcherObject;
 
   String? autoShutdown;
   String? electricCurrent;
-  String? lastDataUpdate;
-  String? macAddress;
   String? remainingTime;
 
   /// Please override the following methods
@@ -76,43 +101,53 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
     }
 
     try {
-      if (newEntity.blindsSwitchState!.getOrCrash() !=
-              blindsSwitchState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
-        final DeviceActions? actionToPreform =
-            EnumHelperCbj.stringToDeviceAction(
-          newEntity.blindsSwitchState!.getOrCrash(),
-        );
+      if (newEntity.entityStateGRPC.getOrCrash() !=
+          DeviceStateGRPC.ack.toString()) {
+        if (newEntity.blindsSwitchState!.getOrCrash() !=
+            blindsSwitchState!.getOrCrash()) {
+          final DeviceActions? actionToPreform =
+              EnumHelperCbj.stringToDeviceAction(
+            newEntity.blindsSwitchState!.getOrCrash(),
+          );
 
-        if (actionToPreform == DeviceActions.moveUp) {
-          (await moveUpBlinds()).fold((l) {
-            logger.e('Error turning blinds up');
-            throw l;
-          }, (r) {
-            logger.i('Blinds up success');
-          });
-        } else if (actionToPreform == DeviceActions.stop) {
-          (await stopBlinds()).fold((l) {
-            logger.e('Error stopping blinds');
-            throw l;
-          }, (r) {
-            logger.i('Blinds stop success');
-          });
-        } else if (actionToPreform == DeviceActions.moveDown) {
-          (await moveDownBlinds()).fold((l) {
-            logger.e('Error turning blinds down');
-            throw l;
-          }, (r) {
-            logger.i('Blinds down success');
-          });
-        } else {
-          logger.e('actionToPreform is not set correctly on Switcher Runner');
+          if (actionToPreform == DeviceActions.moveUp) {
+            (await moveUpBlinds()).fold((l) {
+              logger.e('Error turning blinds up');
+              throw l;
+            }, (r) {
+              logger.i('Blinds up success');
+            });
+          } else if (actionToPreform == DeviceActions.stop) {
+            (await stopBlinds()).fold((l) {
+              logger.e('Error stopping blinds');
+              throw l;
+            }, (r) {
+              logger.i('Blinds stop success');
+            });
+          } else if (actionToPreform == DeviceActions.moveDown) {
+            (await moveDownBlinds()).fold((l) {
+              logger.e('Error turning blinds down');
+              throw l;
+            }, (r) {
+              logger.i('Blinds down success');
+            });
+          } else {
+            logger.e('actionToPreform is not set correctly on Switcher Runner');
+          }
         }
+        entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+
+        getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+          entityFromTheHub: this,
+        );
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+
+      getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+        entityFromTheHub: this,
+      );
       return left(const CoreFailure.unexpected());
     }
   }
@@ -124,6 +159,7 @@ class SwitcherRunnerEntity extends GenericBlindsDE {
 
     try {
       await switcherObject!.setPosition(pos: 100);
+
       return right(unit);
     } catch (e) {
       return left(const CoreFailure.unexpected());

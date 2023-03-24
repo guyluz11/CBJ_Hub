@@ -12,6 +12,7 @@ import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_converter.dart';
 import 'package:cbj_hub/infrastructure/room/saved_rooms_repo.dart';
@@ -25,20 +26,11 @@ import 'package:rxdart/rxdart.dart';
 
 @LazySingleton(as: ISceneCbjRepository)
 class SceneCbjRepository implements ISceneCbjRepository {
-  SceneCbjRepository() {
-    setUpAllFromDb();
-  }
   final HashMap<String, SceneCbjEntity> _allScenes = HashMap();
 
+  @override
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
-    /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    getIt<ILocalDbRepository>().getScenesFromDb().then((value) {
+    await getIt<ILocalDbRepository>().getScenesFromDb().then((value) {
       value.fold((l) => null, (r) {
         for (final element in r) {
           addNewScene(element);
@@ -58,7 +50,10 @@ class SceneCbjRepository implements ISceneCbjRepository {
   }
 
   @override
-  Future<Either<LocalDbFailures, Unit>> saveAndActivateScenesToDb() {
+  Future<Either<LocalDbFailures, Unit>>
+      saveAndActivateScenesAndSmartDevicesToDb() async {
+    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+
     return getIt<ILocalDbRepository>().saveScenes(
       sceneList: List<SceneCbjEntity>.from(_allScenes.values),
     );
@@ -87,8 +82,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
     /// If it is new scene
     _allScenes[entityId] = tempSceneCbj;
 
-    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-
     String sceneNodeRedFlowId = '';
 
     if (existingScene == null ||
@@ -105,12 +98,17 @@ class SceneCbjRepository implements ISceneCbjRepository {
     }
     getIt<ISavedRoomsRepo>().addSceneToRoomDiscoveredIfNotExist(tempSceneCbj);
     _allScenes[tempSceneCbj.uniqueId.getOrCrash()] = tempSceneCbj;
-
-    await saveAndActivateScenesToDb();
     return right(sceneNodeRedFlowId);
+  }
 
-    /// Scene already got added
-    return left(const SceneCbjFailure.unexpected());
+  @override
+  Future<Either<SceneCbjFailure, String>> addNewSceneAndSaveInDb(
+    SceneCbjEntity sceneCbj,
+  ) async {
+    final Either<SceneCbjFailure, String> sceneNodeRedFlowId =
+        await addNewScene(sceneCbj);
+    await saveAndActivateScenesAndSmartDevicesToDb();
+    return sceneNodeRedFlowId;
   }
 
   @override
@@ -150,7 +148,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
     final String sceneId = sceneCbjEntityTemp.uniqueId.getOrCrash();
     String nodeRedFlowId = '';
 
-    (await addNewScene(sceneCbjEntityTemp)).fold((l) {}, (r) {
+    (await addNewSceneAndSaveInDb(sceneCbjEntityTemp)).fold((l) {}, (r) {
       nodeRedFlowId = r;
     });
 
@@ -176,7 +174,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     _allScenes[sceneId] = sceneCbjEntityTemp;
 
-    saveAndActivateScenesToDb();
+    saveAndActivateScenesAndSmartDevicesToDb();
+
+    AppCommunicationRepository.sendAllScenesFromHubRequestsStream();
 
     return right(sceneCbjEntityTemp);
   }
@@ -187,10 +187,15 @@ class SceneCbjRepository implements ISceneCbjRepository {
     String sceneName,
     List<MapEntry<DeviceEntityAbstract, MapEntry<String?, String?>>>
         smartDevicesWithActionToAdd,
+    AreaPurposesTypes areaPurposesTypes,
   ) async {
+    final String colorForArea =
+        AreaTypeWithDeviceTypePreset.getColorForAreaType(areaPurposesTypes);
+
     final SceneCbjEntity newCbjScene = NodeRedConverter.convertToSceneNodes(
       nodeName: sceneName,
       devicesPropertyAction: smartDevicesWithActionToAdd,
+      sceneColor: colorForArea,
     );
     return addOrUpdateNewSceneInHub(newCbjScene);
   }
@@ -202,7 +207,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
     for (final SceneCbjEntity sceneCbjEntity in scenesList.asList()) {
       addOrUpdateNewSceneInHub(
         sceneCbjEntity.copyWith(
-          deviceStateGRPC: SceneCbjDeviceStateGRPC(
+          entityStateGRPC: SceneCbjDeviceStateGRPC(
             DeviceStateGRPC.waitingInFirebase.toString(),
           ),
         ),
@@ -326,6 +331,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
       }
     }
 
+    final String colorForArea =
+        AreaTypeWithDeviceTypePreset.getColorForAreaType(areaType);
+
     // Removing start and end curly braces of the map object
 
     final String sceneAutomationStringNoBrackets =
@@ -370,11 +378,12 @@ class SceneCbjRepository implements ISceneCbjRepository {
     }
     scene = scene.copyWith(
       automationString: SceneCbjAutomationString(tempNewAutomation),
+      backgroundColor: SceneCbjBackgroundColor(colorForArea),
     );
 
     String nodeRedFlowId = '';
 
-    (await addNewScene(scene)).fold((l) {}, (r) {
+    (await addNewSceneAndSaveInDb(scene)).fold((l) {}, (r) {
       nodeRedFlowId = r;
     });
 
@@ -396,7 +405,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
     _allScenes[sceneId] = scene;
 
-    saveAndActivateScenesToDb();
+    saveAndActivateScenesAndSmartDevicesToDb();
 
     //TODO: add to the automationString part the new automation for devices String from actionForDevicesInArea and connect all to first node id
     return right(scene);
@@ -408,7 +417,6 @@ class SceneCbjRepository implements ISceneCbjRepository {
     String keyToGetFromNode,
   ) {
     try {
-      String brokerNodeId;
       final List<Map<String, dynamic>> sceneAutomationJson =
           (jsonDecode(sceneAutomationString) as List)
               .map((e) => e as Map<String, dynamic>)

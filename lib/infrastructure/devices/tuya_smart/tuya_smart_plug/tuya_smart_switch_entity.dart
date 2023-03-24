@@ -4,8 +4,8 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dar
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_switch_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_switch_value_objects.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_device_validators.dart';
 import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_remote_api/cloudtuya.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
@@ -15,16 +15,28 @@ import 'package:dartz/dartz.dart';
 class TuyaSmartPlugEntity extends GenericSmartPlugDE {
   TuyaSmartPlugEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
-    required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericSmartPlugState super.smartPlugState,
+    required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
+    required super.smartPlugState,
     required this.cloudTuya,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.tuyaSmart.toString()),
@@ -48,7 +60,7 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
     try {
       if (newEntity.smartPlugState!.getOrCrash() !=
               smartPlugState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         final DeviceActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.smartPlugState!.getOrCrash(),
@@ -80,10 +92,16 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
           );
         }
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+      //   entityFromTheHub: this,
+      // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+      //   entityFromTheHub: this,
+      // );
       return left(const CoreFailure.unexpected());
     }
   }
@@ -92,7 +110,7 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
     smartPlugState = GenericSmartPlugState(DeviceActions.on.toString());
     try {
       final String requestResponse = await cloudTuya.turnOn(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {
@@ -105,7 +123,7 @@ class TuyaSmartPlugEntity extends GenericSmartPlugDE {
 
     try {
       final String requestResponse = await cloudTuya.turnOff(
-        vendorUniqueId.getOrCrash(),
+        entityUniqueId.getOrCrash(),
       );
       return tuyaResponseToCyBearJinniSucessFailure(requestResponse);
     } catch (e) {

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
@@ -11,16 +10,11 @@ import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_mqtt/tasmota_mqtt
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
 @singleton
 class TasmotaMqttConnectorConjector
     implements AbstractCompanyConnectorConjector {
-  TasmotaMqttConnectorConjector() {
-    discoverNewDevices();
-  }
-
   // Future<void> addNewDeviceByHostInfo({
   //   required ActiveHost activeHost,
   // }) async {
@@ -39,7 +33,7 @@ class TasmotaMqttConnectorConjector
 
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  static Future<void> discoverNewDevices() async {
+  Future<void> discoverNewDevices() async {
     getIt<IMqttServerRepository>()
         .streamOfChosenSubscription('tasmota/discovery/+/config')
         .listen((mqttPublishMessage) async {
@@ -54,15 +48,15 @@ class TasmotaMqttConnectorConjector
 
       for (final DeviceEntityAbstract savedDevice in companyDevices.values) {
         if (savedDevice is TasmotaMqttLedEntity &&
-            deviceId == savedDevice.vendorUniqueId.getOrCrash()) {
+            deviceId == savedDevice.entityUniqueId.getOrCrash()) {
           deviceExist = true;
           break;
         } else if (savedDevice is GenericLightDE &&
-            deviceId == savedDevice.vendorUniqueId.getOrCrash()) {
+            deviceId == savedDevice.entityUniqueId.getOrCrash()) {
           /// Device exist as generic and needs to get converted to non generic type for this vendor
           tempCoreUniqueId = savedDevice.uniqueId;
           break;
-        } else if (deviceId == savedDevice.vendorUniqueId.getOrCrash()) {
+        } else if (deviceId == savedDevice.entityUniqueId.getOrCrash()) {
           logger.e(
             'Tasmota Mqtt device type supported but implementation is missing here',
           );
@@ -95,21 +89,6 @@ class TasmotaMqttConnectorConjector
     });
   }
 
-  Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract tasmotaMqtt) {
-    // TODO: implement create
-    throw UnimplementedError();
-  }
-
-  Future<Either<CoreFailure, Unit>> delete(DeviceEntityAbstract tasmotaMqtt) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
-
-  Future<void> initiateHubConnection() {
-    // TODO: implement initiateHubConnection
-    throw UnimplementedError();
-  }
-
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract tasmotaMqttDE,
   ) async {
@@ -123,12 +102,6 @@ class TasmotaMqttConnectorConjector
     }
   }
 
-  Future<Either<CoreFailure, Unit>> updateDatabase({
-    required String pathOfField,
-    required Map<String, dynamic> fieldsToUpdate,
-    String? forceUpdateLocation,
-  }) async {
-    // TODO: implement updateDatabase
-    throw UnimplementedError();
-  }
+  @override
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
 }

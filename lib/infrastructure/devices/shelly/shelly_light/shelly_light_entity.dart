@@ -13,41 +13,45 @@ import 'package:dartz/dartz.dart';
 class ShellyColorLightEntity extends GenericRgbwLightDE {
   ShellyColorLightEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
-    required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericRgbwLightSwitchState super.lightSwitchState,
+    required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
+    required super.lightSwitchState,
     required super.lightColorTemperature,
-    required super.lightBrightness,
     required super.lightColorAlpha,
     required super.lightColorHue,
     required super.lightColorSaturation,
     required super.lightColorValue,
-    required this.deviceMdnsName,
-    required this.devicePort,
-    required this.lastKnownIp,
-    required String hostName,
+    required super.lightBrightness,
+    ShellyApiColorBulb? bulbeMode,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.shelly.toString()),
         ) {
-    shellyColorBulb = ShellyApiColorBulb(
-      lastKnownIp: lastKnownIp.getOrCrash(),
-      mDnsName: deviceMdnsName.getOrCrash(),
-      hostName: hostName,
-    );
+    shellyColorBulb = bulbeMode ??
+        ShellyApiColorBulb(
+          lastKnownIp: deviceLastKnownIp.getOrCrash(),
+          mDnsName: deviceMdns.getOrCrash(),
+          hostName: deviceHostName.getOrCrash(),
+        );
   }
-
-  DeviceLastKnownIp lastKnownIp;
-
-  DeviceMdnsName deviceMdnsName;
-
-  DevicePort devicePort;
 
   late ShellyApiColorBulb shellyColorBulb;
 
@@ -64,7 +68,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     }
 
     try {
-      // if (deviceStateGRPC.getOrCrash() == DeviceStateGRPC.ack.toString()) {
+      // if (entityStateGRPC.getOrCrash() == DeviceStateGRPC.ack.toString()) {
       //   return right(unit);
       // }
 
@@ -148,10 +152,16 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
           },
         );
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+      //   entityFromTheHub: this,
+      // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+      //   entityFromTheHub: this,
+      // );
       return left(const CoreFailure.unexpected());
     }
   }
@@ -195,15 +205,16 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
         temperatureInt = 6465;
       }
 
+      if (lightColorTemperature.getOrCrash() == temperatureInt.toString()) {
+        return right(unit);
+      }
+
       lightColorTemperature =
           GenericRgbwLightColorTemperature(temperatureInt.toString());
 
-      await shellyColorBulb.changeTemperatureAndBrightness(
+      await shellyColorBulb.changTemperature(
         temperature: lightColorTemperature.getOrCrash(),
-        brightness: lightBrightness.getOrCrash(),
       );
-
-      await shellyColorBulb.changeModeToWhite();
 
       return right(unit);
     } catch (e) {
@@ -216,8 +227,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     lightBrightness = GenericRgbwLightBrightness(brightness);
 
     try {
-      await shellyColorBulb.changeTemperatureAndBrightness(
-        temperature: lightColorTemperature.getOrCrash(),
+      await shellyColorBulb.changBrightness(
         brightness: brightness,
       );
 
@@ -226,8 +236,6 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
       return left(const CoreFailure.unexpected());
     }
   }
-
-  /// Please override the following methods
 
   @override
   Future<Either<CoreFailure, Unit>> changeColorHsv({
@@ -271,7 +279,10 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
   int convertDecimalPresentagetToIntegerPercentage(double number) {
     if (number == 1.0) {
       return 100;
+    } else if (number == 0.0) {
+      return 0;
     }
+
     if (number.toString().length <= 8) {
       throw 'Error converting to integer percentage';
     }

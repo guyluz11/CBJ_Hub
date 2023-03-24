@@ -5,12 +5,12 @@ import 'package:cbj_hub/utils.dart';
 ///
 class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
   NodeRedInjectAtASpecificTimeNode({
-    super.id,
-    super.name,
-    super.wires,
     required this.daysToRepeat,
     required this.hourToRepeat,
     required this.minutesToRepeat,
+    super.tempId,
+    super.name,
+    super.wires,
   }) : super(
           type: 'inject',
         );
@@ -41,6 +41,8 @@ class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
     "crontab": "$crontab",
     "once": false,
     "onceDelay": 0.1,
+    "x": 400,
+    "y": 800,
     "topic": "",
     "payload": "",
     "payloadType": "date",

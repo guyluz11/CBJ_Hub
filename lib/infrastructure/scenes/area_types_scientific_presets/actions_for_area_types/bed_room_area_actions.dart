@@ -10,7 +10,7 @@ class BedRoomAreaAction {
     String brokerNodeId,
   ) async {
     final DeviceTypes deviceType = DeviceTypes.values.firstWhere(
-      (element) => element.name == deviceEntity.deviceTypes.getOrCrash(),
+      (element) => element.name == deviceEntity.entityTypes.getOrCrash(),
     );
     final Map<String, String> actionsList = <String, String>{};
 
@@ -173,7 +173,7 @@ class BedRoomAreaAction {
       case DeviceTypes.toaster:
         // TODO: Handle this case.
         break;
-      case DeviceTypes.typeNotSupported:
+      case DeviceTypes.smartTypeNotSupported:
         // TODO: Handle this case.
         break;
       case DeviceTypes.vacuumCleaner:
@@ -181,6 +181,20 @@ class BedRoomAreaAction {
         break;
       case DeviceTypes.washingMachine:
         // TODO: Turn off.
+        break;
+      case DeviceTypes.emptyDevice:
+        // TODO: Handle this case.
+        break;
+      case DeviceTypes.pingDevice:
+        // TODO: Handle this case.
+        break;
+      case DeviceTypes.smartComputer:
+        actionsList.addEntries([
+          CommonDevicesScenesPresetsForDevices.smartComputerSuspend(
+            deviceEntity,
+            brokerNodeId,
+          ),
+        ]);
         break;
     }
     return right(actionsList);

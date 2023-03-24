@@ -8,38 +8,10 @@ import 'package:cbj_hub/infrastructure/node_red/node_red_api/node_red_api.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:http/src/response.dart';
 import 'package:injectable/injectable.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 /// Control Node-RED, create scenes and more
 @LazySingleton(as: INodeRedRepository)
 class NodeRedRepository extends INodeRedRepository {
-  NodeRedRepository() {
-    _deviceIsReadyToSendInternetRequests = isThereInternetConnection();
-  }
-
-  /// Set _deviceIsReadyToSendInternetRequests to true when there is an internet
-  Future<bool> isThereInternetConnection() async {
-    while (true) {
-      final bool result = await InternetConnectionChecker().hasConnection;
-      if (result) {
-        break;
-      } else {
-        logger.w(
-          'Node-Red will not get connected until device is connected to www',
-        );
-      }
-      await Future.delayed(const Duration(milliseconds: 800));
-    }
-    return true;
-  }
-
-  /// Here to fix a bug where device crash if trying to send network requests
-  /// before there is network.
-  /// TODO: check if this can be removed in case we used 127.0.0.1 instead of
-  /// localhost and not get this issue again
-  /// https://github.com/CyBear-Jinni/cbj_hub/issues/150
-  late Future<bool> _deviceIsReadyToSendInternetRequests;
-
   static NodeRedAPI nodeRedApi = NodeRedAPI();
 
   // /// List of all the scenes JSONs in Node-RED
@@ -53,8 +25,6 @@ class NodeRedRepository extends INodeRedRepository {
 
   @override
   Future<String> createNewNodeRedScene(SceneCbjEntity sceneCbj) async {
-    await _deviceIsReadyToSendInternetRequests;
-
     // final String flowId = sceneCbj.uniqueId.getOrCrash();
 
     try {
@@ -95,7 +65,7 @@ class NodeRedRepository extends INodeRedRepository {
 
   @override
   Future<String> createNewNodeRedRoutine(RoutineCbjEntity routineCbj) async {
-    await _deviceIsReadyToSendInternetRequests;
+    // await _deviceIsReadyToSendInternetRequests;
     // final String flowId = routineCbj.uniqueId.getOrCrash();
 
     try {
@@ -134,8 +104,6 @@ class NodeRedRepository extends INodeRedRepository {
 
   @override
   Future<String> createNewNodeRedBinding(BindingCbjEntity bindingCbj) async {
-    await _deviceIsReadyToSendInternetRequests;
-
     try {
       // if (bindingsList.contains(bindingCbj.uniqueId.getOrCrash())) {
       //   await nodeRedApi.deleteFlowById(id: flowId);
@@ -166,6 +134,82 @@ class NodeRedRepository extends INodeRedRepository {
       } else {
         logger.e('Node-RED create new Binding error:\n$e');
       }
+    }
+    return "";
+  }
+
+  @override
+  Future<String> setFlowWithModule({
+    required String moduleToUse,
+    required String label,
+    required String nodes,
+    required String flowId,
+  }) async {
+    // TODO: check if hub crash when trying to download new node inside node red without internet connection
+
+    try {
+      /// Install the new node module
+      await nodeRedApi.postNodes(module: moduleToUse);
+
+      final Response response = await nodeRedApi.postFlow(
+        label: label,
+        nodes: nodes,
+        flowId: flowId,
+      );
+      if (response.statusCode != 200) {
+        logger.e('Error sending nodeRED flow request\n${response.body}');
+      }
+      final String returnedFlowId = jsonDecode(response.body)['id'] as String;
+      return returnedFlowId;
+    } catch (e) {
+      if (e.toString() ==
+          'The remote computer refused the network connection.\r\n') {
+        logger.e('Node-RED is not installed');
+      } else {
+        logger.e('Node-RED setting flow with module $moduleToUse\n$e');
+      }
+    }
+    return "";
+  }
+
+  @override
+  Future<String> setGlobalNodes({
+    required String? moduleToUse,
+    required String nodes,
+  }) async {
+    try {
+      /// Install the new node module
+      if (moduleToUse != null) {
+        await nodeRedApi.postNodes(module: moduleToUse);
+      }
+      final Response response = await nodeRedApi.postGlobalNode(
+        nodes: nodes,
+      );
+      if (response.statusCode != 200) {
+        logger.e('Error sending nodeRED global node request\n${response.body}');
+      }
+    } catch (e) {
+      logger.e('Node-RED setting global node with module $moduleToUse\n$e');
+      return e.toString();
+    }
+    return "ok";
+  }
+
+  @override
+  Future<String> updateFlowNodes({
+    required String nodes,
+    required String flowId,
+  }) async {
+    try {
+      final Response response = await nodeRedApi.putFlowById(
+        nodes: nodes,
+        flowId: flowId,
+      );
+      if (response.statusCode != 200) {
+        logger.e('Error updating nodeRED flow node request\n${response.body}');
+      }
+    } catch (e) {
+      logger.e('Node-RED updating flow\n$e');
     }
     return "";
   }

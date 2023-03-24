@@ -4,7 +4,7 @@ class NodeRedMqttInNode extends NodeRedVisualNodeAbstract {
   NodeRedMqttInNode({
     required this.brokerNodeId,
     required this.topic,
-    super.id,
+    super.tempId,
     super.name,
     super.wires,
     this.qos,
@@ -28,6 +28,8 @@ class NodeRedMqttInNode extends NodeRedVisualNodeAbstract {
     "name": "$name",
     "topic": "$topic",
     "qos": "$qos",
+    "x": 600,
+    "y": 400,
     "datatype": "$datatype",
     "broker": "$brokerNodeId",
     "wires":  ${fixWiresForNodeRed()}

@@ -5,8 +5,12 @@ import 'package:cbj_hub/domain/app_communication/i_app_communication_repository.
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/room/room_entity.dart';
+import 'package:cbj_hub/domain/room/value_objects_room.dart';
+import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -17,6 +21,9 @@ class Connector {
   static Future<void> startConnector() async {
     ConnectorStreamToMqtt.toMqttStream.listen((entityForMqtt) async {
       if (entityForMqtt.value is DeviceEntityAbstract) {
+        /// Data will probably arrive to the function
+        /// updateAllDevicesReposWithDeviceChanges where we listen to request from
+        /// the mqtt with this path
         await getIt<IMqttServerRepository>()
             .publishDeviceEntity(entityForMqtt.value as DeviceEntityAbstract);
       } else if (entityForMqtt.value is RoomEntity) {
@@ -41,12 +48,13 @@ class Connector {
     }
 
     Future.delayed(const Duration(milliseconds: 3000)).whenComplete(() {
-      final IAppCommunicationRepository appCommunication =
-          getIt<IAppCommunicationRepository>();
+      // final IAppCommunicationRepository appCommunication =
+      getIt<IAppCommunicationRepository>();
     });
 
     getIt<IMqttServerRepository>().allHubDevicesSubscriptions();
-    // appCommunication.sendToApp();
+
+    getIt<IMqttServerRepository>().sendToApp();
 
     CompaniesConnectorConjector.updateAllDevicesReposWithDeviceChanges(
       ConnectorDevicesStreamFromMqtt.fromMqttStream,
@@ -68,12 +76,15 @@ class Connector {
     final Map<String, dynamic> devicePropertyAndValues =
         deviceChangeFromMqtt.value;
 
+    // String? deviceStateValue;
+
     for (final DeviceEntityAbstract d in allDevices.values) {
       if (d.getDeviceId() == deviceChangeFromMqtt.key) {
         final Map<String, dynamic> deviceAsJson = d.toInfrastructure().toJson();
 
         for (final String property in devicePropertyAndValues.keys) {
-          final String pt = MqttPublishPayload.bytesToStringAsString(
+          // final String pt =
+          MqttPublishPayload.bytesToStringAsString(
             (devicePropertyAndValues[property] as MqttPublishMessage)
                 .payload
                 .message,
@@ -98,6 +109,24 @@ class Connector {
 
           ConnectorDevicesStreamFromMqtt.fromMqttStream.sink
               .add(savedDeviceWithSameIdAsMqtt);
+
+          if (property == 'entityStateGRPC' &&
+              propertyValueString == DeviceStateGRPC.ack.toString()) {
+            final Map<String, RoomEntity> rooms =
+                await getIt<ISavedRoomsRepo>().getAllRooms();
+
+            HubRequestsToApp.streamRequestsToApp.sink
+                .add(savedDeviceWithSameIdAsMqtt.toInfrastructure());
+            if (rooms[RoomUniqueId.discoveredRoomId().getOrCrash()]!
+                .roomDevicesId
+                .getOrCrash()
+                .contains(savedDeviceWithSameIdAsMqtt.uniqueId.getOrCrash())) {
+              HubRequestsToApp.streamRequestsToApp.sink.add(
+                rooms[RoomUniqueId.discoveredRoomId().getOrCrash()]!
+                    .toInfrastructure(),
+              );
+            }
+          }
           return;
         }
       }

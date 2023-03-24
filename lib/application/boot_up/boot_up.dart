@@ -34,7 +34,13 @@ class BootUp {
 
     CompaniesConnectorConjector.searchPingableDevicesAndSetThemUpByHostName();
 
-    getIt<IMqttServerRepository>();
+    CompaniesConnectorConjector.searchDevicesByBindingIntoSockets();
+
+    CompaniesConnectorConjector.searchDevicesByMqttPath();
+
+    CompaniesConnectorConjector.notImplementedDevicesSearch();
+
+    await getIt<IMqttServerRepository>().asyncConstractor();
 
     getIt<ICbjWebServerRepository>();
 

@@ -1,18 +1,25 @@
 import 'dart:io';
 
-import 'package:cbj_hub/infrastructure/core/singleton/my_singleton.dart';
+import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_base_class_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_manager_d.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 
 class CommonBashCommandsD implements SystemCommandsBaseClassD {
+  Future<void> asyncConstractor() async {
+    getIt<SystemCommandsManager>();
+  }
+
   @override
   Future<String> getCurrentUserName() async {
     final String whoami =
-        await Process.run('whoami', <String>[]).then((ProcessResult result) {
+        await Process.run('id', <String>['-nu']).then((ProcessResult result) {
+      // whoami is getting permission error inside the snap
+      // await Process.run('whoami', <String>[]).then((ProcessResult result) {
       return result.stdout.toString();
     });
-    return whoami.substring(0, whoami.indexOf('\n'));
+    return whoami.trim();
   }
 
   @override
@@ -45,7 +52,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
       blkid = blkid.substring(blkid.indexOf('/dev/'));
     }
 
-    blkid = blkid.substring(0, blkid.indexOf('\n'));
+    blkid = blkid.trim();
 
     final String uuid = blkid.substring(blkid.indexOf('UUID="') + 6);
     return uuid.substring(0, uuid.indexOf('"'));
@@ -61,7 +68,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 //      logger.v('Host name: ' + hostName);
       return result.stdout.toString();
     });
-    return hostName.substring(0, hostName.indexOf('\n'));
+    return hostName.trim();
   }
 
   @override
@@ -83,8 +90,9 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
         etcReleaseFiles += File(releaseContent).readAsStringSync();
       }
     } catch (error) {
-      logger.e('Error getting all files from /etc/that end with release');
-      logger.e('error: $error');
+      logger.e(
+        'Error getting all files from /etc/ that end with release\n$error',
+      );
     }
     return etcReleaseFiles;
   }
@@ -113,18 +121,46 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
   }
 
   @override
-  Future<String> getLocalDbPath() async {
+  Future<String> getLocalDbPath(
+    Future<String?> currentUserName,
+  ) async {
     String localDbFolderPath;
-    final String? snapCommonEnvironmentVariablePath =
-        await SystemCommandsManager().getSnapCommonEnvironmentVariable();
 
-    if (snapCommonEnvironmentVariablePath == null) {
-      final String? currentUserName = await MySingleton.getCurrentUserName();
-      localDbFolderPath = '/home/$currentUserName/Documents/hive';
+    final String? snapCommonEnvironmentVariable =
+        getIt<SharedVariables>().getSnapCommonEnvironmentVariable();
+    if (snapCommonEnvironmentVariable == null) {
+      localDbFolderPath = '/home/${await currentUserName}/'
+          '';
     } else {
-      // /var/snap/cbj-hub/common/hive
-      localDbFolderPath = '$snapCommonEnvironmentVariablePath/hive';
+      // /var/snap/cbj-hub/common/isar
+      localDbFolderPath = snapCommonEnvironmentVariable;
     }
     return localDbFolderPath;
+  }
+
+  @override
+  Future<String> getProjectFilesLocation() async {
+    final String? snapLocation =
+        getIt<SharedVariables>().getSnapLocationEnvironmentVariable();
+    if (snapLocation == null) {
+      return Directory.current.path;
+    }
+
+    return snapLocation;
+  }
+
+  @override
+  Future<String?> getIpFromMdnsName(String mdnsName) async {
+    try {
+      final String fileContent =
+          await Process.run('avahi-resolve-host-name', <String>[mdnsName])
+              .then((ProcessResult result) {
+        return result.stdout.toString();
+      });
+      return fileContent.substring(fileContent.indexOf('\t') + 1).trim();
+    } catch (e) {
+      logger.w("Can't get device IP from mdns $mdnsName\n$e");
+    }
+    return null;
   }
 }

@@ -98,7 +98,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   @override
   void sendToApp(Stream<MqttPublishMessage> dataToSend) {
     dataToSend.listen((MqttPublishMessage event) async {
-      logger.i('Got AppRequestsToHub');
+      logger.i('Got hub requests to app');
 
       (await getIt<ISavedDevicesRepo>().getAllDevices())
           .forEach((String id, deviceEntityToSend) {
@@ -127,10 +127,10 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         final DeviceEntityAbstract deviceEntityFromApp =
             DeviceHelper.convertJsonStringToDomain(event.allRemoteCommands);
 
-        deviceEntityFromApp.deviceStateGRPC =
-            DeviceState(DeviceStateGRPC.waitingInComp.toString());
+        deviceEntityFromApp.entityStateGRPC =
+            EntityState(DeviceStateGRPC.waitingInComp.toString());
 
-        getIt<IMqttServerRepository>().postToMqtt(
+        getIt<IMqttServerRepository>().postToHubMqtt(
           entityFromTheApp: deviceEntityFromApp,
           gotFromApp: true,
         );
@@ -143,7 +143,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
           roomEntity: roomEntityFromApp,
         );
 
-        getIt<IMqttServerRepository>().postToMqtt(
+        getIt<IMqttServerRepository>().postToHubMqtt(
           entityFromTheApp: roomEntityFromApp,
           gotFromApp: true,
         );
@@ -176,16 +176,16 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
             SceneCbjDtos.fromJson(jsonSceneFromJsonString).toDomain();
 
         final String sceneStateGrpcTemp =
-            sceneCbj.deviceStateGRPC.getOrCrash()!;
+            sceneCbj.entityStateGRPC.getOrCrash()!;
 
         sceneCbj.copyWith(
-          deviceStateGRPC: SceneCbjDeviceStateGRPC(
+          entityStateGRPC: SceneCbjDeviceStateGRPC(
             DeviceStateGRPC.waitingInComp.toString(),
           ),
         );
 
         if (sceneStateGrpcTemp == DeviceStateGRPC.addingNewScene.toString()) {
-          getIt<ISceneCbjRepository>().addNewScene(sceneCbj);
+          getIt<ISceneCbjRepository>().addNewSceneAndSaveInDb(sceneCbj);
         } else {
           getIt<ISceneCbjRepository>().activateScene(sceneCbj);
         }
@@ -197,17 +197,18 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
             RoutineCbjDtos.fromJson(jsonRoutineFromJsonString).toDomain();
 
         final String routineStateGrpcTemp =
-            routineCbj.deviceStateGRPC.getOrCrash()!;
+            routineCbj.entityStateGRPC.getOrCrash()!;
 
         routineCbj.copyWith(
-          deviceStateGRPC: RoutineCbjDeviceStateGRPC(
+          entityStateGRPC: RoutineCbjDeviceStateGRPC(
             DeviceStateGRPC.waitingInComp.toString(),
           ),
         );
 
         if (routineStateGrpcTemp ==
             DeviceStateGRPC.addingNewRoutine.toString()) {
-          getIt<IRoutineCbjRepository>().addNewRoutine(routineCbj);
+          getIt<IRoutineCbjRepository>()
+              .addNewRoutineAndSaveItToLocalDb(routineCbj);
         } else {
           // For a way to active it manually
           // getIt<IRoutineCbjRepository>().activateRoutine(routineCbj);
@@ -291,7 +292,6 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     if (allRooms.isNotEmpty) {
       /// The delay fix this issue in gRPC for some reason
       /// https://github.com/grpc/grpc-dart/issues/558
-      await Future.delayed(const Duration(milliseconds: 15));
       allRooms.map((String id, RoomEntity d) {
         HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
         return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
@@ -332,7 +332,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         nodeRedFlowId: SceneCbjNodeRedFlowId(null),
         firstNodeId: SceneCbjFirstNodeId(null),
         lastDateOfExecute: SceneCbjLastDateOfExecute(null),
-        deviceStateGRPC:
+        entityStateGRPC:
             SceneCbjDeviceStateGRPC(DeviceStateGRPC.ack.toString()),
         senderDeviceModel: SceneCbjSenderDeviceModel(null),
         senderDeviceOs: SceneCbjSenderDeviceOs(null),

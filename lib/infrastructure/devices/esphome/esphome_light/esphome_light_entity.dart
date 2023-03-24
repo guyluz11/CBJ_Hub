@@ -4,36 +4,70 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/esphome/esphome_api/esphome_api_client.dart';
+import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esphome_node_red_api.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 
 class EspHomeLightEntity extends GenericLightDE {
   EspHomeLightEntity({
     required super.uniqueId,
-    required super.vendorUniqueId,
-    required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.entityUniqueId,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
-    required DevicePowerConsumption super.powerConsumption,
-    required GenericLightSwitchState super.lightSwitchState,
-    required this.deviceMdnsName,
-    required this.devicePort,
-    this.lastKnownIp,
+    required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
+    required super.lightSwitchState,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.espHome.toString()),
         );
 
-  DeviceLastKnownIp? lastKnownIp;
-
-  DeviceMdnsName deviceMdnsName;
-
-  DevicePort devicePort;
+  factory EspHomeLightEntity.fromGeneric(GenericLightDE genericDevice) {
+    return EspHomeLightEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      lightSwitchState: genericDevice.lightSwitchState,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+    );
+  }
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({
@@ -50,7 +84,7 @@ class EspHomeLightEntity extends GenericLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          deviceStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
+          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
         final DeviceActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
@@ -74,10 +108,18 @@ class EspHomeLightEntity extends GenericLightDE {
           logger.e('actionToPreform is not set correctly ESPHome light');
         }
       }
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+      //   entityFromTheHub: this,
+      // );
       return right(unit);
     } catch (e) {
-      deviceStateGRPC = DeviceState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      //
+      // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
+      //   entityFromTheHub: this,
+      // );
+
       return left(const CoreFailure.unexpected());
     }
   }
@@ -85,78 +127,40 @@ class EspHomeLightEntity extends GenericLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
     lightSwitchState = GenericLightSwitchState(DeviceActions.on.toString());
-
     try {
-      logger.v('Turn on ESPHome device');
-      EspHomeApiClient espHomeApi;
-      try {
-        espHomeApi = EspHomeApiClient(
-          deviceMdnsT: deviceMdnsName.getOrCrash(),
-          devicePass: 'MyPassword',
-        );
-        //
-        // EspHomeApi.listenToResponses();
-      } catch (mDnsCannotBeFound) {
-        espHomeApi = EspHomeApiClient(
-          deviceMdnsT: lastKnownIp!.getOrCrash(),
-          devicePass: 'MyPassword',
-        );
-        //
-        // EspHomeApi.listenToResponses();
-      }
-      await espHomeApi.sendConnect();
-      // await EspHomeApi.deviceInfoRequestToEsp();
-      // await EspHomeApi.listEntitiesRequest();
-      // await EspHomeApi.subscribeStatesRequest();
-      await espHomeApi.switchCommandRequest(
-        int.parse(vendorUniqueId.getOrCrash()),
-        true,
-      );
-      await espHomeApi.disconnect();
-      return right(unit);
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
+
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+
+      getIt<IMqttServerRepository>()
+          .publishMessage(topic, """{"state":true}""");
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
+    return right(unit);
   }
 
   @override
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
     lightSwitchState = GenericLightSwitchState(DeviceActions.off.toString());
-
     try {
-      try {
-        logger.v('Turn off ESPHome device');
-        EspHomeApiClient espHomeApi;
-        try {
-          espHomeApi = EspHomeApiClient(
-            deviceMdnsT: deviceMdnsName.getOrCrash(),
-            devicePass: 'MyPassword',
-          );
-          //
-          // EspHomeApi.listenToResponses();
-        } catch (mDnsCannotBeFound) {
-          espHomeApi = EspHomeApiClient(
-            deviceMdnsT: lastKnownIp!.getOrCrash(),
-            devicePass: 'MyPassword',
-          );
-          //
-          // EspHomeApi.listenToResponses();
-        }
-        await espHomeApi.sendConnect();
-        // await EspHomeApi.deviceInfoRequestToEsp();
-        // await EspHomeApi.listEntitiesRequest();
-        // await EspHomeApi.subscribeStatesRequest();
-        await espHomeApi.switchCommandRequest(
-          int.parse(vendorUniqueId.getOrCrash()),
-          false,
-        );
-        await espHomeApi.disconnect();
-        return right(unit);
-      } catch (exception) {
-        return left(const CoreFailure.unexpected());
-      }
+      final String nodeRedApiBaseTopic =
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
+
+      final String nodeRedDevicesTopic =
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
+      final String topic =
+          '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+
+      getIt<IMqttServerRepository>()
+          .publishMessage(topic, """{"state":false}""");
     } catch (e) {
       return left(const CoreFailure.unexpected());
     }
+    return right(unit);
   }
 }

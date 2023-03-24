@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cbj_hub/domain/generic_devices/abstract_device/core_failures.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
@@ -10,42 +10,42 @@ import 'package:cbj_hub/infrastructure/devices/lifx/lifx_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/lifx/lifx_white/lifx_white_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:lifx_http_api/lifx_http_api.dart' as lifx;
+import 'package:lifx_http_api/lifx_http_api.dart';
 
 @singleton
 class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<String> accountLogin(GenericLifxLoginDE genericLifxLoginDE) async {
-    lifxClient = lifx.Client(genericLifxLoginDE.lifxApiKey.getOrCrash());
+    lifxClient = LIFXClient(genericLifxLoginDE.lifxApiKey.getOrCrash());
     _discoverNewDevices();
     return 'Success';
   }
 
   static Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  static lifx.Client? lifxClient;
+  static LIFXClient? lifxClient;
 
   Future<void> _discoverNewDevices() async {
     while (true) {
       try {
-        final Iterable<lifx.Bulb> lights = await lifxClient!.listLights();
+        final Iterable<LIFXBulb> lights =
+            await lifxClient!.listLights(const Selector());
 
-        for (final lifx.Bulb lifxDevice in lights) {
+        for (final LIFXBulb lifxDevice in lights) {
           CoreUniqueId? tempCoreUniqueId;
           bool deviceExist = false;
           for (final DeviceEntityAbstract savedDevice
               in companyDevices.values) {
             if (savedDevice is LifxWhiteEntity &&
-                lifxDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+                lifxDevice.id == savedDevice.entityUniqueId.getOrCrash()) {
               deviceExist = true;
               break;
             } else if (savedDevice is GenericLightDE &&
-                lifxDevice.id == savedDevice.vendorUniqueId.getOrCrash()) {
+                lifxDevice.id == savedDevice.entityUniqueId.getOrCrash()) {
               tempCoreUniqueId = savedDevice.uniqueId;
               break;
             } else if (lifxDevice.id ==
-                savedDevice.vendorUniqueId.getOrCrash()) {
+                savedDevice.entityUniqueId.getOrCrash()) {
               logger.w(
                 'Lifx device type supported but implementation is missing here',
               );
@@ -67,7 +67,7 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
                 CompaniesConnectorConjector.addDiscoverdDeviceToHub(addDevice);
 
             final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-                MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+                MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
             companyDevices.addEntries([deviceAsEntry]);
 
@@ -82,25 +82,11 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
-  Future<Either<CoreFailure, Unit>> create(DeviceEntityAbstract lifx) {
-    // TODO: implement create
-    throw UnimplementedError();
-  }
-
-  Future<Either<CoreFailure, Unit>> delete(DeviceEntityAbstract lifx) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
-
-  Future<void> initiateHubConnection() {
-    // TODO: implement initiateHubConnection
-    throw UnimplementedError();
-  }
-
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract lifxDE,
   ) async {
-    final DeviceEntityAbstract? device = companyDevices[lifxDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[lifxDE.entityUniqueId.getOrCrash()];
 
     if (device is LifxWhiteEntity) {
       device.executeDeviceAction(newEntity: lifxDE);
@@ -109,12 +95,21 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
-  Future<Either<CoreFailure, Unit>> updateDatabase({
-    required String pathOfField,
-    required Map<String, dynamic> fieldsToUpdate,
-    String? forceUpdateLocation,
-  }) async {
-    // TODO: implement updateDatabase
-    throw UnimplementedError();
+  @override
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericDimmableLightDE) {
+      nonGenericDevice = LifxWhiteEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
   }
 }

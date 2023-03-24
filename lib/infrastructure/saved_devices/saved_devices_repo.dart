@@ -17,24 +17,14 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ISavedDevicesRepo)
 class SavedDevicesRepo extends ISavedDevicesRepo {
-  SavedDevicesRepo() {
-    setUpAllFromDb();
-  }
-
   static final HashMap<String, DeviceEntityAbstract> _allDevices =
       HashMap<String, DeviceEntityAbstract>();
 
   static bool setUpAllFromDbAtLestOnce = false;
 
+  @override
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
-    /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    getIt<ILocalDbRepository>().getSmartDevicesFromDb().then((value) {
+    await getIt<ILocalDbRepository>().getSmartDevicesFromDb().then((value) {
       value.fold((l) => null, (r) {
         for (final element in r) {
           addOrUpdateDevice(element);
@@ -130,8 +120,8 @@ class SavedDevicesRepo extends ISavedDevicesRepo {
     DeviceEntityAbstract deviceEntity,
   ) {
     for (final DeviceEntityAbstract deviceTemp in _allDevices.values) {
-      if (deviceEntity.vendorUniqueId.getOrCrash() ==
-          deviceTemp.vendorUniqueId.getOrCrash()) {
+      if (deviceEntity.entityUniqueId.getOrCrash() ==
+          deviceTemp.entityUniqueId.getOrCrash()) {
         return deviceTemp;
       }
     }
@@ -148,9 +138,9 @@ class SavedDevicesRepo extends ISavedDevicesRepo {
 
   @override
   Future<Either<LocalDbFailures, DeviceEntityAbstract>> getDeviceById(
-    String deviceUniqueId,
+    String entityUniqueId,
   ) async {
-    final DeviceEntityAbstract? device = _allDevices[deviceUniqueId];
+    final DeviceEntityAbstract? device = _allDevices[entityUniqueId];
     if (device != null) {
       return right(device);
     }

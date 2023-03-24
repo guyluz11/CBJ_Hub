@@ -14,23 +14,14 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: IRoutineCbjRepository)
 class RoutineCbjRepository implements IRoutineCbjRepository {
-  RoutineCbjRepository() {
-    setUpAllFromDb();
-  }
   final Map<String, RoutineCbjEntity> _allRoutines = {};
 
+  @override
   Future<void> setUpAllFromDb() async {
-    /// Delay inorder for the Hive boxes to initialize
-    /// In case you got the following error:
-    /// "HiveError: You need to initialize Hive or provide a path to store
-    /// the box."
-    /// Please increase the duration
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    getIt<ILocalDbRepository>().getRoutinesFromDb().then((value) {
-      value.fold((l) => null, (r) {
+    await getIt<ILocalDbRepository>().getRoutinesFromDb().then((value) {
+      value.fold((l) => null, (r) async {
         for (final element in r) {
-          addNewRoutine(element);
+          await addNewRoutine(element);
         }
       });
     });
@@ -70,8 +61,6 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
       /// If it is new routine
       _allRoutines[entityId] = tempRoutineCbj;
 
-      await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-
       getIt<ISavedRoomsRepo>()
           .addRoutineToRoomDiscoveredIfNotExist(tempRoutineCbj);
       final String routineNodeRedFlowId = await getIt<INodeRedRepository>()
@@ -81,13 +70,25 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
           nodeRedFlowId: RoutineCbjNodeRedFlowId(routineNodeRedFlowId),
         );
       }
-      await saveAndActivateRoutineToDb();
     }
     return right(unit);
   }
 
   @override
-  Future<bool> activateRoutine(RoutineCbjEntity routineCbj) async {
+  Future<Either<RoutineCbjFailure, Unit>> addNewRoutineAndSaveItToLocalDb(
+    RoutineCbjEntity routineCbj,
+  ) async {
+    await addNewRoutine(routineCbj);
+    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+    await saveAndActivateRoutineToDb();
+
+    return right(unit);
+  }
+
+  @override
+  Future<bool> activateRoutine(
+    RoutineCbjEntity routineCbj,
+  ) async {
     final String fullPathOfRoutine = await getFullMqttPathOfRoutine(routineCbj);
     getIt<IMqttServerRepository>()
         .publishMessage(fullPathOfRoutine, DateTime.now().toString());

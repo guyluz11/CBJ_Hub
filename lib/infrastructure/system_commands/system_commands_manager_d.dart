@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/bash_commands_d/bash_commands_for_raspberry_pi_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/bash_commands_d/common_bash_commands_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/batch_commands_d/common_batch_commands_d.dart';
 import 'package:cbj_hub/infrastructure/system_commands/system_commands_base_class_d.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class SystemCommandsManager {
   SystemCommandsManager() {
     if (Platform.isLinux) {
@@ -20,7 +21,8 @@ class SystemCommandsManager {
       throw 'Mac os is currently not supported';
     } else {
       logger.e(
-          '${Platform.operatingSystem} os is not supported in SystemCommandsManager');
+        '${Platform.operatingSystem} os is not supported in SystemCommandsManager',
+      );
       throw '${Platform.operatingSystem} os is not supported';
     }
   }
@@ -32,7 +34,13 @@ class SystemCommandsManager {
   }
 
   Future<String> getLocalDbPath() {
-    return systemCommandsBaseClassD!.getLocalDbPath();
+    return systemCommandsBaseClassD!.getLocalDbPath(
+      getCurrentUserName(),
+    );
+  }
+
+  Future<String> getProjectFilesLocation() {
+    return systemCommandsBaseClassD!.getProjectFilesLocation();
   }
 
   Future<String> getDeviceHostName() {
@@ -59,15 +67,7 @@ class SystemCommandsManager {
     return BashCommandsForRaspberryPi.getRaspberryPiDeviceVersion();
   }
 
-  Future<String?> getSnapLocationEnvironmentVariable() {
-    return Future.value(SharedVariables.getSnapLocationEnvironmentVariable());
-  }
-
-  Future<String?> getSnapCommonEnvironmentVariable() {
-    return Future.value(SharedVariables.getSnapCommonEnvironmentVariable());
-  }
-
-  Future<String?> getSnapUserCommonEnvironmentVariable() {
-    return Future.value(SharedVariables.getSnapUserCommonEnvironmentVariable());
+  Future<String?> getIpFromMdnsName(String mdnsName) {
+    return systemCommandsBaseClassD!.getIpFromMdnsName(mdnsName);
   }
 }

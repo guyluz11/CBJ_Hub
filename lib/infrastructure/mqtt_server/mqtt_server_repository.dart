@@ -1,15 +1,20 @@
+import 'dart:convert';
+
 import 'package:cbj_hub/application/connector/connector.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_switch_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -20,16 +25,18 @@ import 'package:mqtt_client/src/observable/src/records.dart';
 
 @LazySingleton(as: IMqttServerRepository)
 class MqttServerRepository extends IMqttServerRepository {
-  MqttServerRepository() {
-    connect();
-  }
-
   /// Static instance of connection to mqtt broker
   static MqttServerClient client = MqttServerClient('127.0.0.1', 'CBJ_Hub');
 
   static const String hubBaseTopic = 'CBJ_Hub_Topic';
 
+  static const String appBaseTopic = 'CBJ_App_Topic';
+
+  static const String nodeRedApiBaseTopic = 'NodeRed_Api_Topic';
+
   static const String devicesTopicTypeName = 'Devices';
+
+  static const String nodeRedDevicesTopic = 'Node_Red_Devices';
 
   static const String scenesTopicTypeName = 'Scenes';
 
@@ -37,14 +44,32 @@ class MqttServerRepository extends IMqttServerRepository {
 
   static const String bindingsTopicTypeName = 'Bindings';
 
+  static Future<MqttServerClient>? clientFuture;
+
+  @override
+  Future<void> asyncConstractor() async {
+    clientFuture = connect();
+    await clientFuture;
+  }
+
   @override
   String getHubBaseTopic() {
     return hubBaseTopic;
   }
 
   @override
+  String getNodeRedApiBaseTopic() {
+    return nodeRedApiBaseTopic;
+  }
+
+  @override
   String getDevicesTopicTypeName() {
     return devicesTopicTypeName;
+  }
+
+  @override
+  String getNodeRedDevicesTopicTypeName() {
+    return nodeRedDevicesTopic;
   }
 
   @override
@@ -67,11 +92,13 @@ class MqttServerRepository extends IMqttServerRepository {
   Future<MqttServerClient> connect() async {
     if (client.connectionStatus!.state == MqttConnectionState.connected) {
       return client;
-    } else if (client.connectionStatus!.state ==
-        MqttConnectionState.connecting) {
-      await Future.delayed(const Duration(seconds: 1));
-      return client;
-    } else {
+    }
+    // else if (client.connectionStatus!.state ==
+    //     MqttConnectionState.connecting) {
+    //   // await Future.delayed(const Duration(seconds: 1));
+    //   // return client;
+    // }
+    else {
       client.disconnect();
     }
 
@@ -96,41 +123,47 @@ class MqttServerRepository extends IMqttServerRepository {
     client.connectionMessage = connMessage;
     try {
       await client.connect();
+
+      client.subscribe('#', MqttQos.atLeastOnce);
     } catch (e) {
-      logger.e('Error: $e');
+      logger.e('Error in mqtt connect\n$e');
       client.disconnect();
     }
-    client.subscribe('#', MqttQos.atLeastOnce);
+
     return client;
   }
 
   @override
   Future<void> subscribeToTopic(String topic) async {
-    await connect();
     client.subscribe(topic, MqttQos.atLeastOnce);
   }
 
   @override
   Stream<List<MqttReceivedMessage<MqttMessage?>>>
       streamOfAllSubscriptions() async* {
-    await connect();
     yield* MqttClientTopicFilter('#', client.updates).updates;
   }
 
   @override
   Stream<List<MqttReceivedMessage<MqttMessage?>>>
       streamOfAllHubSubscriptions() async* {
-    await connect();
-
     yield* MqttClientTopicFilter('$hubBaseTopic/#', client.updates).updates;
   }
 
   @override
   Stream<List<MqttReceivedMessage<MqttMessage?>>>
       streamOfAllDevicesHubSubscriptions() async* {
-    await connect();
     yield* MqttClientTopicFilter(
       '$hubBaseTopic/$devicesTopicTypeName/#',
+      client.updates,
+    ).updates;
+  }
+
+  @override
+  Stream<List<MqttReceivedMessage<MqttMessage?>>>
+      streamOfAllDeviceAppSubscriptions() async* {
+    yield* MqttClientTopicFilter(
+      '$appBaseTopic/$devicesTopicTypeName/#',
       client.updates,
     ).updates;
   }
@@ -139,7 +172,6 @@ class MqttServerRepository extends IMqttServerRepository {
   Stream<List<MqttReceivedMessage<MqttMessage?>>> streamOfChosenSubscription(
     String topicPath,
   ) async* {
-    await connect();
     yield* MqttClientTopicFilter(topicPath, client.updates).updates;
   }
 
@@ -170,9 +202,68 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
+  Future<void> sendToApp() async {
+    streamOfAllDeviceAppSubscriptions().listen(
+        (List<MqttReceivedMessage<MqttMessage?>> mqttPublishMessage) async {
+      final String messageTopic = mqttPublishMessage[0].topic;
+      final List<String> topicsSplitted = messageTopic.split('/');
+      if (topicsSplitted.length < 4) {
+        return;
+      }
+      final String deviceId = topicsSplitted[2];
+      final String deviceDeviceTypeThatChanged = topicsSplitted[3];
+
+      final Map<String, dynamic> devicePropertyAndValues = {
+        deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload
+      };
+
+      final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();
+
+      final Map<String, DeviceEntityAbstract> allDevices =
+          await savedDevicesRepo.getAllDevices();
+
+      for (final DeviceEntityAbstract d in allDevices.values) {
+        if (d.getDeviceId() == deviceId) {
+          final Map<String, dynamic> deviceAsJson =
+              d.toInfrastructure().toJson();
+
+          for (final String property in devicePropertyAndValues.keys) {
+            // final String pt =
+            MqttPublishPayload.bytesToStringAsString(
+              (devicePropertyAndValues[property] as MqttPublishMessage)
+                  .payload
+                  .message,
+            ).replaceAll('\n', '');
+
+            final valueMessage =
+                (devicePropertyAndValues[property] as MqttPublishMessage)
+                    .payload
+                    .message;
+            final String propertyValueString =
+                utf8.decode(valueMessage, allowMalformed: true);
+
+            if (propertyValueString.contains('value')) {
+              final Map<String, dynamic> propertyValueJson =
+                  jsonDecode(propertyValueString) as Map<String, dynamic>;
+              deviceAsJson[property] = propertyValueJson['value'];
+            } else {
+              deviceAsJson[property] = propertyValueString;
+            }
+            final DeviceEntityDtoAbstract savedDeviceWithSameIdAsMqtt =
+                DeviceEntityDtoAbstract.fromJson(deviceAsJson);
+
+            HubRequestsToApp.streamRequestsToApp.sink
+                .add(savedDeviceWithSameIdAsMqtt);
+            return;
+          }
+        }
+      }
+    });
+  }
+
+  @override
   Future<void> publishMessage(String topic, String message) async {
     try {
-      await connect();
       final builder = MqttClientPayloadBuilder();
       builder.addUTF8String(message);
       client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!);
@@ -201,12 +292,10 @@ class MqttServerRepository extends IMqttServerRepository {
 
   @override
   Future<List<ChangeRecord>?> readingFromMqttOnce(String topic) async {
-    await connect();
-
     final MqttClientTopicFilter mqttClientTopic =
         MqttClientTopicFilter(topic, client.updates);
-    final Stream<List<MqttReceivedMessage<MqttMessage?>>> myValueStream =
-        mqttClientTopic.updates.asBroadcastStream();
+    // final Stream<List<MqttReceivedMessage<MqttMessage?>>> myValueStream =
+    mqttClientTopic.updates.asBroadcastStream();
 
     // myValueStream.listen((event) {
     //   logger.v(event);
@@ -308,14 +397,14 @@ class MqttServerRepository extends IMqttServerRepository {
       logger.i(
         'getValues got called on Device $deviceId and will get reposted to mqtt',
       );
-      postToMqtt(entityFromTheApp: deviceObjectOfDeviceId);
+      postToHubMqtt(entityFromTheApp: deviceObjectOfDeviceId);
     } else {
       logger.w('Device id does not exist');
     }
   }
 
   @override
-  Future<void> postToMqtt({
+  Future<void> postToHubMqtt({
     dynamic entityFromTheApp,
     bool? gotFromApp,
   }) async {
@@ -336,6 +425,15 @@ class MqttServerRepository extends IMqttServerRepository {
       if (savedDeviceEntity is GenericLightDE &&
           entityFromTheApp is GenericLightDE) {
         savedDeviceEntity.lightSwitchState = entityFromTheApp.lightSwitchState;
+
+        deviceFromApp = MapEntry(
+          savedDeviceEntity.uniqueId.getOrCrash(),
+          savedDeviceEntity,
+        );
+      } else if (savedDeviceEntity is GenericDimmableLightDE &&
+          entityFromTheApp is GenericDimmableLightDE) {
+        savedDeviceEntity.lightSwitchState = entityFromTheApp.lightSwitchState;
+        savedDeviceEntity.lightBrightness = entityFromTheApp.lightBrightness;
 
         deviceFromApp = MapEntry(
           savedDeviceEntity.uniqueId.getOrCrash(),
@@ -396,6 +494,20 @@ class MqttServerRepository extends IMqttServerRepository {
         savedDeviceEntity.smartComputerSuspendState =
             entityFromTheApp.smartComputerSuspendState;
 
+        savedDeviceEntity.smartComputerShutDownState =
+            entityFromTheApp.smartComputerShutDownState;
+
+        deviceFromApp = MapEntry(
+          savedDeviceEntity.uniqueId.getOrCrash(),
+          savedDeviceEntity,
+        );
+      } else if (savedDeviceEntity is GenericSmartTvDE &&
+          entityFromTheApp is GenericSmartTvDE) {
+        savedDeviceEntity.openUrl = entityFromTheApp.openUrl;
+        savedDeviceEntity.volume = entityFromTheApp.volume;
+        savedDeviceEntity.skip = entityFromTheApp.skip;
+        savedDeviceEntity.pausePlayState = entityFromTheApp.pausePlayState;
+
         deviceFromApp = MapEntry(
           savedDeviceEntity.uniqueId.getOrCrash(),
           savedDeviceEntity,
@@ -403,13 +515,13 @@ class MqttServerRepository extends IMqttServerRepository {
       } else {
         logger.w(
           'Cant find device from app type '
-          '${entityFromTheApp.deviceTypes.getOrCrash()}',
+          '${entityFromTheApp.entityTypes.getOrCrash()}',
         );
         return;
       }
       if (gotFromApp != null && gotFromApp == true) {
-        deviceFromApp.value.deviceStateGRPC =
-            DeviceState(entityFromTheApp.deviceStateGRPC.getOrCrash());
+        deviceFromApp.value.entityStateGRPC =
+            EntityState(entityFromTheApp.entityStateGRPC.getOrCrash());
       }
 
       ConnectorStreamToMqtt.toMqttController.sink.add(deviceFromApp);
@@ -419,5 +531,41 @@ class MqttServerRepository extends IMqttServerRepository {
         'support sending to MQTT',
       );
     }
+  }
+
+  @override
+  Future<void> postToAppMqtt({
+    required DeviceEntityAbstract entityFromTheHub,
+  }) async {
+    // if (entityFromTheHub is Map<String, dynamic>) {
+    // if (entityFromTheHub['entityStateGRPC'] !=
+    //         DeviceStateGRPC.waitingInComp.toString() ||
+    //     entityFromTheHub['entityStateGRPC'] !=
+    //         DeviceStateGRPC.ack.toString()) {
+    //   logger.w("Hub didn't confirmed receiving the request yet");
+    //   return;
+    // }
+
+    final MapEntry<String, dynamic> deviceInMapEntry =
+        MapEntry<String, dynamic>(
+      entityFromTheHub.uniqueId.getOrCrash(),
+      entityFromTheHub,
+    );
+
+    ConnectorStreamToMqtt.toMqttController.sink.add(deviceInMapEntry);
+
+    // } else {
+    //   logger.w(
+    //     'Entity from Hub type ${entityFromTheHub.runtimeType} not '
+    //     'support sending to MQTT for the app',
+    //   );
+    // }
+  }
+
+  @override
+  Future<void> postSmartDeviceToAppMqtt({
+    required DeviceEntityAbstract entityFromTheHub,
+  }) async {
+    postToAppMqtt(entityFromTheHub: entityFromTheHub);
   }
 }

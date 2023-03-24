@@ -14,46 +14,78 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   /// All public field of GenericSmartTv entity
   GenericSmartTvDE({
     required super.uniqueId,
-    required super.vendorUniqueId,
+    required super.entityUniqueId,
     required super.deviceVendor,
-    required super.defaultName,
-    required super.deviceStateGRPC,
+    required super.cbjEntityName,
+    required super.entityOriginalName,
+    required super.deviceOriginalName,
     required super.stateMassage,
     required super.senderDeviceOs,
     required super.senderDeviceModel,
     required super.senderId,
     required super.compUuid,
+    required super.entityStateGRPC,
+    required super.powerConsumption,
+    required super.deviceUniqueId,
+    required super.devicePort,
+    required super.deviceLastKnownIp,
+    required super.deviceHostName,
+    required super.deviceMdns,
+    required super.devicesMacAddress,
+    required super.entityKey,
+    required super.requestTimeStamp,
+    required super.lastResponseFromDeviceTimeStamp,
+    required super.deviceCbjUniqueId,
     required this.smartTvSwitchState,
-    DevicePowerConsumption? powerConsumption,
+    this.openUrl,
+    this.pausePlayState,
+    this.skip,
+    this.volume,
   }) : super(
-          deviceTypes: DeviceType(DeviceTypes.smartTV.toString()),
+          entityTypes: EntityType(DeviceTypes.smartTV.toString()),
         );
 
   /// Empty instance of GenericSmartTvEntity
   factory GenericSmartTvDE.empty() => GenericSmartTvDE(
         uniqueId: CoreUniqueId(),
-        vendorUniqueId: VendorUniqueId(),
-        defaultName: DeviceDefaultName(''),
-        deviceStateGRPC: DeviceState(''),
+        entityUniqueId: EntityUniqueId(''),
+        cbjEntityName: CbjEntityName(''),
+        entityOriginalName: EntityOriginalName(''),
+        deviceOriginalName: DeviceOriginalName(''),
+        entityStateGRPC: EntityState(''),
         senderDeviceOs: DeviceSenderDeviceOs(''),
         senderDeviceModel: DeviceSenderDeviceModel(''),
         stateMassage: DeviceStateMassage(''),
         senderId: DeviceSenderId(),
         deviceVendor: DeviceVendor(''),
+        deviceUniqueId: DeviceUniqueId(''),
+        devicePort: DevicePort(''),
+        deviceLastKnownIp: DeviceLastKnownIp(''),
+        deviceHostName: DeviceHostName(''),
+        deviceMdns: DeviceMdns(''),
         compUuid: DeviceCompUuid(''),
         powerConsumption: DevicePowerConsumption(''),
+        devicesMacAddress: DevicesMacAddress(''),
+        entityKey: EntityKey(''),
+        requestTimeStamp: RequestTimeStamp(''),
+        lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(''),
+        deviceCbjUniqueId: CoreUniqueId(),
         smartTvSwitchState:
             GenericSmartTvSwitchState(DeviceActions.off.toString()),
       );
 
   /// State of the smartTv on/off
   GenericSmartTvSwitchState? smartTvSwitchState;
+  GenericSmartTvOpenUrl? openUrl;
+  GenericSmartTvPausePlayState? pausePlayState;
+  GenericSmartTvSkipBackOrForward? skip;
+  GenericSmartTvVolume? volume;
 
   //
   // /// Will return failure if any of the fields failed or return unit if fields
   // /// have legit values
   Option<CoreFailure<dynamic>> get failureOption =>
-      defaultName.value.fold((f) => some(f), (_) => none());
+      cbjEntityName.value.fold((f) => some(f), (_) => none());
   //
   // return body.failureOrUnit
   //     .andThen(todos.failureOrUnit)
@@ -86,18 +118,35 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
     return GenericSmartTvDeviceDtos(
       deviceDtoClass: (GenericSmartTvDeviceDtos).toString(),
       id: uniqueId.getOrCrash(),
-      vendorUniqueId: vendorUniqueId.getOrCrash(),
-      defaultName: defaultName.getOrCrash(),
-      deviceStateGRPC: deviceStateGRPC.getOrCrash(),
+      entityUniqueId: entityUniqueId.getOrCrash(),
+      cbjEntityName: cbjEntityName.getOrCrash(),
+      entityOriginalName: entityOriginalName.getOrCrash(),
+      deviceOriginalName: deviceOriginalName.getOrCrash(),
+      entityStateGRPC: entityStateGRPC.getOrCrash(),
       stateMassage: stateMassage.getOrCrash(),
       senderDeviceOs: senderDeviceOs.getOrCrash(),
       senderDeviceModel: senderDeviceModel.getOrCrash(),
       senderId: senderId.getOrCrash(),
-      deviceTypes: deviceTypes.getOrCrash(),
+      entityTypes: entityTypes.getOrCrash(),
       compUuid: compUuid.getOrCrash(),
+      powerConsumption: powerConsumption.getOrCrash(),
+      deviceUniqueId: deviceUniqueId.getOrCrash(),
+      devicePort: devicePort.getOrCrash(),
+      deviceLastKnownIp: deviceLastKnownIp.getOrCrash(),
+      deviceHostName: deviceHostName.getOrCrash(),
+      deviceMdns: deviceMdns.getOrCrash(),
+      devicesMacAddress: devicesMacAddress.getOrCrash(),
+      entityKey: entityKey.getOrCrash(),
+      requestTimeStamp: requestTimeStamp.getOrCrash(),
+      lastResponseFromDeviceTimeStamp:
+          lastResponseFromDeviceTimeStamp.getOrCrash(),
+      deviceCbjUniqueId: deviceCbjUniqueId.getOrCrash(),
       smartTvSwitchState: smartTvSwitchState!.getOrCrash(),
       deviceVendor: deviceVendor.getOrCrash(),
-      // serverTimeStamp: FieldValue.serverTimestamp(),
+      openUrl: openUrl?.getOrCrash(),
+      pausePlayState: pausePlayState?.getOrCrash(),
+      skip: skip?.getOrCrash(),
+      volume: volume?.getOrCrash(),
     );
   }
 
@@ -134,6 +183,88 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
     );
   }
 
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> sendUrlToDevice(String newUrl) async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> togglePausePlay(
+    String toggleNewState,
+  ) async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> togglePause() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> togglePlay() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> toggleStop() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> queueNext() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> queuePrev() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
+  /// Please override the following methods
+  Future<Either<CoreFailure, Unit>> closeApp() async {
+    logger.w('Please override this method in the non generic implementation');
+    return left(
+      const CoreFailure.actionExcecuter(
+        failedValue: 'Action does not exist',
+      ),
+    );
+  }
+
   @override
   bool replaceActionIfExist(String action) {
     if (GenericSmartTvSwitchState.smartTvValidActions().contains(action)) {
@@ -147,6 +278,9 @@ class GenericSmartTvDE extends DeviceEntityAbstract {
   List<String> getListOfPropertiesToChange() {
     return [
       'smartTvSwitchState',
+      'openUrl',
+      'skip',
+      'volume',
     ];
   }
 }

@@ -1,7 +1,7 @@
 abstract class SystemCommandsBaseClassD {
   Future<String> getCurrentUserName();
 
-  Future<String> getLocalDbPath();
+  Future<String> getLocalDbPath(Future<String?> currentUserName);
 
   Future<String> getUuidOfCurrentDevice();
 
@@ -13,6 +13,10 @@ abstract class SystemCommandsBaseClassD {
 
   Future<String?> getDeviceConfiguration();
 
+  Future<String> getProjectFilesLocation();
+
+  Future<String?> getIpFromMdnsName(String mdnsName);
+
 // TODO: Need to find a way in dart to get os environment variable
 // /// Get Snap location environment variable "SNAP"
 // Future<String> getSnapLocationEnvironmentVariable();
@@ -22,5 +26,4 @@ abstract class SystemCommandsBaseClassD {
 //
 // /// Get Snap user common environment variable "SNAP_USER_COMMON"
 // Future<String> getSnapUserCommonEnvironmentVariable();
-
 }
