@@ -13,7 +13,8 @@ import 'package:yeedart/yeedart.dart';
 
 @singleton
 class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> discoverNewDevices() async {
     while (true) {

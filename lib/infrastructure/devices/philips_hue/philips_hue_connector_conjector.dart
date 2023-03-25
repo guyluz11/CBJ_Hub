@@ -12,7 +12,8 @@ import 'package:injectable/injectable.dart';
 @singleton
 class PhilipsHueConnectorConjector
     implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   static const List<String> mdnsTypes = [
     '_hue._tcp',

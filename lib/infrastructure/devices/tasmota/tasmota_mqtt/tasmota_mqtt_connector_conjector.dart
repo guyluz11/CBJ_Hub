@@ -31,7 +31,8 @@ class TasmotaMqttConnectorConjector
   //       .publishMessage('cmnd/$tasmotaMqttTopic/SetOption19', '0');
   // }
 
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> discoverNewDevices() async {
     getIt<IMqttServerRepository>()

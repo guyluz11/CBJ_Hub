@@ -11,7 +11,8 @@ import 'package:injectable/injectable.dart';
 
 @singleton
 class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   static const List<String> mdnsTypes = [
     '_googlecast._tcp',

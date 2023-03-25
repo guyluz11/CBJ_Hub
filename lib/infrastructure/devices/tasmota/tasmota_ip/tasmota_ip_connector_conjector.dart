@@ -15,7 +15,8 @@ import 'package:network_tools/network_tools.dart';
 
 @singleton
 class TasmotaIpConnectorConjector implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   // This is how you can interact tasmota using network calls.
   // http://ip/cm?cmnd=SetOption19%200

@@ -20,6 +20,13 @@ import 'package:injectable/injectable.dart';
 
 @singleton
 class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
+
+  static late CloudTuya cloudTuya;
+  static late CloudTuya cloudJinvooSmart;
+  static late CloudTuya cloudSmartLife;
+
   Future<String> accountLogin({
     required GenericTuyaLoginDE genericTuyaLoginDE,
   }) async {
@@ -60,12 +67,6 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
     // TODO: Add other types
     return 'Success';
   }
-
-  static late CloudTuya cloudTuya;
-  static late CloudTuya cloudJinvooSmart;
-  static late CloudTuya cloudSmartLife;
-
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> _discoverNewDevices({
     required CloudTuya cloudTuyaOrSmartLifeOrJinvooSmart,

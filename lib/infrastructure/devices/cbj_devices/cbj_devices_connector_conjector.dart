@@ -14,7 +14,8 @@ import 'package:network_tools/network_tools.dart';
 @singleton
 class CbjDevicesConnectorConjector
     implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> addNewDeviceByHostInfo({
     required ActiveHost activeHost,

@@ -5,13 +5,17 @@ import 'package:cbj_hub/infrastructure/devices/xiaomi_io/xiaomi_io_gpx3021gl/xia
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:injectable/injectable.dart';
+import 'package:mi_iot_token/mi_iot_token.dart';
 // import 'package:mi_iot_token/mi_iot_token.dart';
 // import 'package:miio/miio.dart';
 import 'package:network_tools/network_tools.dart';
 
 @singleton
 class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
+
+  final MiCloud miCloud = MiCloud();
 
   // Discover from miio package does not work on Linux, but it is better than
   // filtering devices by host names like we do now

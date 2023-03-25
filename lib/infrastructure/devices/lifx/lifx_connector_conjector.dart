@@ -21,9 +21,10 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
     return 'Success';
   }
 
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  static LIFXClient? lifxClient;
+  LIFXClient? lifxClient;
 
   Future<void> _discoverNewDevices() async {
     while (true) {

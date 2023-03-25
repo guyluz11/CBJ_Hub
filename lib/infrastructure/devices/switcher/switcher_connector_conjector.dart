@@ -17,7 +17,8 @@ import 'package:injectable/injectable.dart';
 
 @singleton
 class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> addOnlyNewSwitcherDevice(
     SwitcherApiObject switcherApiObject,

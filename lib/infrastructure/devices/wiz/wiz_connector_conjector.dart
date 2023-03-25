@@ -16,7 +16,8 @@ class WizConnectorConjector implements AbstractCompanyConnectorConjector {
     return 'Success';
   }
 
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   Future<void> addNewDeviceByHostInfo({
     required ActiveHost activeHost,

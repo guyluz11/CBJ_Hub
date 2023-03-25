@@ -16,7 +16,8 @@ import 'package:injectable/injectable.dart';
 class ShellyConnectorConjector implements AbstractCompanyConnectorConjector {
   static const List<String> mdnsTypes = ['_http._tcp'];
 
-  static Map<String, DeviceEntityAbstract> companyDevices = {};
+  @override
+  Map<String, DeviceEntityAbstract> companyDevices = {};
 
   /// Add new devices to [companyDevices] if not exist
   Future<void> addNewDeviceByMdnsName({

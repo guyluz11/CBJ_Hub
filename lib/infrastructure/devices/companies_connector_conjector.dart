@@ -119,21 +119,37 @@ class CompaniesConnectorConjector {
 
     /// TODO: convert all vendors to use setup from db method
     if (deviceVendor == VendorsAndServices.yeelight.toString()) {
-      YeelightConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<YeelightConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.tasmota.toString()) {
-      TasmotaIpConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<TasmotaIpConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.google.toString()) {
-      GoogleConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<GoogleConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
-      XiaomiIoConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<XiaomiIoConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.tuyaSmart.toString()) {
-      TuyaSmartConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<TuyaSmartConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
-      ShellyConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<ShellyConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
-      SonoffDiyConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<SonoffDiyConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.philipsHue.toString()) {
-      PhilipsHueConnectorConjector.companyDevices.addEntries([devicesEntry]);
+      getIt<PhilipsHueConnectorConjector>()
+          .companyDevices
+          .addEntries([devicesEntry]);
     } else if (companyConnectorConjector != null) {
       companyConnectorConjector.setUpDeviceFromDb(devicesEntry.value);
     } else {
