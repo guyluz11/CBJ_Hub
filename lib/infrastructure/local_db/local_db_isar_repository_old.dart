@@ -194,7 +194,7 @@ class IsarRepository extends ILocalDbRepository {
         devices.add(
           deviceEntity
             ..entityStateGRPC =
-                EntityState(DeviceStateGRPC.waitingInComp.toString()),
+                EntityState(EntityStateGRPC.waitingInComp.toString()),
         );
       }
       return right(devices);
@@ -514,7 +514,7 @@ class IsarRepository extends ILocalDbRepository {
         scenes.add(
           sceneEntity.copyWith(
             entityStateGRPC: SceneCbjDeviceStateGRPC(
-              DeviceStateGRPC.waitingInComp.toString(),
+              EntityStateGRPC.waitingInComp.toString(),
             ),
           ),
         );
@@ -545,7 +545,7 @@ class IsarRepository extends ILocalDbRepository {
         routines.add(
           routineEntity.copyWith(
             entityStateGRPC: RoutineCbjDeviceStateGRPC(
-              DeviceStateGRPC.waitingInComp.toString(),
+              EntityStateGRPC.waitingInComp.toString(),
             ),
           ),
         );
@@ -576,7 +576,7 @@ class IsarRepository extends ILocalDbRepository {
         bindings.add(
           bindingEntity.copyWith(
             entityStateGRPC: BindingCbjDeviceStateGRPC(
-              DeviceStateGRPC.waitingInComp.toString(),
+              EntityStateGRPC.waitingInComp.toString(),
             ),
           ),
         );

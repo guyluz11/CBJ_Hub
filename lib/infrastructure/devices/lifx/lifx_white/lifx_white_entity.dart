@@ -88,20 +88,20 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
-        final DeviceActions? actionToPreform =
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
+        final EntityActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
         );
 
-        if (actionToPreform == DeviceActions.on) {
+        if (actionToPreform == EntityActions.on) {
           (await turnOnLight()).fold((l) {
             logger.e('Error turning Lifx light on');
             throw l;
           }, (r) {
             logger.i('Lifx light turn on success');
           });
-        } else if (actionToPreform == DeviceActions.off) {
+        } else if (actionToPreform == EntityActions.off) {
           (await turnOffLight()).fold((l) {
             logger.e('Error turning Lifx light off');
             throw l;
@@ -125,13 +125,13 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
           },
         );
       }
-      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
@@ -142,7 +142,7 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
     lightSwitchState =
-        GenericDimmableLightSwitchState(DeviceActions.on.toString());
+        GenericDimmableLightSwitchState(EntityActions.on.toString());
     try {
       final setStateBodyResponse =
           await LifxConnectorConjector.lifxClient?.setState(
@@ -166,7 +166,7 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
     lightSwitchState =
-        GenericDimmableLightSwitchState(DeviceActions.off.toString());
+        GenericDimmableLightSwitchState(EntityActions.off.toString());
 
     try {
       final setStateBodyResponse =

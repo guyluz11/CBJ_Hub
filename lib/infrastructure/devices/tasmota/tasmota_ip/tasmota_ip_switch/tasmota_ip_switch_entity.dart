@@ -67,13 +67,13 @@ class TasmotaIpSwitchEntity extends GenericSwitchDE {
 
     try {
       if (newEntity.switchState!.getOrCrash() != switchState!.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
-        final DeviceActions? actionToPreform =
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
+        final EntityActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.switchState!.getOrCrash(),
         );
 
-        if (actionToPreform == DeviceActions.on) {
+        if (actionToPreform == EntityActions.on) {
           (await turnOnSwitch()).fold(
             (l) {
               logger.e('Error turning TasmotaIp switch on');
@@ -83,7 +83,7 @@ class TasmotaIpSwitchEntity extends GenericSwitchDE {
               logger.i('TasmotaIp switch turn on success');
             },
           );
-        } else if (actionToPreform == DeviceActions.off) {
+        } else if (actionToPreform == EntityActions.off) {
           (await turnOffSwitch()).fold(
             (l) {
               logger.e('Error turning TasmotaIp switch off');
@@ -97,13 +97,13 @@ class TasmotaIpSwitchEntity extends GenericSwitchDE {
           logger.e('actionToPreform is not set correctly on TasmotaIp Switch');
         }
       }
-      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.ack.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
@@ -113,7 +113,7 @@ class TasmotaIpSwitchEntity extends GenericSwitchDE {
 
   @override
   Future<Either<CoreFailure, Unit>> turnOnSwitch() async {
-    switchState = GenericSwitchSwitchState(DeviceActions.on.toString());
+    switchState = GenericSwitchSwitchState(EntityActions.on.toString());
 
     final String deviceIp = deviceLastKnownIp.getOrCrash();
     const String getComponentsCommand = 'cm?cmnd=Power%20ON';
@@ -135,7 +135,7 @@ class TasmotaIpSwitchEntity extends GenericSwitchDE {
 
   @override
   Future<Either<CoreFailure, Unit>> turnOffSwitch() async {
-    switchState = GenericSwitchSwitchState(DeviceActions.off.toString());
+    switchState = GenericSwitchSwitchState(EntityActions.off.toString());
 
     final String deviceIp = deviceLastKnownIp.getOrCrash();
     const String getComponentsCommand = 'cm?cmnd=Power%20OFF';

@@ -111,7 +111,7 @@ class Connector {
               .add(savedDeviceWithSameIdAsMqtt);
 
           if (property == 'entityStateGRPC' &&
-              propertyValueString == DeviceStateGRPC.ack.toString()) {
+              propertyValueString == EntityStateGRPC.ack.toString()) {
             final Map<String, RoomEntity> rooms =
                 await getIt<ISavedRoomsRepo>().getAllRooms();
 

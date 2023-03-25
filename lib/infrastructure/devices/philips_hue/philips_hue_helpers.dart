@@ -50,7 +50,7 @@ class PhilipsHueHelpers {
           cbjEntityName: CbjEntityName(deviceName),
           entityOriginalName: EntityOriginalName(deviceName),
           deviceOriginalName: DeviceOriginalName(deviceName),
-          entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
+          entityStateGRPC: EntityState(EntityStateGRPC.ack.toString()),
           senderDeviceOs: DeviceSenderDeviceOs('philips_hue'),
           senderDeviceModel: DeviceSenderDeviceModel(light.modelId),
           senderId: DeviceSenderId(),
@@ -62,8 +62,8 @@ class PhilipsHueHelpers {
           devicePort: DevicePort(port),
           lightSwitchState: GenericDimmableLightSwitchState(
             lightState != null && lightState.on != null && lightState.on == true
-                ? DeviceActions.on.toString()
-                : DeviceActions.off.toString(),
+                ? EntityActions.on.toString()
+                : EntityActions.off.toString(),
           ),
           lightBrightness: GenericDimmableLightBrightness(
             (lightState?.brightness ?? 0).toString(),

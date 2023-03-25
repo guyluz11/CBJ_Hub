@@ -56,12 +56,12 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     try {
       if (newEntity.smartComputerSuspendState!.getOrCrash() !=
           smartComputerSuspendState!.getOrCrash()) {
-        final DeviceActions? actionToPreform =
+        final EntityActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.smartComputerSuspendState!.getOrCrash(),
         );
 
-        if (actionToPreform == DeviceActions.suspend) {
+        if (actionToPreform == EntityActions.suspend) {
           (await suspendSmartComputer()).fold((l) {
             logger.e('Error suspending Cbj Computer');
             throw l;
@@ -75,11 +75,11 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
 
       if (newEntity.smartComputerShutDownState!.getOrCrash() !=
           smartComputerShutDownState!.getOrCrash()) {
-        final DeviceActions? actionToPreform =
+        final EntityActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.smartComputerShutDownState!.getOrCrash(),
         );
-        if (actionToPreform == DeviceActions.shutdown) {
+        if (actionToPreform == EntityActions.shutdown) {
           (await shutDownSmartComputer()).fold((l) {
             logger.e('Error shutdown Cbj Computer');
             throw l;
@@ -92,11 +92,11 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
       }
 
       smartComputerSuspendState =
-          GenericSmartComputerSuspendState(DeviceActions.itIsFalse.toString());
+          GenericSmartComputerSuspendState(EntityActions.itIsFalse.toString());
       smartComputerShutDownState =
-          GenericSmartComputerShutdownState(DeviceActions.itIsFalse.toString());
+          GenericSmartComputerShutdownState(EntityActions.itIsFalse.toString());
 
-      // entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      // entityStateGRPC = EntityState(EntityStateGRPC.ack.toString());
       //
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
@@ -104,7 +104,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
 
       return right(unit);
     } catch (e) {
-      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.newStateFailed.toString());
 
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
@@ -118,7 +118,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
   @override
   Future<Either<CoreFailure, Unit>> suspendSmartComputer() async {
     smartComputerSuspendState =
-        GenericSmartComputerSuspendState(DeviceActions.itIsFalse.toString());
+        GenericSmartComputerSuspendState(EntityActions.itIsFalse.toString());
 
     await CbjSmartDeviceClient.suspendCbjSmartDeviceHostDevice(
       lastKnownIp.getOrCrash(),
@@ -136,7 +136,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
   @override
   Future<Either<CoreFailure, Unit>> shutDownSmartComputer() async {
     smartComputerShutDownState =
-        GenericSmartComputerShutdownState(DeviceActions.itIsFalse.toString());
+        GenericSmartComputerShutdownState(EntityActions.itIsFalse.toString());
 
     await CbjSmartDeviceClient.shutDownCbjSmartDeviceHostDevice(
       lastKnownIp.getOrCrash(),

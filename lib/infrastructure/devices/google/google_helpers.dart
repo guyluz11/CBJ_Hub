@@ -26,7 +26,7 @@ class GoogleHelpers {
       cbjEntityName: CbjEntityName('Chromecast'),
       entityOriginalName: EntityOriginalName('Chromecast'),
       deviceOriginalName: DeviceOriginalName('Chromecast'),
-      entityStateGRPC: EntityState(DeviceStateGRPC.ack.toString()),
+      entityStateGRPC: EntityState(EntityStateGRPC.ack.toString()),
       senderDeviceOs: DeviceSenderDeviceOs('Android'),
       senderDeviceModel: DeviceSenderDeviceModel('1SE'),
       senderId: DeviceSenderId(),
@@ -37,7 +37,7 @@ class GoogleHelpers {
       powerConsumption: DevicePowerConsumption('0'),
       googlePort: GooglePort(port),
       smartTvSwitchState: GenericSmartTvSwitchState(
-        DeviceActions.actionNotSupported.toString(),
+        EntityActions.actionNotSupported.toString(),
       ),
       deviceUniqueId: DeviceUniqueId('0'),
       devicePort: DevicePort('0'),

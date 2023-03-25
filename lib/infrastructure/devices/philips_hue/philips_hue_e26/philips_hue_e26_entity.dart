@@ -67,13 +67,13 @@ class PhilipsHueE26Entity extends GenericDimmableLightDE {
     try {
       if (newEntity.lightSwitchState!.getOrCrash() !=
               lightSwitchState!.getOrCrash() ||
-          entityStateGRPC.getOrCrash() != DeviceStateGRPC.ack.toString()) {
-        final DeviceActions? actionToPreform =
+          entityStateGRPC.getOrCrash() != EntityStateGRPC.ack.toString()) {
+        final EntityActions? actionToPreform =
             EnumHelperCbj.stringToDeviceAction(
           newEntity.lightSwitchState!.getOrCrash(),
         );
 
-        if (actionToPreform == DeviceActions.on) {
+        if (actionToPreform == EntityActions.on) {
           (await turnOnLight()).fold(
             (l) {
               logger.e('Error turning philips_hue light on');
@@ -83,7 +83,7 @@ class PhilipsHueE26Entity extends GenericDimmableLightDE {
               logger.i('Philips Hue light turn on success');
             },
           );
-        } else if (actionToPreform == DeviceActions.off) {
+        } else if (actionToPreform == EntityActions.off) {
           (await turnOffLight()).fold(
             (l) {
               logger.e('Error turning philips_hue light off');
@@ -110,14 +110,14 @@ class PhilipsHueE26Entity extends GenericDimmableLightDE {
           },
         );
       }
-      entityStateGRPC = EntityState(DeviceStateGRPC.ack.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.ack.toString());
 
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
       return right(unit);
     } catch (e) {
-      entityStateGRPC = EntityState(DeviceStateGRPC.newStateFailed.toString());
+      entityStateGRPC = EntityState(EntityStateGRPC.newStateFailed.toString());
       // getIt<IMqttServerRepository>().postSmartDeviceToAppMqtt(
       //   entityFromTheHub: this,
       // );
@@ -128,7 +128,7 @@ class PhilipsHueE26Entity extends GenericDimmableLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
     lightSwitchState =
-        GenericDimmableLightSwitchState(DeviceActions.on.toString());
+        GenericDimmableLightSwitchState(EntityActions.on.toString());
 
     try {
       await philipsHueApiLight.turnLightOn(entityUniqueId.getOrCrash());
@@ -142,7 +142,7 @@ class PhilipsHueE26Entity extends GenericDimmableLightDE {
   @override
   Future<Either<CoreFailure, Unit>> turnOffLight() async {
     lightSwitchState =
-        GenericDimmableLightSwitchState(DeviceActions.off.toString());
+        GenericDimmableLightSwitchState(EntityActions.off.toString());
 
     try {
       await philipsHueApiLight.turnLightOff(entityUniqueId.getOrCrash());
