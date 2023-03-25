@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/xiaomi_io/xiaomi_io_gpx3021gl/xiaomi_io_gpx3021gl_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mi_iot_token/mi_iot_token.dart';
-// import 'package:mi_iot_token/mi_iot_token.dart';
-// import 'package:miio/miio.dart';
 import 'package:network_tools/network_tools.dart';
 
 @singleton
@@ -15,13 +14,33 @@ class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
   @override
   Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  final MiCloud miCloud = MiCloud();
+  MiCloud? miCloud;
+
+  Future<String> accountLogin(
+    GenericXiaomiMiLoginDE loginDE,
+  ) async {
+    miCloud = MiCloud();
+    await miCloud!.login(
+      loginDE.xiaomiMiAccountEmail.getOrCrash(),
+      loginDE.xiaomiMiAccountPass.getOrCrash(),
+    );
+    // final List<dynamic> devices = await miCloud!.getDevices();
+    // for (final dynamic device in devices) {
+    //   print(device.name);
+    //   print(device.toString());
+    // }
+    return '';
+  }
 
   // Discover from miio package does not work on Linux, but it is better than
   // filtering devices by host names like we do now
   Future<void> discoverNewDevices({
     required ActiveHost activeHost,
   }) async {
+    if (miCloud == null) {
+      logger.w('Please set Xiaomi Mi credentials in the app');
+    }
+
     // try {
     //   if ((activeHost.address).endsWith('.1')) {
     //     // Currently we exclude discovered routers

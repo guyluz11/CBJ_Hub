@@ -8,9 +8,11 @@ import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entit
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_entity.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/esphome_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/lifx_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/xiaomi_mi_vendor_credentials_hive_model.dart';
 import 'package:dartz/dartz.dart';
 
 /// Only ISavedDevicesRepo need to call functions here
@@ -49,6 +51,9 @@ abstract class ILocalDbRepository {
 
   /// Name of the box that stores ESPHome device password
   String espHomeVendorCredentialsBoxName = 'espHomeVendorCredentialsBoxName';
+
+  /// Name of the box that stores Xiaomi Mi account email ans password
+  String xiaomiMiVendorCredentialsBoxName = 'xiaomiMiVendorCredentialsBoxName';
 
   /// Name of the box that stores Hub general info
   String hubEntityBoxName = 'hubEntityBox';
@@ -105,6 +110,12 @@ abstract class ILocalDbRepository {
       getEspHomeVendorLoginCredentials({
     required List<EspHomeVendorCredentialsHiveModel>
         espHomeVendorCredentialsModelFromDb,
+  });
+
+  Future<Either<LocalDbFailures, GenericXiaomiMiLoginDE>>
+      getXiaomiMiVendorLoginCredentials({
+    required List<XiaomiMiVendorCredentialsHiveModel>
+        xiaomiMiVendorCredentialsModelFromDb,
   });
 
   Future<Either<LocalDbFailures, Unit>> saveRoomsToDb({

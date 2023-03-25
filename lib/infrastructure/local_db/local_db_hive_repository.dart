@@ -26,6 +26,8 @@ import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart
 import 'package:cbj_hub/domain/vendors/login_abstract/value_login_objects_core.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_value_objects.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_value_objects.dart';
 import 'package:cbj_hub/infrastructure/bindings/binding_cbj_dtos.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart';
@@ -40,6 +42,7 @@ import 'package:cbj_hub/infrastructure/local_db/hive_objects/rooms_hive_model.da
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/routines_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/scenes_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/xiaomi_mi_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/room/room_entity_dtos.dart';
 import 'package:cbj_hub/infrastructure/routines/routine_cbj_dtos.dart';
 import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
@@ -81,6 +84,7 @@ class HiveRepository extends ILocalDbRepository {
     Hive.registerAdapter(TuyaVendorCredentialsHiveModelAdapter());
     Hive.registerAdapter(LifxVendorCredentialsHiveModelAdapter());
     Hive.registerAdapter(EspHomeVendorCredentialsHiveModelAdapter());
+    Hive.registerAdapter(XiaomiMiVendorCredentialsHiveModelAdapter());
 
     /// Delay inorder for the Hive boxes to initialize
     /// In case you got the following error:
@@ -103,6 +107,7 @@ class HiveRepository extends ILocalDbRepository {
   Box<TuyaVendorCredentialsHiveModel>? jinvooSmartVendorCredentialsBox;
   Box<LifxVendorCredentialsHiveModel>? lifxVendorCredentialsBox;
   Box<EspHomeVendorCredentialsHiveModel>? espHomeVendorCredentialsBox;
+  Box<XiaomiMiVendorCredentialsHiveModel>? xiaomiMiVendorCredentialsBox;
 
   @override
   Future<void> loadFromDb() async {
@@ -209,7 +214,7 @@ class HiveRepository extends ILocalDbRepository {
           lifxVendorCredentialsModelFromDb = lifxVendorCredentialsBox!.values
               .toList()
               .cast<LifxVendorCredentialsHiveModel>();
-      await espHomeVendorCredentialsBox?.close();
+      await lifxVendorCredentialsBox?.close();
 
       (await getLifxVendorLoginCredentials(
         lifxVendorCredentialsModelFromDb: lifxVendorCredentialsModelFromDb,
@@ -247,6 +252,35 @@ class HiveRepository extends ILocalDbRepository {
 
         logger.i(
           'ESPHome device password got found in DB',
+        );
+      });
+    }
+
+    /// Xiaomi Mi
+    {
+      await xiaomiMiVendorCredentialsBox?.close();
+
+      xiaomiMiVendorCredentialsBox =
+          await Hive.openBox<XiaomiMiVendorCredentialsHiveModel>(
+        xiaomiMiVendorCredentialsBoxName,
+      );
+
+      final List<XiaomiMiVendorCredentialsHiveModel>
+          xiaomiMiVendorCredentialsModelFromDb = xiaomiMiVendorCredentialsBox!
+              .values
+              .toList()
+              .cast<XiaomiMiVendorCredentialsHiveModel>();
+      await xiaomiMiVendorCredentialsBox?.close();
+
+      (await getXiaomiMiVendorLoginCredentials(
+        xiaomiMiVendorCredentialsModelFromDb:
+            xiaomiMiVendorCredentialsModelFromDb,
+      ))
+          .fold((l) {}, (r) {
+        CompaniesConnectorConjector.setVendorLoginCredentials(r);
+
+        logger.i(
+          'Xiaomi Mi device password got found in DB',
         );
       });
     }
@@ -458,6 +492,45 @@ class HiveRepository extends ILocalDbRepository {
   }
 
   @override
+  Future<Either<LocalDbFailures, GenericXiaomiMiLoginDE>>
+      getXiaomiMiVendorLoginCredentials({
+    required List<XiaomiMiVendorCredentialsHiveModel>
+        xiaomiMiVendorCredentialsModelFromDb,
+  }) async {
+    try {
+      if (xiaomiMiVendorCredentialsModelFromDb.isNotEmpty) {
+        final XiaomiMiVendorCredentialsHiveModel firstXiaomiMiVendorFromDB =
+            xiaomiMiVendorCredentialsModelFromDb[0];
+
+        final String? senderUniqueId = firstXiaomiMiVendorFromDB.senderUniqueId;
+        final String xiaomiMiAccountEmail =
+            firstXiaomiMiVendorFromDB.xiaomiMiAccountEmail;
+        final String xiaomiMiAccountPass =
+            firstXiaomiMiVendorFromDB.xiaomiMiAccountPass;
+
+        final GenericXiaomiMiLoginDE genericXiaomiMiLoginDE =
+            GenericXiaomiMiLoginDE(
+          senderUniqueId: CoreLoginSenderId.fromUniqueString(senderUniqueId),
+          xiaomiMiAccountEmail:
+              GenericXiaomiMiAccountEmail(xiaomiMiAccountEmail),
+          xiaomiMiAccountPass: GenericXiaomiMiAccountPass(xiaomiMiAccountPass),
+        );
+
+        logger.i(
+          'Xiaomi Mi got returned from local storage',
+        );
+        return right(genericXiaomiMiLoginDE);
+      }
+      logger.i(
+        "Didn't find any Xiaomi Mi in the local DB",
+      );
+    } catch (e) {
+      logger.e('Local DB hive error while getting Xiaomi Mi vendor: $e');
+    }
+    return left(const LocalDbFailures.unexpected());
+  }
+
+  @override
   Future<Either<LocalDbFailures, String>> getRemotePipesDnsName() async {
     try {
       await remotePipesBox?.close();
@@ -600,6 +673,11 @@ class HiveRepository extends ILocalDbRepository {
         espHomeLoginDE: loginEntityAbstract,
         vendorCredentialsBoxName: espHomeVendorCredentialsBoxName,
       );
+    } else if (loginEntityAbstract is GenericXiaomiMiLoginDE) {
+      saveXiaomiMiVendorCredentials(
+        xiaomiMiLoginDE: loginEntityAbstract,
+        vendorCredentialsBoxName: xiaomiMiVendorCredentialsBoxName,
+      );
     } else {
       logger.e(
         'Please implement save function for this login type '
@@ -738,6 +816,43 @@ class HiveRepository extends ILocalDbRepository {
       );
     } catch (e) {
       logger.e('Error saving ESPHome vendor credentials to local storage');
+      return left(const LocalDbFailures.unexpected());
+    }
+    return right(unit);
+  }
+
+  Future<Either<LocalDbFailures, Unit>> saveXiaomiMiVendorCredentials({
+    required GenericXiaomiMiLoginDE xiaomiMiLoginDE,
+    required String vendorCredentialsBoxName,
+  }) async {
+    try {
+      final Box<XiaomiMiVendorCredentialsHiveModel>
+          xiaomiMiVendorCredentialsBox =
+          await Hive.openBox<XiaomiMiVendorCredentialsHiveModel>(
+        vendorCredentialsBoxName,
+      );
+
+      final XiaomiMiVendorCredentialsHiveModel xiaomiMiVendorCredentialsModel =
+          XiaomiMiVendorCredentialsHiveModel()
+            ..senderUniqueId = xiaomiMiLoginDE.senderUniqueId.getOrCrash()
+            ..xiaomiMiAccountEmail =
+                xiaomiMiLoginDE.xiaomiMiAccountEmail.getOrCrash()
+            ..xiaomiMiAccountPass =
+                xiaomiMiLoginDE.xiaomiMiAccountPass.getOrCrash();
+
+      if (xiaomiMiVendorCredentialsBox.isNotEmpty) {
+        await xiaomiMiVendorCredentialsBox.putAt(
+            0, xiaomiMiVendorCredentialsModel);
+      } else {
+        xiaomiMiVendorCredentialsBox.add(xiaomiMiVendorCredentialsModel);
+      }
+
+      await xiaomiMiVendorCredentialsBox.close();
+      logger.i(
+        'Xiaomi Mi vendor credentials saved to local storage',
+      );
+    } catch (e) {
+      logger.e('Error saving Xiaomi Mi vendor credentials to local storage');
       return left(const LocalDbFailures.unexpected());
     }
     return right(unit);

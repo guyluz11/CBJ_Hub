@@ -27,25 +27,24 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
   static late CloudTuya cloudJinvooSmart;
   static late CloudTuya cloudSmartLife;
 
-  Future<String> accountLogin({
-    required GenericTuyaLoginDE genericTuyaLoginDE,
-  }) async {
+  Future<String> accountLogin(
+    GenericTuyaLoginDE loginDE,
+  ) async {
     final CloudTuya cloudTuyaTemp = cloudTuya = CloudTuya(
-      userName: genericTuyaLoginDE.tuyaUserName.getOrCrash(),
-      userPassword: genericTuyaLoginDE.tuyaUserPassword.getOrCrash(),
-      countryCode: genericTuyaLoginDE.tuyaCountryCode.getOrCrash(),
-      bizType: genericTuyaLoginDE.tuyaBizType.getOrCrash(),
-      region: genericTuyaLoginDE.tuyaRegion.getOrCrash(),
+      userName: loginDE.tuyaUserName.getOrCrash(),
+      userPassword: loginDE.tuyaUserPassword.getOrCrash(),
+      countryCode: loginDE.tuyaCountryCode.getOrCrash(),
+      bizType: loginDE.tuyaBizType.getOrCrash(),
+      region: loginDE.tuyaRegion.getOrCrash(),
     );
-    if (genericTuyaLoginDE.loginVendor.getOrCrash() ==
-        VendorsAndServices.tuyaSmart.name) {
+    if (loginDE.loginVendor.getOrCrash() == VendorsAndServices.tuyaSmart.name) {
       cloudTuya = cloudTuyaTemp..bizType = 'tuya';
       final bool loginSuccess = await cloudTuya.login();
       if (!loginSuccess) {
         return 'Error';
       }
       _discoverNewDevices(cloudTuyaOrSmartLifeOrJinvooSmart: cloudTuya);
-    } else if (genericTuyaLoginDE.loginVendor.getOrCrash() ==
+    } else if (loginDE.loginVendor.getOrCrash() ==
         VendorsAndServices.smartLife.name) {
       cloudSmartLife = cloudTuyaTemp..bizType = 'smart_life';
       final bool loginSuccess = await cloudSmartLife.login();
@@ -54,7 +53,7 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
       }
       _discoverNewDevices(cloudTuyaOrSmartLifeOrJinvooSmart: cloudSmartLife);
       return 'Success';
-    } else if (genericTuyaLoginDE.loginVendor.getOrCrash() ==
+    } else if (loginDE.loginVendor.getOrCrash() ==
         VendorsAndServices.jinvooSmart.name) {
       cloudJinvooSmart = cloudTuyaTemp..bizType = 'jinvoo_smart';
       final bool loginSuccess = await cloudJinvooSmart.login();

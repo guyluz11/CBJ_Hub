@@ -7,6 +7,7 @@ import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entit
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_smart_device_client/cbj_smart_device_client.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_connector_conjector.dart';
@@ -175,8 +176,9 @@ class CompaniesConnectorConjector {
     } else if (loginEntity is GenericEspHomeLoginDE) {
       getIt<EspHomeConnectorConjector>().accountLogin(loginEntity);
     } else if (loginEntity is GenericTuyaLoginDE) {
-      getIt<TuyaSmartConnectorConjector>()
-          .accountLogin(genericTuyaLoginDE: loginEntity);
+      getIt<TuyaSmartConnectorConjector>().accountLogin(loginEntity);
+    } else if (loginEntity is GenericXiaomiMiLoginDE) {
+      getIt<XiaomiIoConnectorConjector>().accountLogin(loginEntity);
     } else {
       logger.w('Vendor login type ${loginEntity.runtimeType} is not supported');
     }
