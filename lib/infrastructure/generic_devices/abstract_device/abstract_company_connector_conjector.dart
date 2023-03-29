@@ -12,4 +12,6 @@ abstract class AbstractCompanyConnectorConjector {
   /// Will set up device for this vendor into the connector conjecture,
   /// will be called for each saved device of this vendor
   Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity);
+
+  Future<void> manageHubRequestsForDevice(DeviceEntityAbstract entity);
 }

@@ -67,6 +67,7 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
     // logger.v('New switcher devices name:${switcherApiObject.switcherName}');
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract switcherDE,
   ) async {

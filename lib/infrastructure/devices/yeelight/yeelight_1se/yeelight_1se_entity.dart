@@ -47,6 +47,41 @@ class Yeelight1SeEntity extends GenericRgbwLightDE {
           deviceVendor: DeviceVendor(VendorsAndServices.yeelight.toString()),
         );
 
+  factory Yeelight1SeEntity.fromGeneric(GenericRgbwLightDE genericDevice) {
+    return Yeelight1SeEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      lightSwitchState: genericDevice.lightSwitchState,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      lightBrightness: genericDevice.lightBrightness,
+      lightColorTemperature: genericDevice.lightColorTemperature,
+      lightColorAlpha: genericDevice.lightColorAlpha,
+      lightColorHue: genericDevice.lightColorHue,
+      lightColorSaturation: genericDevice.lightColorSaturation,
+      lightColorValue: genericDevice.lightColorValue,
+    );
+  }
+
   /// Yeelight package object require to close previews request before new one
   Device? yeelightPackageObject;
 

@@ -83,6 +83,7 @@ class LifxConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract lifxDE,
   ) async {

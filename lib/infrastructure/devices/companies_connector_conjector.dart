@@ -42,18 +42,13 @@ class CompaniesConnectorConjector {
       if (deviceEntityAbstract is DeviceEntityAbstract) {
         final String deviceVendor =
             deviceEntityAbstract.deviceVendor.getOrCrash();
-        if (deviceVendor == VendorsAndServices.yeelight.toString()) {
-          getIt<YeelightConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.tasmota.toString()) {
+
+        final AbstractCompanyConnectorConjector? companyConnectorConjector =
+            vendorStringToCompanyConnectorConjector(deviceVendor);
+
+        /// TODO: convert all vendors to use setup from db method
+        if (deviceVendor == VendorsAndServices.tasmota.toString()) {
           getIt<TasmotaIpConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.espHome.toString()) {
-          getIt<EspHomeConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor ==
-            VendorsAndServices.switcherSmartHome.toString()) {
-          getIt<SwitcherConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.google.toString()) {
           getIt<GoogleConnectorConjector>()
@@ -63,9 +58,6 @@ class CompaniesConnectorConjector {
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.tuyaSmart.toString()) {
           getIt<TuyaSmartConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.lifx.toString()) {
-          getIt<LifxConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
           getIt<ShellyConnectorConjector>()
@@ -82,6 +74,9 @@ class CompaniesConnectorConjector {
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.philipsHue.toString()) {
           getIt<PhilipsHueConnectorConjector>()
+              .manageHubRequestsForDevice(deviceEntityAbstract);
+        } else if (companyConnectorConjector != null) {
+          companyConnectorConjector
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
           logger.w(
@@ -119,11 +114,7 @@ class CompaniesConnectorConjector {
         vendorStringToCompanyConnectorConjector(deviceVendor);
 
     /// TODO: convert all vendors to use setup from db method
-    if (deviceVendor == VendorsAndServices.yeelight.toString()) {
-      getIt<YeelightConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.tasmota.toString()) {
+    if (deviceVendor == VendorsAndServices.tasmota.toString()) {
       getIt<TasmotaIpConnectorConjector>()
           .companyDevices
           .addEntries([devicesEntry]);
@@ -307,6 +298,14 @@ class CompaniesConnectorConjector {
         ip: mdnsDeviceIp,
         port: mdnsPort,
       );
+    } else if (YeelightConnectorConjector.mdnsTypes
+            .contains(hostMdnsInfo.mdnsServiceType) &&
+        (startOfMdnsName.startsWith('YL'))) {
+      getIt<YeelightConnectorConjector>().addNewDeviceByMdnsName(
+        mDnsName: startOfMdnsName,
+        ip: mdnsDeviceIp,
+        port: mdnsPort,
+      );
     } else if (PhilipsHueConnectorConjector.mdnsTypes
         .contains(hostMdnsInfo.mdnsServiceType)) {
       getIt<PhilipsHueConnectorConjector>().addNewDeviceByMdnsName(
@@ -315,9 +314,9 @@ class CompaniesConnectorConjector {
         port: mdnsPort,
       );
     } else {
-      // logger.v(
-      //   'mDNS service type ${hostMdnsInfo.mdnsServiceType} is not supported\n IP: ${activeHost.address}, Port: ${hostMdnsInfo.mdnsPort}, ServiceType: ${hostMdnsInfo.mdnsServiceType}, MdnsName: ${hostMdnsInfo.getOnlyTheStartOfMdnsName()}',
-      // );
+      logger.v(
+        'mDNS service type ${hostMdnsInfo.mdnsServiceType} is not supported\n IP: ${activeHost.address}, Port: ${hostMdnsInfo.mdnsPort}, ServiceType: ${hostMdnsInfo.mdnsServiceType}, MdnsName: ${hostMdnsInfo.getOnlyTheStartOfMdnsName()}',
+      );
     }
   }
 
@@ -427,7 +426,7 @@ class CompaniesConnectorConjector {
   /// and since putting it in the constructor of singleton will be called
   /// before all of our program.
   static Future<void> notImplementedDevicesSearch() async {
-    getIt<YeelightConnectorConjector>().discoverNewDevices();
+    // getIt<YeelightConnectorConjector>().discoverNewDevices();
   }
 
   static AbstractCompanyConnectorConjector?
@@ -438,13 +437,12 @@ class CompaniesConnectorConjector {
 
     if (vendorName == VendorsAndServices.espHome.toString()) {
       return getIt<EspHomeConnectorConjector>();
-    }
-    if (vendorName == VendorsAndServices.switcherSmartHome.toString()) {
+    } else if (vendorName == VendorsAndServices.switcherSmartHome.toString()) {
       return getIt<SwitcherConnectorConjector>();
-    }
-
-    if (vendorName == VendorsAndServices.lifx.toString()) {
+    } else if (vendorName == VendorsAndServices.lifx.toString()) {
       return getIt<LifxConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.yeelight.toString()) {
+      return getIt<YeelightConnectorConjector>();
     }
 
     logger.w(

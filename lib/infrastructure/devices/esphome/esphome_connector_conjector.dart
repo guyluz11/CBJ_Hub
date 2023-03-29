@@ -75,6 +75,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
     getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract espHomeDE,
   ) async {
