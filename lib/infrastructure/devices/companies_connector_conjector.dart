@@ -53,12 +53,6 @@ class CompaniesConnectorConjector {
         } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
           getIt<XiaomiIoConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
-          getIt<ShellyConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.hp.toString()) {
-          getIt<HpConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (companyConnectorConjector != null) {
           companyConnectorConjector
               .manageHubRequestsForDevice(deviceEntityAbstract);
@@ -104,10 +98,6 @@ class CompaniesConnectorConjector {
           .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
       getIt<XiaomiIoConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
-      getIt<ShellyConnectorConjector>()
           .companyDevices
           .addEntries([devicesEntry]);
     } else if (companyConnectorConjector != null) {
@@ -422,6 +412,10 @@ class CompaniesConnectorConjector {
     } else if (vendorName ==
         VendorsAndServices.cbjDeviceSmartEntity.toString()) {
       return getIt<CbjDevicesConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.shelly.toString()) {
+      return getIt<ShellyConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.hp.toString()) {
+      return getIt<HpConnectorConjector>();
     }
 
     logger.w(

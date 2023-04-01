@@ -74,7 +74,8 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
 
   @override
   Future<void> manageHubRequestsForDevice(DeviceEntityAbstract googleDE) async {
-    final DeviceEntityAbstract? device = companyDevices[googleDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[googleDE.entityUniqueId.getOrCrash()];
 
     if (device is ChromeCastEntity) {
       device.executeDeviceAction(newEntity: googleDE);

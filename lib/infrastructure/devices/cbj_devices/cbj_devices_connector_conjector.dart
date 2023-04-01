@@ -65,12 +65,12 @@ class CbjDevicesConnectorConjector
     DeviceEntityAbstract cbjDevicesDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[cbjDevicesDE.getDeviceId()];
+        companyDevices[cbjDevicesDE.entityUniqueId.getOrCrash()];
 
     // if (device == null) {
     //   setTheSameDeviceFromAllDevices(cbjDevicesDE);
     //   device =
-    //   companyDevices[cbjDevicesDE.getDeviceId()];
+    //   companyDevices[cbjDevicesDE.entityUniqueId.getOrCrash();
     // }
 
     if (device != null && (device is CbjSmartComputerEntity)) {

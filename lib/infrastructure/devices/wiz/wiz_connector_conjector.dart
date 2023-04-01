@@ -131,7 +131,8 @@ class WizConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract wizDE,
   ) async {
-    final DeviceEntityAbstract? device = companyDevices[wizDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[wizDE.entityUniqueId.getOrCrash()];
 
     if (device is WizWhiteEntity) {
       device.executeDeviceAction(newEntity: wizDE);

@@ -101,7 +101,8 @@ class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract xiaomiDE,
   ) async {
-    final DeviceEntityAbstract? device = companyDevices[xiaomiDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[xiaomiDE.entityUniqueId.getOrCrash()];
 
     if (device is XiaomiIoGpx4021GlEntity) {
       device.executeDeviceAction(newEntity: xiaomiDE);

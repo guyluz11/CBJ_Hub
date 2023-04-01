@@ -75,7 +75,8 @@ class LgConnectorConjector implements AbstractCompanyConnectorConjector {
 
   @override
   Future<void> manageHubRequestsForDevice(DeviceEntityAbstract lgDE) async {
-    final DeviceEntityAbstract? device = companyDevices[lgDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[lgDE.entityUniqueId.getOrCrash()];
 
     if (device is LgWebosTvEntity) {
       device.executeDeviceAction(newEntity: lgDE);

@@ -77,7 +77,7 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
     // if (device == null) {
     //   setTheSameDeviceFromAllDevices(switcherDE);
     //   device =
-    //   companyDevices[switcherDE.getDeviceId()];
+    //   companyDevices[switcherDE.entityUniqueId.getOrCrash();
     // }
 
     if (device != null &&

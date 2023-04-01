@@ -70,7 +70,7 @@ class SonoffDiyConnectorConjector implements AbstractCompanyConnectorConjector {
     DeviceEntityAbstract sonoffDiyDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[sonoffDiyDE.getDeviceId()];
+        companyDevices[sonoffDiyDE.entityUniqueId.getOrCrash()];
 
     if (device is SonoffDiyRelaySwitchEntity) {
       device.executeDeviceAction(newEntity: sonoffDiyDE);

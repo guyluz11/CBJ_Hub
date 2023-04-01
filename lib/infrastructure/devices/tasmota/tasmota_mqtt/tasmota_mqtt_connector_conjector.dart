@@ -95,7 +95,7 @@ class TasmotaMqttConnectorConjector
     DeviceEntityAbstract tasmotaMqttDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[tasmotaMqttDE.getDeviceId()];
+        companyDevices[tasmotaMqttDE.entityUniqueId.getOrCrash()];
 
     if (device is TasmotaMqttLedEntity) {
       device.executeDeviceAction(newEntity: tasmotaMqttDE);

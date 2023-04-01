@@ -81,7 +81,7 @@ class TasmotaIpConnectorConjector implements AbstractCompanyConnectorConjector {
     DeviceEntityAbstract tasmotaIpDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[tasmotaIpDE.getDeviceId()];
+        companyDevices[tasmotaIpDE.entityUniqueId.getOrCrash()];
 
     if (device is TasmotaIpSwitchEntity) {
       device.executeDeviceAction(newEntity: tasmotaIpDE);

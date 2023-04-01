@@ -140,7 +140,7 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
     DeviceEntityAbstract tuyaSmartDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[tuyaSmartDE.getDeviceId()];
+        companyDevices[tuyaSmartDE.entityUniqueId.getOrCrash()];
 
     if (device is TuyaSmartJbtA70RgbcwWfEntity) {
       device.executeDeviceAction(newEntity: tuyaSmartDE);

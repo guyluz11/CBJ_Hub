@@ -65,7 +65,8 @@ class HpConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract hpDE,
   ) async {
-    final DeviceEntityAbstract? device = companyDevices[hpDE.getDeviceId()];
+    final DeviceEntityAbstract? device =
+        companyDevices[hpDE.entityUniqueId.getOrCrash()];
 
     if (device is HpPrinterEntity) {
       device.executeDeviceAction(newEntity: hpDE);

@@ -77,7 +77,7 @@ class PhilipsHueConnectorConjector
     DeviceEntityAbstract philipsHueDE,
   ) async {
     final DeviceEntityAbstract? device =
-        companyDevices[philipsHueDE.getDeviceId()];
+        companyDevices[philipsHueDE.entityUniqueId.getOrCrash()];
 
     if (device is PhilipsHueE26Entity) {
       device.executeDeviceAction(newEntity: philipsHueDE);
