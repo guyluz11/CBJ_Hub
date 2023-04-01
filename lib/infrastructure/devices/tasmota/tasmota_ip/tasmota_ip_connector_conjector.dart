@@ -76,6 +76,7 @@ class TasmotaIpConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract tasmotaIpDE,
   ) async {

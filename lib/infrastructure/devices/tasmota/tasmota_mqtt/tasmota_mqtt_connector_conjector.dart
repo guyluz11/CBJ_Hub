@@ -90,6 +90,7 @@ class TasmotaMqttConnectorConjector
     });
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract tasmotaMqttDE,
   ) async {

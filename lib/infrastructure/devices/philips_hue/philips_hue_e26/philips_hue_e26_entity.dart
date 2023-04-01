@@ -46,6 +46,45 @@ class PhilipsHueE26Entity extends GenericDimmableLightDE {
           ),
         );
 
+  factory PhilipsHueE26Entity.fromGeneric(
+    GenericDimmableLightDE genericDevice,
+  ) {
+    return PhilipsHueE26Entity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      lightSwitchState: genericDevice.lightSwitchState,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      lightBrightness: genericDevice.lightBrightness,
+
+      /// TODO: Save and pull philips hub generated user name
+      /// (created in phillips_hue_helpers.dart)
+      philipsHueApiLight: PhilipsHueApiLight(
+        ipAdress: genericDevice.deviceLastKnownIp.getOrCrash(),
+        username: '',
+      ),
+    );
+  }
+
   /// PhilipsHue package object require to close previews request before new one
   Device? philipsHuePackageObject;
 

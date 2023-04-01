@@ -29,6 +29,8 @@ class PhilipsHueHelpers {
 
     //create bridge
     final bridge = Bridge(client, ip);
+
+    /// TODO: save user phillips hub generated user name for cbj
     final String userNameForPhilipsHueHub =
         await bridge.brideLoopToAwaitPushlinkForUserId();
     bridge.username = userNameForPhilipsHueHub;

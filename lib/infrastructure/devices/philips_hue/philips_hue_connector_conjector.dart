@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_e26/philips_hue_e26_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_helpers.dart';
@@ -47,7 +48,7 @@ class PhilipsHueConnectorConjector
     }
     gotHueHubIp = true;
 
-    final List<DeviceEntityAbstract> hpDevice =
+    final List<DeviceEntityAbstract> phillipsDevice =
         await PhilipsHueHelpers.addDiscoverdDevice(
       mDnsName: mDnsName,
       ip: ip,
@@ -55,22 +56,23 @@ class PhilipsHueConnectorConjector
       uniqueDeviceId: tempCoreUniqueId,
     );
 
-    if (hpDevice.isEmpty) {
+    if (phillipsDevice.isEmpty) {
       return;
     }
 
-    for (final DeviceEntityAbstract entityAsDevice in hpDevice) {
+    for (final DeviceEntityAbstract entityAsDevice in phillipsDevice) {
       final DeviceEntityAbstract deviceToAdd =
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
       final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-          MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+          MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
     }
     logger.i('New Philips Hue device got added');
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract philipsHueDE,
   ) async {
@@ -85,5 +87,20 @@ class PhilipsHueConnectorConjector
   }
 
   @override
-  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericDimmableLightDE) {
+      nonGenericDevice = PhilipsHueE26Entity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
+  }
 }

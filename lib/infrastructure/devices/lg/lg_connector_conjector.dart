@@ -73,6 +73,7 @@ class LgConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(DeviceEntityAbstract lgDE) async {
     final DeviceEntityAbstract? device = companyDevices[lgDE.getDeviceId()];
 

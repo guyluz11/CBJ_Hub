@@ -69,6 +69,7 @@ class ShellyConnectorConjector implements AbstractCompanyConnectorConjector {
     logger.v('New shelly devices name:$mDnsName');
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract shellyDE,
   ) async {

@@ -65,6 +65,7 @@ class SonoffDiyConnectorConjector implements AbstractCompanyConnectorConjector {
     logger.v('New Sonoff diy devices name:$mDnsName');
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract sonoffDiyDE,
   ) async {

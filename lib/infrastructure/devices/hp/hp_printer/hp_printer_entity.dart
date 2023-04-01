@@ -34,6 +34,35 @@ class HpPrinterEntity extends GenericPrinterDE {
           deviceVendor: DeviceVendor(VendorsAndServices.hp.toString()),
         );
 
+  factory HpPrinterEntity.fromGeneric(GenericPrinterDE genericDevice) {
+    return HpPrinterEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      printerSwitchState: genericDevice.printerSwitchState,
+    );
+  }
+
   static const List<String> mdnsTypes = [
     '_ipp._tcp',
   ];

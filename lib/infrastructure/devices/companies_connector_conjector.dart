@@ -50,30 +50,14 @@ class CompaniesConnectorConjector {
         if (deviceVendor == VendorsAndServices.tasmota.toString()) {
           getIt<TasmotaIpConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.google.toString()) {
-          getIt<GoogleConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
           getIt<XiaomiIoConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.tuyaSmart.toString()) {
-          getIt<TuyaSmartConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
           getIt<ShellyConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
-          getIt<SonoffDiyConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor ==
-            VendorsAndServices.cbjDeviceSmartEntity.toString()) {
-          getIt<CbjDevicesConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (deviceVendor == VendorsAndServices.hp.toString()) {
           getIt<HpConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.philipsHue.toString()) {
-          getIt<PhilipsHueConnectorConjector>()
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else if (companyConnectorConjector != null) {
           companyConnectorConjector
@@ -118,28 +102,12 @@ class CompaniesConnectorConjector {
       getIt<TasmotaIpConnectorConjector>()
           .companyDevices
           .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.google.toString()) {
-      getIt<GoogleConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
       getIt<XiaomiIoConnectorConjector>()
           .companyDevices
           .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.tuyaSmart.toString()) {
-      getIt<TuyaSmartConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
     } else if (deviceVendor == VendorsAndServices.shelly.toString()) {
       getIt<ShellyConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.sonoffDiy.toString()) {
-      getIt<SonoffDiyConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.philipsHue.toString()) {
-      getIt<PhilipsHueConnectorConjector>()
           .companyDevices
           .addEntries([devicesEntry]);
     } else if (companyConnectorConjector != null) {
@@ -443,6 +411,17 @@ class CompaniesConnectorConjector {
       return getIt<LifxConnectorConjector>();
     } else if (vendorName == VendorsAndServices.yeelight.toString()) {
       return getIt<YeelightConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.philipsHue.toString()) {
+      return getIt<PhilipsHueConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.tuyaSmart.toString()) {
+      return getIt<TuyaSmartConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.sonoffDiy.toString()) {
+      return getIt<SonoffDiyConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.google.toString()) {
+      return getIt<GoogleConnectorConjector>();
+    } else if (vendorName ==
+        VendorsAndServices.cbjDeviceSmartEntity.toString()) {
+      return getIt<CbjDevicesConnectorConjector>();
     }
 
     logger.w(

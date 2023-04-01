@@ -97,6 +97,7 @@ class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
     // }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract xiaomiDE,
   ) async {

@@ -127,6 +127,7 @@ class WizConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract wizDE,
   ) async {

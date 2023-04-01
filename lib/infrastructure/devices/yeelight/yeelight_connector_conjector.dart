@@ -8,6 +8,7 @@ import 'package:cbj_hub/infrastructure/devices/yeelight/yeelight_helpers.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:injectable/injectable.dart';
+import 'package:network_tools/network_tools.dart';
 import 'package:yeedart/yeedart.dart';
 
 @singleton
@@ -27,8 +28,25 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
     required String ip,
     required String port,
   }) async {
+    addNewDevice(ip: ip, mDnsName: mDnsName);
+  }
+
+  Future<void> addNewDeviceByHostInfo({
+    required ActiveHost activeHost,
+  }) async {
+    addNewDevice(ip: activeHost.address);
+  }
+
+  Future<void> addNewDevice({
+    required String ip,
+    String? mDnsName,
+  }) async {
     try {
       final responses = await Yeelight.discover();
+      if (responses.isEmpty) {
+        return;
+      }
+
       for (final DiscoveryResponse yeelightDevice in responses) {
         if (companyDevices.containsKey(yeelightDevice.id.toString())) {
           return;
@@ -38,6 +56,7 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
         if (yeelightDevice.address.address == ip) {
           addDevice = YeelightHelpers.addDiscoverdDevice(
             yeelightDevice: yeelightDevice,
+            mDnsName: mDnsName,
           );
         } else {
           addDevice = YeelightHelpers.addDiscoverdDevice(
@@ -92,7 +111,7 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
     }
 
     companyDevices.addEntries([
-      MapEntry(nonGenericDevice.deviceMdns.getOrCrash(), nonGenericDevice),
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
     ]);
   }
 }

@@ -39,9 +39,6 @@ class CbjDevicesHelpers {
         entityAbstract = CbjSmartComputerEntity(
           uniqueId: CoreUniqueId(),
           entityUniqueId: EntityUniqueId(deviceId),
-          deviceVendor: DeviceVendor(
-            VendorsAndServices.cbjDeviceSmartEntity.toString(),
-          ),
           cbjEntityName: CbjEntityName(cbjEntityName),
           entityStateGRPC: EntityState(deviceStateGrpc.toString()),
           stateMassage: DeviceStateMassage(deviceStateMassage),
@@ -55,13 +52,12 @@ class CbjDevicesHelpers {
           smartComputerShutDownState: GenericSmartComputerShutdownState(
             EntityActions.itIsFalse.toString(),
           ),
-          lastKnownIp: DeviceLastKnownIp(deviceAddress),
           entityOriginalName: EntityOriginalName(cbjEntityName),
           deviceOriginalName: DeviceOriginalName(cbjEntityName),
           powerConsumption: DevicePowerConsumption('0'),
           deviceUniqueId: DeviceUniqueId('0'),
           devicePort: DevicePort('0'),
-          deviceLastKnownIp: DeviceLastKnownIp('0'),
+          deviceLastKnownIp: DeviceLastKnownIp(deviceAddress),
           deviceHostName: DeviceHostName('0'),
           deviceMdns: DeviceMdns('0'),
           devicesMacAddress: DevicesMacAddress('0'),

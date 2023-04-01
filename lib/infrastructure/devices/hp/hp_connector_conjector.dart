@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_printer_device/generic_printer_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/hp/hp_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/hp/hp_printer/hp_printer_entity.dart';
@@ -53,13 +54,14 @@ class HpConnectorConjector implements AbstractCompanyConnectorConjector {
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
       final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-          MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+          MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
     }
     logger.i('New HP device got added');
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract hpDE,
   ) async {
@@ -73,5 +75,20 @@ class HpConnectorConjector implements AbstractCompanyConnectorConjector {
   }
 
   @override
-  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericPrinterDE) {
+      nonGenericDevice = HpPrinterEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
+  }
 }

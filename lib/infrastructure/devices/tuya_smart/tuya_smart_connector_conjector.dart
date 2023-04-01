@@ -135,6 +135,7 @@ class TuyaSmartConnectorConjector implements AbstractCompanyConnectorConjector {
     }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract tuyaSmartDE,
   ) async {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_smart_device/cbj_smart_device_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_smart_device_client/cbj_smart_device_client.dart';
@@ -59,6 +60,7 @@ class CbjDevicesConnectorConjector
     }
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract cbjDevicesDE,
   ) async {
@@ -95,5 +97,20 @@ class CbjDevicesConnectorConjector
   }
 
   @override
-  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericSmartComputerDE) {
+      nonGenericDevice = CbjSmartComputerEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('Switcher device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
+  }
 }

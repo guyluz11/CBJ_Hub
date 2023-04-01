@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/google/chrome_cast/chrome_cast_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_helpers.dart';
@@ -64,13 +65,14 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
       final MapEntry<String, DeviceEntityAbstract> deviceAsEntry =
-          MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
+          MapEntry(deviceToAdd.entityUniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
     }
     logger.i('New Chromecast device got added');
   }
 
+  @override
   Future<void> manageHubRequestsForDevice(DeviceEntityAbstract googleDE) async {
     final DeviceEntityAbstract? device = companyDevices[googleDE.getDeviceId()];
 
@@ -84,5 +86,20 @@ class GoogleConnectorConjector implements AbstractCompanyConnectorConjector {
   }
 
   @override
-  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {}
+  Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
+    DeviceEntityAbstract? nonGenericDevice;
+
+    if (deviceEntity is GenericSmartTvDE) {
+      nonGenericDevice = ChromeCastEntity.fromGeneric(deviceEntity);
+    }
+
+    if (nonGenericDevice == null) {
+      logger.w('EspHome device could not get loaded from the server');
+      return;
+    }
+
+    companyDevices.addEntries([
+      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+    ]);
+  }
 }
