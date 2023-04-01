@@ -30,7 +30,7 @@ class YeelightConnectorConjector implements AbstractCompanyConnectorConjector {
     try {
       final responses = await Yeelight.discover();
       for (final DiscoveryResponse yeelightDevice in responses) {
-        if (companyDevices.containsKey(yeelightDevice.id)) {
+        if (companyDevices.containsKey(yeelightDevice.id.toString())) {
           return;
         }
 
