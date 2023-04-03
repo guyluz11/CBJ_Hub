@@ -46,14 +46,7 @@ class CompaniesConnectorConjector {
         final AbstractCompanyConnectorConjector? companyConnectorConjector =
             vendorStringToCompanyConnectorConjector(deviceVendor);
 
-        /// TODO: convert all vendors to use setup from db method
-        if (deviceVendor == VendorsAndServices.tasmota.toString()) {
-          getIt<TasmotaIpConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
-          getIt<XiaomiIoConnectorConjector>()
-              .manageHubRequestsForDevice(deviceEntityAbstract);
-        } else if (companyConnectorConjector != null) {
+        if (companyConnectorConjector != null) {
           companyConnectorConjector
               .manageHubRequestsForDevice(deviceEntityAbstract);
         } else {
@@ -91,16 +84,7 @@ class CompaniesConnectorConjector {
     final AbstractCompanyConnectorConjector? companyConnectorConjector =
         vendorStringToCompanyConnectorConjector(deviceVendor);
 
-    /// TODO: convert all vendors to use setup from db method
-    if (deviceVendor == VendorsAndServices.tasmota.toString()) {
-      getIt<TasmotaIpConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
-    } else if (deviceVendor == VendorsAndServices.miHome.toString()) {
-      getIt<XiaomiIoConnectorConjector>()
-          .companyDevices
-          .addEntries([devicesEntry]);
-    } else if (companyConnectorConjector != null) {
+    if (companyConnectorConjector != null) {
       companyConnectorConjector.setUpDeviceFromDb(devicesEntry.value);
     } else {
       logger.w('Cannot add device entity to its repo, type not supported');
@@ -216,7 +200,10 @@ class CompaniesConnectorConjector {
       );
     } else if (ShellyConnectorConjector.mdnsTypes
             .contains(hostMdnsInfo.mdnsServiceType) &&
-        hostMdnsInfo.getOnlyTheStartOfMdnsName().contains('shelly')) {
+        hostMdnsInfo
+            .getOnlyTheStartOfMdnsName()
+            .toLowerCase()
+            .contains('shelly')) {
       getIt<ShellyConnectorConjector>().addNewDeviceByMdnsName(
         mDnsName: startOfMdnsName,
         ip: mdnsDeviceIp,
@@ -416,6 +403,10 @@ class CompaniesConnectorConjector {
       return getIt<ShellyConnectorConjector>();
     } else if (vendorName == VendorsAndServices.hp.toString()) {
       return getIt<HpConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.miHome.toString()) {
+      return getIt<XiaomiIoConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.tasmota.toString()) {
+      return getIt<TasmotaIpConnectorConjector>();
     }
 
     logger.w(
