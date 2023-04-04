@@ -65,7 +65,7 @@ class EspHomeSwitchEntity extends GenericSwitchDE {
       lastResponseFromDeviceTimeStamp:
           genericDevice.lastResponseFromDeviceTimeStamp,
       deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
-      switchState: GenericSwitchSwitchState('off'),
+      switchState: genericDevice.switchState,
     );
   }
 

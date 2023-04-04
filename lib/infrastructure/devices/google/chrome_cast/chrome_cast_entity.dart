@@ -7,7 +7,6 @@ import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv
 import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_value_objects.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/google/chromecast_node_red_api/chromecast_node_red_api.dart';
-import 'package:cbj_hub/infrastructure/devices/google/google_device_value_objects.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
@@ -38,7 +37,6 @@ class ChromeCastEntity extends GenericSmartTvDE {
     required super.lastResponseFromDeviceTimeStamp,
     required super.deviceCbjUniqueId,
     required super.smartTvSwitchState,
-    required this.googlePort,
     super.openUrl,
     super.pausePlayState,
     super.skip,
@@ -51,8 +49,34 @@ class ChromeCastEntity extends GenericSmartTvDE {
     setUpNodeRedApi();
   }
 
-  /// Google communication port 8009 for chromecast
-  GooglePort? googlePort;
+  factory ChromeCastEntity.fromGeneric(GenericSmartTvDE genericDevice) {
+    return ChromeCastEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      smartTvSwitchState: genericDevice.smartTvSwitchState,
+    );
+  }
 
   DeviceLastKnownIp? lastKnownIp;
 

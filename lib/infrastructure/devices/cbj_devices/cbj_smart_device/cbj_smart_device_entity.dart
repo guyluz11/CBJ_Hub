@@ -13,7 +13,6 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
   CbjSmartComputerEntity({
     required super.uniqueId,
     required super.entityUniqueId,
-    required super.deviceVendor,
     required super.cbjEntityName,
     required super.entityOriginalName,
     required super.deviceOriginalName,
@@ -36,10 +35,41 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.deviceCbjUniqueId,
     required super.smartComputerShutDownState,
     required super.smartComputerSuspendState,
-    required this.lastKnownIp,
-  });
+  }) : super(
+          deviceVendor: DeviceVendor(
+              VendorsAndServices.cyBearJinniAppSmartEntity.toString()),
+        );
 
-  DeviceLastKnownIp lastKnownIp;
+  factory CbjSmartComputerEntity.fromGeneric(
+      GenericSmartComputerDE genericDevice) {
+    return CbjSmartComputerEntity(
+      uniqueId: genericDevice.uniqueId,
+      entityUniqueId: genericDevice.entityUniqueId,
+      cbjEntityName: genericDevice.cbjEntityName,
+      entityOriginalName: genericDevice.entityOriginalName,
+      deviceOriginalName: genericDevice.deviceOriginalName,
+      stateMassage: genericDevice.stateMassage,
+      senderDeviceOs: genericDevice.senderDeviceOs,
+      senderDeviceModel: genericDevice.senderDeviceModel,
+      senderId: genericDevice.senderId,
+      compUuid: genericDevice.compUuid,
+      entityStateGRPC: genericDevice.entityStateGRPC,
+      powerConsumption: genericDevice.powerConsumption,
+      deviceUniqueId: genericDevice.deviceUniqueId,
+      devicePort: genericDevice.devicePort,
+      deviceLastKnownIp: genericDevice.deviceLastKnownIp,
+      deviceHostName: genericDevice.deviceHostName,
+      deviceMdns: genericDevice.deviceMdns,
+      devicesMacAddress: genericDevice.devicesMacAddress,
+      entityKey: genericDevice.entityKey,
+      requestTimeStamp: genericDevice.requestTimeStamp,
+      lastResponseFromDeviceTimeStamp:
+          genericDevice.lastResponseFromDeviceTimeStamp,
+      deviceCbjUniqueId: genericDevice.deviceCbjUniqueId,
+      smartComputerShutDownState: genericDevice.smartComputerShutDownState,
+      smartComputerSuspendState: genericDevice.smartComputerSuspendState,
+    );
+  }
 
   @override
   Future<Either<CoreFailure, Unit>> executeDeviceAction({
@@ -121,7 +151,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
         GenericSmartComputerSuspendState(EntityActions.itIsFalse.toString());
 
     await CbjSmartDeviceClient.suspendCbjSmartDeviceHostDevice(
-      lastKnownIp.getOrCrash(),
+      deviceLastKnownIp.getOrCrash(),
       entityUniqueId.getOrCrash(),
     );
 
@@ -139,7 +169,7 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
         GenericSmartComputerShutdownState(EntityActions.itIsFalse.toString());
 
     await CbjSmartDeviceClient.shutDownCbjSmartDeviceHostDevice(
-      lastKnownIp.getOrCrash(),
+      deviceLastKnownIp.getOrCrash(),
       entityUniqueId.getOrCrash(),
     );
 

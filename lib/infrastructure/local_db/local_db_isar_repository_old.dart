@@ -26,6 +26,8 @@ import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart
 import 'package:cbj_hub/domain/vendors/login_abstract/value_login_objects_core.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_value_objects.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_value_objects.dart';
 import 'package:cbj_hub/infrastructure/bindings/binding_cbj_dtos.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart';
@@ -33,6 +35,7 @@ import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/esphome_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/lifx_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/xiaomi_mi_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/bindings_isar_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/devices_isar_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/isar_old_objects/remote_pipes_isar_model.dart';
@@ -757,6 +760,45 @@ class IsarRepository extends ILocalDbRepository {
       );
     } catch (e) {
       logger.e('Local DB hive error while getting ESPHome vendor: $e');
+    }
+    return left(const LocalDbFailures.unexpected());
+  }
+
+  @override
+  Future<Either<LocalDbFailures, GenericXiaomiMiLoginDE>>
+      getXiaomiMiVendorLoginCredentials({
+    required List<XiaomiMiVendorCredentialsHiveModel>
+        xiaomiMiVendorCredentialsModelFromDb,
+  }) async {
+    try {
+      if (xiaomiMiVendorCredentialsModelFromDb.isNotEmpty) {
+        final XiaomiMiVendorCredentialsHiveModel firstXiaomiMiVendorFromDB =
+            xiaomiMiVendorCredentialsModelFromDb[0];
+
+        final String? senderUniqueId = firstXiaomiMiVendorFromDB.senderUniqueId;
+        final String xiaomiMiAccountEmail =
+            firstXiaomiMiVendorFromDB.xiaomiMiAccountEmail;
+        final String xiaomiMiAccountPass =
+            firstXiaomiMiVendorFromDB.xiaomiMiAccountPass;
+
+        final GenericXiaomiMiLoginDE genericXiaomiMiLoginDE =
+            GenericXiaomiMiLoginDE(
+          senderUniqueId: CoreLoginSenderId.fromUniqueString(senderUniqueId),
+          xiaomiMiAccountEmail:
+              GenericXiaomiMiAccountEmail(xiaomiMiAccountEmail),
+          xiaomiMiAccountPass: GenericXiaomiMiAccountPass(xiaomiMiAccountPass),
+        );
+
+        logger.i(
+          'Xiaomi Mi got returned from local storage',
+        );
+        return right(genericXiaomiMiLoginDE);
+      }
+      logger.i(
+        "Didn't find any Xiaomi Mi in the local DB",
+      );
+    } catch (e) {
+      logger.e('Local DB hive error while getting Xiaomi Mi vendor: $e');
     }
     return left(const LocalDbFailures.unexpected());
   }

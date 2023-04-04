@@ -8,6 +8,7 @@ import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/gen
 import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_value_objects.dart';
 import 'package:cbj_hub/infrastructure/devices/lifx/lifx_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:lifx_http_api/lifx_http_api.dart';
@@ -145,11 +146,11 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
         GenericDimmableLightSwitchState(EntityActions.on.toString());
     try {
       final setStateBodyResponse =
-          await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(entityUniqueId.getOrCrash()),
-        power: 'on',
-        fast: true,
-      );
+          await getIt<LifxConnectorConjector>().lifxClient?.setState(
+                Selector.id(entityUniqueId.getOrCrash()),
+                power: 'on',
+                fast: true,
+              );
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }
@@ -170,11 +171,11 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
 
     try {
       final setStateBodyResponse =
-          await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(entityUniqueId.getOrCrash()),
-        power: 'off',
-        fast: true,
-      );
+          await getIt<LifxConnectorConjector>().lifxClient?.setState(
+                Selector.id(entityUniqueId.getOrCrash()),
+                power: 'off',
+                fast: true,
+              );
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }
@@ -193,11 +194,11 @@ class LifxWhiteEntity extends GenericDimmableLightDE {
 
     try {
       final setStateBodyResponse =
-          await LifxConnectorConjector.lifxClient?.setState(
-        Selector.id(entityUniqueId.getOrCrash()),
-        fast: true,
-        brightness: lightBrightness.backToDecimalPointBrightness(),
-      );
+          await getIt<LifxConnectorConjector>().lifxClient?.setState(
+                Selector.id(entityUniqueId.getOrCrash()),
+                fast: true,
+                brightness: lightBrightness.backToDecimalPointBrightness(),
+              );
       if (setStateBodyResponse == null) {
         throw 'setStateBodyResponse is null';
       }
