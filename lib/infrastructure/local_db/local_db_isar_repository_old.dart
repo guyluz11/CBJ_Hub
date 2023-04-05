@@ -20,6 +20,7 @@ import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
 import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_value_objects.dart';
+import 'package:cbj_hub/domain/vendors/ewelink_login/generic_ewelink_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_value_objects.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
@@ -33,6 +34,7 @@ import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dar
 import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/esphome_vendor_credentials_hive_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/ewelink_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/lifx_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/xiaomi_mi_vendor_credentials_hive_model.dart';
@@ -801,5 +803,15 @@ class IsarRepository extends ILocalDbRepository {
       logger.e('Local DB hive error while getting Xiaomi Mi vendor: $e');
     }
     return left(const LocalDbFailures.unexpected());
+  }
+
+  @override
+  Future<Either<LocalDbFailures, GenericEwelinkLoginDE>>
+      getEwelinkVendorLoginCredentials({
+    required List<EwelinkVendorCredentialsHiveModel>
+        ewelinkVendorCredentialsModelFromDb,
+  }) {
+    // TODO: implement getEwelinkVendorLoginCredentials
+    throw UnimplementedError();
   }
 }

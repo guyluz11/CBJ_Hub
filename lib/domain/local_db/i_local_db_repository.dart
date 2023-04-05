@@ -5,11 +5,13 @@ import 'package:cbj_hub/domain/room/room_entity.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/ewelink_login/generic_ewelink_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_entity.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/esphome_vendor_credentials_hive_model.dart';
+import 'package:cbj_hub/infrastructure/local_db/hive_objects/ewelink_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/lifx_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/tuya_vendor_credentials_hive_model.dart';
 import 'package:cbj_hub/infrastructure/local_db/hive_objects/xiaomi_mi_vendor_credentials_hive_model.dart';
@@ -54,6 +56,9 @@ abstract class ILocalDbRepository {
 
   /// Name of the box that stores Xiaomi Mi account email ans password
   String xiaomiMiVendorCredentialsBoxName = 'xiaomiMiVendorCredentialsBoxName';
+
+  /// Name of the box that stores eWeLink account email ans password
+  String ewelinkVendorCredentialsBoxName = 'ewelinkVendorCredentialsBoxName';
 
   /// Name of the box that stores Hub general info
   String hubEntityBoxName = 'hubEntityBox';
@@ -116,6 +121,12 @@ abstract class ILocalDbRepository {
       getXiaomiMiVendorLoginCredentials({
     required List<XiaomiMiVendorCredentialsHiveModel>
         xiaomiMiVendorCredentialsModelFromDb,
+  });
+
+  Future<Either<LocalDbFailures, GenericEwelinkLoginDE>>
+      getEwelinkVendorLoginCredentials({
+    required List<EwelinkVendorCredentialsHiveModel>
+        ewelinkVendorCredentialsModelFromDb,
   });
 
   Future<Either<LocalDbFailures, Unit>> saveRoomsToDb({

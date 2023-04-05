@@ -4,6 +4,7 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/vendors/esphome_login/generic_esphome_login_entity.dart';
+import 'package:cbj_hub/domain/vendors/ewelink_login/generic_ewelink_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/lifx_login/generic_lifx_login_entity.dart';
 import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/domain/vendors/tuya_login/generic_tuya_login_entity.dart';
@@ -11,6 +12,7 @@ import 'package:cbj_hub/domain/vendors/xiaomi_mi_login/generic_xiaomi_mi_login_e
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_devices_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/cbj_devices/cbj_smart_device_client/cbj_smart_device_client.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_connector_conjector.dart';
+import 'package:cbj_hub/infrastructure/devices/ewelink/ewelink_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/google/google_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/hp/hp_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/hp/hp_printer/hp_printer_entity.dart';
@@ -112,6 +114,8 @@ class CompaniesConnectorConjector {
       getIt<TuyaSmartConnectorConjector>().accountLogin(loginEntity);
     } else if (loginEntity is GenericXiaomiMiLoginDE) {
       getIt<XiaomiIoConnectorConjector>().accountLogin(loginEntity);
+    } else if (loginEntity is GenericEwelinkLoginDE) {
+      getIt<EwelinkConnectorConjector>().accountLogin(loginEntity);
     } else {
       logger.w('Vendor login type ${loginEntity.runtimeType} is not supported');
     }
