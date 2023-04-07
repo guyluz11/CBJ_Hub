@@ -213,13 +213,10 @@ class CompaniesConnectorConjector {
         ip: mdnsDeviceIp,
         port: mdnsPort,
       );
-    } else if (SonoffDiyConnectorConjector.mdnsTypes
+    } else if (EwelinkConnectorConjector.mdnsTypes
         .contains(hostMdnsInfo.mdnsServiceType)) {
-      getIt<SonoffDiyConnectorConjector>().addNewDeviceByMdnsName(
-        mDnsName: startOfMdnsName,
-        ip: mdnsDeviceIp,
-        port: mdnsPort,
-      );
+      getIt<EwelinkConnectorConjector>()
+          .discoverNewDevices(activeHost: activeHost);
     } else if (GoogleConnectorConjector.mdnsTypes
             .contains(hostMdnsInfo.mdnsServiceType) &&
         (startOfMdnsNameLower.contains('google') ||

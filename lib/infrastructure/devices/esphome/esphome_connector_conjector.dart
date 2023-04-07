@@ -45,7 +45,7 @@ class EspHomeConnectorConjector implements AbstractCompanyConnectorConjector {
   }) async {
     if (espHomeDevicePass == null) {
       logger.w('ESPHome device got found but missing a password, please add '
-          'password for it in the app UI');
+          'password for it in the app');
       return;
     }
 
