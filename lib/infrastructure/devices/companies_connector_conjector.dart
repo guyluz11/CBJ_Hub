@@ -408,6 +408,8 @@ class CompaniesConnectorConjector {
       return getIt<XiaomiIoConnectorConjector>();
     } else if (vendorName == VendorsAndServices.tasmota.toString()) {
       return getIt<TasmotaIpConnectorConjector>();
+    } else if (vendorName == VendorsAndServices.sonoffEweLink.toString()) {
+      return getIt<EwelinkConnectorConjector>();
     }
 
     logger.w(

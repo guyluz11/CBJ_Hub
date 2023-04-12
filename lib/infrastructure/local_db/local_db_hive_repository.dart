@@ -314,7 +314,7 @@ class HiveRepository extends ILocalDbRepository {
         CompaniesConnectorConjector.setVendorLoginCredentials(r);
 
         logger.i(
-          'Xiaomi Mi device password got found in DB',
+          'EweLink account email and password got found in DB',
         );
       });
     }
@@ -447,9 +447,9 @@ class HiveRepository extends ILocalDbRepository {
         );
         return right(genericTuyaLoginDE);
       }
-      logger.i(
-        "Didn't find any Tuya in the local DB",
-      );
+      // logger.i(
+      //   "Didn't find any Tuya in the local DB",
+      // );
     } catch (e) {
       logger.e('Local DB hive error while getting Tuya vendor: $e');
     }
@@ -480,9 +480,9 @@ class HiveRepository extends ILocalDbRepository {
         );
         return right(genericLifxLoginDE);
       }
-      logger.i(
-        "Didn't find any Lifx in the local DB",
-      );
+      // logger.i(
+      //   "Didn't find any Lifx in the local DB",
+      // );
     } catch (e) {
       logger.e('Local DB hive error while getting Lifx vendor: $e');
     }
@@ -516,9 +516,9 @@ class HiveRepository extends ILocalDbRepository {
         );
         return right(genericEspHomeLoginDE);
       }
-      logger.i(
-        "Didn't find any ESPHome in the local DB",
-      );
+      // logger.i(
+      //   "Didn't find any ESPHome in the local DB",
+      // );
     } catch (e) {
       logger.e('Local DB hive error while getting ESPHome vendor: $e');
     }
@@ -555,9 +555,9 @@ class HiveRepository extends ILocalDbRepository {
         );
         return right(genericXiaomiMiLoginDE);
       }
-      logger.i(
-        "Didn't find any Xiaomi Mi in the local DB",
-      );
+      // logger.i(
+      //   "Didn't find any Xiaomi Mi in the local DB",
+      // );
     } catch (e) {
       logger.e('Local DB hive error while getting Xiaomi Mi vendor: $e');
     }
@@ -589,13 +589,13 @@ class HiveRepository extends ILocalDbRepository {
         );
 
         logger.i(
-          'Xiaomi Mi got returned from local storage',
+          'EweLink got returned from local storage',
         );
         return right(genericEwelinkLoginDE);
       }
-      logger.i(
-        "Didn't find any Xiaomi Mi in the local DB",
-      );
+      // logger.i(
+      //   "Didn't find any Xiaomi Mi in the local DB",
+      // );
     } catch (e) {
       logger.e('Local DB hive error while getting Xiaomi Mi vendor: $e');
     }
@@ -753,7 +753,7 @@ class HiveRepository extends ILocalDbRepository {
     } else if (loginEntityAbstract is GenericEwelinkLoginDE) {
       saveEwelinkVendorCredentials(
         ewelinkLoginDE: loginEntityAbstract,
-        vendorCredentialsBoxName: xiaomiMiVendorCredentialsBoxName,
+        vendorCredentialsBoxName: ewelinkVendorCredentialsBoxName,
       );
     } else {
       logger.e(
@@ -962,10 +962,10 @@ class HiveRepository extends ILocalDbRepository {
 
       await ewelinkVendorCredentialsBox.close();
       logger.i(
-        'Xiaomi Mi vendor credentials saved to local storage',
+        'EweLink vendor credentials saved to local storage',
       );
     } catch (e) {
-      logger.e('Error saving Xiaomi Mi vendor credentials to local storage');
+      logger.e('Error saving EweLink vendor credentials to local storage');
       return left(const LocalDbFailures.unexpected());
     }
     return right(unit);
