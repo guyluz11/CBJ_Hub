@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/vendors/ewelink_login/generic_ewelink_login_entity.dart';
+import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/ewelink/ewelink_helpers.dart';
+import 'package:cbj_hub/infrastructure/devices/ewelink/ewelink_switch/ewelink_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
+import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dart_ewelink_api/dart_ewelink_api.dart';
 import 'package:injectable/injectable.dart';
@@ -23,9 +27,8 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
   ) async {
     try {
       ewelink = Ewelink(
-        email: '',
-        password: '',
-        region: 'us',
+        email: loginDE.ewelinkAccountEmail.getOrCrash(),
+        password: loginDE.ewelinkAccountPass.getOrCrash(),
       );
 
       await ewelink!.getCredentials();
@@ -52,41 +55,88 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
     }
     final List<EwelinkDevice> devices = await ewelink!.getDevices();
 
-    for (EwelinkDevice ewelinkDevice in devices) {
-      EwelinkHelpers.addDiscoverdDevice(ewelinkDevice);
+    for (final EwelinkDevice ewelinkDevice in devices) {
+      // Getting device by id adds additional info in the result
+      final EwelinkDevice ewelinkDeviceWithTag =
+          await ewelink!.getDevice(deviceId: ewelinkDevice.deviceid);
+
+      final List<DeviceEntityAbstract> entityList =
+          EwelinkHelpers.addDiscoverdDevice(ewelinkDeviceWithTag);
+
+      for (final DeviceEntityAbstract deviceEntityAbstract in entityList) {
+        if (companyDevices[
+                '${deviceEntityAbstract.deviceUniqueId.getOrCrash()}-${deviceEntityAbstract.entityUniqueId.getOrCrash()}'] !=
+            null) {
+          continue;
+        }
+
+        final DeviceEntityAbstract deviceToAdd =
+            CompaniesConnectorConjector.addDiscoverdDeviceToHub(
+          deviceEntityAbstract,
+        );
+
+        final MapEntry<String, DeviceEntityAbstract> deviceAsEntry = MapEntry(
+          '${deviceEntityAbstract.deviceUniqueId.getOrCrash()}-${deviceEntityAbstract.entityUniqueId.getOrCrash()}',
+          deviceToAdd,
+        );
+
+        companyDevices.addEntries([deviceAsEntry]);
+
+        logger.i(
+          'New EweLink devices name:${deviceEntityAbstract.cbjEntityName.getOrCrash()}',
+        );
+      }
     }
-    logger.w('Ewelink discover Not implemented yet');
+    getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
   }
 
   @override
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract ewelinkDE,
   ) async {
-    // final DeviceEntityAbstract? device =
-    //     companyDevices[ewelinkDE.entityUniqueId.getOrCrash()];
-    //
-    // if (false) {
-    //   // device.executeDeviceAction(newEntity: ewelinkDE);
-    // } else {
-    logger.w('Ewelink device type does not exist');
-    // }
+    if (ewelink == null || companyDevices.isEmpty) {
+      await waitUntilConnectionEstablished(0);
+    }
+
+    final DeviceEntityAbstract? device = companyDevices[
+        '${ewelinkDE.deviceUniqueId.getOrCrash()}-${ewelinkDE.entityUniqueId.getOrCrash()}'];
+
+    if (device is EwelinkSwitchEntity) {
+      device.executeDeviceAction(newEntity: ewelinkDE);
+    } else {
+      logger.w('Ewelink device type does not exist');
+    }
   }
 
   @override
   Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
     DeviceEntityAbstract? nonGenericDevice;
-
-    // if (deviceEntity is GenericRgbwLightDE) {
-    //   nonGenericDevice = EwelinkGpx4021GlEntity.fromGeneric(deviceEntity);
-    // }
+    if (ewelink == null || companyDevices.isEmpty) {
+      await waitUntilConnectionEstablished(0);
+    }
+    if (deviceEntity is EwelinkSwitchEntity) {
+      nonGenericDevice = EwelinkSwitchEntity.fromGeneric(deviceEntity);
+    }
 
     if (nonGenericDevice == null) {
-      logger.w('Xiaomi mi device could not get loaded from the server');
+      logger.w('EweLink device could not get loaded from the server');
       return;
     }
 
     companyDevices.addEntries([
-      MapEntry(nonGenericDevice.entityUniqueId.getOrCrash(), nonGenericDevice),
+      MapEntry(
+        '${nonGenericDevice.deviceUniqueId.getOrCrash()}-${nonGenericDevice.entityUniqueId.getOrCrash()}',
+        nonGenericDevice,
+      ),
     ]);
+  }
+
+  Future<void> waitUntilConnectionEstablished(int executed) async {
+    if (executed > 20 || ewelink != null) {
+      await Future.delayed(const Duration(seconds: 50));
+      return;
+    }
+    await Future.delayed(const Duration(seconds: 20));
+    return waitUntilConnectionEstablished(executed + 1);
   }
 }
