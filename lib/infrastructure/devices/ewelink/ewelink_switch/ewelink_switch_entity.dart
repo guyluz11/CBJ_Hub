@@ -127,10 +127,12 @@ class EwelinkSwitchEntity extends GenericSwitchDE {
   Future<Either<CoreFailure, Unit>> turnOnSwitch() async {
     switchState = GenericSwitchSwitchState(EntityActions.on.toString());
     try {
-      getIt<EwelinkConnectorConjector>().ewelink?.setDevicePowerState(
+      await getIt<EwelinkConnectorConjector>().ewelink?.setDevicePowerState(
             deviceId: deviceUniqueId.getOrCrash(),
             state: 'on',
-            channel: entityUniqueId.getOrCrash(),
+            // TODO: Bug in api, channel 1 get changed no matter the input
+            // https://github.com/ianmaciel/dart_ewelink_api/issues/21
+            channel: entityKey.getOrCrash(),
           );
     } catch (e) {
       return left(const CoreFailure.unexpected());
@@ -142,10 +144,12 @@ class EwelinkSwitchEntity extends GenericSwitchDE {
   Future<Either<CoreFailure, Unit>> turnOffSwitch() async {
     switchState = GenericSwitchSwitchState(EntityActions.off.toString());
     try {
-      getIt<EwelinkConnectorConjector>().ewelink?.setDevicePowerState(
+      await getIt<EwelinkConnectorConjector>().ewelink?.setDevicePowerState(
             deviceId: deviceUniqueId.getOrCrash(),
             state: 'off',
-            channel: entityUniqueId.getOrCrash(),
+            // TODO: Bug in api, channel 1 get changed no matter the input
+            // https://github.com/ianmaciel/dart_ewelink_api/issues/21
+            channel: entityKey.getOrCrash(),
           );
     } catch (e) {
       return left(const CoreFailure.unexpected());

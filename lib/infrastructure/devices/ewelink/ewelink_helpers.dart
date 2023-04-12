@@ -31,7 +31,8 @@ class EwelinkHelpers {
           compUuid: DeviceCompUuid('empty'),
           powerConsumption: DevicePowerConsumption('0'),
           devicesMacAddress: DevicesMacAddress('0'),
-          entityKey: EntityKey(''),
+          // TODO: Fix because we can't use the outlet number from entityUniqueId
+          entityKey: EntityKey('1'),
           requestTimeStamp: RequestTimeStamp('0'),
           lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp('0'),
           deviceCbjUniqueId: CoreUniqueId(),
@@ -98,7 +99,8 @@ class EwelinkHelpers {
             compUuid: DeviceCompUuid('empty'),
             powerConsumption: DevicePowerConsumption('0'),
             devicesMacAddress: DevicesMacAddress('0'),
-            entityKey: EntityKey(''),
+            // TODO: Fix because we can't use the outlet number from entityUniqueId
+            entityKey: EntityKey(outletNumber),
             requestTimeStamp: RequestTimeStamp('0'),
             lastResponseFromDeviceTimeStamp:
                 LastResponseFromDeviceTimeStamp('0'),
