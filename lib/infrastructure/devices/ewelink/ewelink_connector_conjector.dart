@@ -94,7 +94,9 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
   Future<void> manageHubRequestsForDevice(
     DeviceEntityAbstract ewelinkDE,
   ) async {
-    await waitUntilConnectionEstablished(0);
+    if (ewelink == null || companyDevices.isEmpty) {
+      await waitUntilConnectionEstablished(0);
+    }
 
     final DeviceEntityAbstract? device = companyDevices[
         '${ewelinkDE.deviceUniqueId.getOrCrash()}-${ewelinkDE.entityUniqueId.getOrCrash()}'];
@@ -109,8 +111,9 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
   @override
   Future<void> setUpDeviceFromDb(DeviceEntityAbstract deviceEntity) async {
     DeviceEntityAbstract? nonGenericDevice;
-    await waitUntilConnectionEstablished(0);
-
+    if (ewelink == null || companyDevices.isEmpty) {
+      await waitUntilConnectionEstablished(0);
+    }
     if (deviceEntity is EwelinkSwitchEntity) {
       nonGenericDevice = EwelinkSwitchEntity.fromGeneric(deviceEntity);
     }
@@ -130,7 +133,7 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
 
   Future<void> waitUntilConnectionEstablished(int executed) async {
     if (executed > 20 || ewelink != null) {
-      await Future.delayed(const Duration(seconds: 20));
+      await Future.delayed(const Duration(seconds: 50));
       return;
     }
     await Future.delayed(const Duration(seconds: 20));
