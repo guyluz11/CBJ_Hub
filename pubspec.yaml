@@ -17,10 +17,7 @@ dependencies:
   # Collection of cyclic redundancy check (CRC) routines as Dart converters.
   crclib: ^3.0.0
   # Functional programming thingies, let you use multiple return types
-  dart_ewelink_api:
-    git:
-      url: 'https://github.com/guyluz11/dart_ewelink_api.git'
-      ref: 'implement-get-all-devices'
+  dart_ewelink_api: ^0.0.6
   dartz: ^0.10.1
   # Allow returning more than one type of object
   equatable: ^2.0.5
