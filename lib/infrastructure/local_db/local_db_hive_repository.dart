@@ -63,11 +63,6 @@ class HiveRepository extends ILocalDbRepository {
   Future<void> initializeDb() async {
     String? localDbPath = await getIt<SystemCommandsManager>().getLocalDbPath();
 
-    if (localDbPath == null) {
-      logger.e('Cant find local DB path');
-      localDbPath = '/';
-    }
-
     if (localDbPath[localDbPath.length - 1] == '/') {
       localDbPath = localDbPath.substring(0, localDbPath.length - 1);
     }

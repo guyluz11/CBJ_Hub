@@ -75,12 +75,7 @@ class IsarRepository extends ILocalDbRepository {
   }
 
   Future<bool> asyncConstractorHelper() async {
-    String? localDbPath = await getIt<SystemCommandsManager>().getLocalDbPath();
-
-    if (localDbPath == null) {
-      logger.e('Cant find local DB path');
-      localDbPath = '/';
-    }
+    await getIt<SystemCommandsManager>().getLocalDbPath();
 
     logger.i('Isar db location\n${isar.path}');
 
