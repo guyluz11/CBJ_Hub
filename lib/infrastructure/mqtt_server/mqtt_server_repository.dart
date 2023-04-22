@@ -21,6 +21,7 @@ import 'package:cbj_hub/utils.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+// ignore: implementation_imports
 import 'package:mqtt_client/src/observable/src/records.dart';
 
 @LazySingleton(as: IMqttServerRepository)

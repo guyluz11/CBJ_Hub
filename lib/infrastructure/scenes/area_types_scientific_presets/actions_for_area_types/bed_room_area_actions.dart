@@ -196,6 +196,15 @@ class BedRoomAreaAction {
           ),
         ]);
         break;
+      case EntityTypes.playerEntity:
+        // TODO: Handle this case.
+        break;
+      case EntityTypes.routerEntity:
+        // TODO: Handle this case.
+        break;
+      case EntityTypes.voiceAssistant:
+        // TODO: Handle this case.
+        break;
     }
     return right(actionsList);
   }
