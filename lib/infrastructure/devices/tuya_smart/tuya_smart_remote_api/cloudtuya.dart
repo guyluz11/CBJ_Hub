@@ -121,7 +121,7 @@ class CloudTuya {
       return tuyaDeviceList;
     }
 
-    for (final dynamic device in devicesList) {
+    for (final dynamic device in devicesList as Iterable) {
       if (device['ha_type'] != 'scene') {
         final TuyaDeviceAbstract tuyaDevice =
             TuyaDeviceAbstract.fromInternalLinkedHashMap(device);
