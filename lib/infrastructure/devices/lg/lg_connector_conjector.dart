@@ -17,7 +17,7 @@ class LgConnectorConjector implements AbstractCompanyConnectorConjector {
   static const List<String> mdnsTypes = [
     '_hap._tcp',
     '_display._tcp',
-    '_airplay._tcp'
+    '_airplay._tcp',
   ];
 
   /// Add new devices to [companyDevices] if not exist

@@ -51,12 +51,12 @@ class ChromecastNodeRedApi {
       topic: '$topic/$outputVideoTopicProperty',
       name: '$mqttNodeName - $outputVideoTopicProperty',
     );
-    nodes += ', ${mqttNode.toString()}';
+    nodes += ', $mqttNode';
 
     /// Cast v2 connection
     final NodeRedCastV2ConnectionNode nodeRedCastV2ConnectionNode =
         NodeRedCastV2ConnectionNode(host: deviceIp);
-    nodes += ', ${nodeRedCastV2ConnectionNode.toString()}';
+    nodes += ', $nodeRedCastV2ConnectionNode';
 
     /// Cast v2 sender
     final NodeRedCastV2SenderNode nodeRedCastV2SenderNode =
@@ -68,7 +68,7 @@ class ChromecastNodeRedApi {
         ]
       ],
     );
-    nodes += ', ${nodeRedCastV2SenderNode.toString()}';
+    nodes += ', $nodeRedCastV2SenderNode';
 
     nodes += ', ${openUrlNodesString(
       mqttBrokerNode,
@@ -146,7 +146,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -157,7 +157,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$playingVideoTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';
@@ -177,7 +177,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -188,7 +188,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$stopVideoTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';
@@ -208,7 +208,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -219,7 +219,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$pauseVideoTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';
@@ -239,7 +239,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -250,7 +250,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$playVideoTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';
@@ -270,7 +270,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -281,7 +281,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$queuePrevVideoTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';
@@ -301,7 +301,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -312,7 +312,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$queueNextVideoTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';
@@ -332,7 +332,7 @@ class ChromecastNodeRedApi {
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
       wires: [
-        [nextNodeIdToConnectToo]
+        [nextNodeIdToConnectToo],
       ],
     );
     nodes += nodeRedFunctionNode.toString();
@@ -343,7 +343,7 @@ class ChromecastNodeRedApi {
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$closeAppTopicProperty',
       wires: [
-        [nodeRedFunctionNode.id]
+        [nodeRedFunctionNode.id],
       ],
     );
     return '$nodes,\n$nodeRedMqttInNode';

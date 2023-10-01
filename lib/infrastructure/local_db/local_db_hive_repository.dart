@@ -877,7 +877,9 @@ class HiveRepository extends ILocalDbRepository {
 
       if (espHomeVendorCredentialsBox.isNotEmpty) {
         await espHomeVendorCredentialsBox.putAt(
-            0, espHomeVendorCredentialsModel);
+          0,
+          espHomeVendorCredentialsModel,
+        );
       } else {
         espHomeVendorCredentialsBox.add(espHomeVendorCredentialsModel);
       }
@@ -914,7 +916,9 @@ class HiveRepository extends ILocalDbRepository {
 
       if (xiaomiMiVendorCredentialsBox.isNotEmpty) {
         await xiaomiMiVendorCredentialsBox.putAt(
-            0, xiaomiMiVendorCredentialsModel);
+          0,
+          xiaomiMiVendorCredentialsModel,
+        );
       } else {
         xiaomiMiVendorCredentialsBox.add(xiaomiMiVendorCredentialsModel);
       }
@@ -950,7 +954,9 @@ class HiveRepository extends ILocalDbRepository {
 
       if (ewelinkVendorCredentialsBox.isNotEmpty) {
         await ewelinkVendorCredentialsBox.putAt(
-            0, ewelinkVendorCredentialsModel);
+          0,
+          ewelinkVendorCredentialsModel,
+        );
       } else {
         ewelinkVendorCredentialsBox.add(ewelinkVendorCredentialsModel);
       }

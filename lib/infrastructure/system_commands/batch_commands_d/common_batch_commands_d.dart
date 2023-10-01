@@ -29,7 +29,7 @@ class CommonBatchCommandsD implements SystemCommandsBaseClassD {
       'path',
       'win32_computersystemproduct',
       'get',
-      'uuid'
+      'uuid',
     ]).then((ProcessResult result) {
       return result.stdout.toString();
     });

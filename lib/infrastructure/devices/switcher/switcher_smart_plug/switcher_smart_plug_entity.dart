@@ -53,7 +53,8 @@ class SwitcherSmartPlugEntity extends GenericSmartPlugDE {
   }
 
   factory SwitcherSmartPlugEntity.fromGeneric(
-      GenericSmartPlugDE genericDevice) {
+    GenericSmartPlugDE genericDevice,
+  ) {
     return SwitcherSmartPlugEntity(
       uniqueId: genericDevice.uniqueId,
       entityUniqueId: genericDevice.entityUniqueId,

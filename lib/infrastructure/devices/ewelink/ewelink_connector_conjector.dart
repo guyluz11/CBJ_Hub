@@ -38,7 +38,8 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
     } on EwelinkOfflineDeviceException {
       logger.e('device is offline');
     } catch (e) {
-      logger.e('error: ${e.toString()}');
+      // ignore: unnecessary_brace_in_string_interps
+      logger.e('error: $e');
     }
     return 'Success';
   }

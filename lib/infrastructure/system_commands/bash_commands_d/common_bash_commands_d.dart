@@ -117,7 +117,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 
   bool doesExistAndStringContainUuid(String blkid, String driveName) {
     return blkid.contains(driveName) &&
-        (blkid.substring(blkid.indexOf(driveName))).contains('UUID="');
+        blkid.substring(blkid.indexOf(driveName)).contains('UUID="');
   }
 
   @override
@@ -129,8 +129,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
     final String? snapCommonEnvironmentVariable =
         getIt<SharedVariables>().getSnapCommonEnvironmentVariable();
     if (snapCommonEnvironmentVariable == null) {
-      localDbFolderPath = '/home/${await currentUserName}/'
-          '';
+      localDbFolderPath = '/home/${await currentUserName}/';
     } else {
       // /var/snap/cbj-hub/common/isar
       localDbFolderPath = snapCommonEnvironmentVariable;

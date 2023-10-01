@@ -37,11 +37,13 @@ class CbjSmartComputerEntity extends GenericSmartComputerDE {
     required super.smartComputerSuspendState,
   }) : super(
           deviceVendor: DeviceVendor(
-              VendorsAndServices.cyBearJinniAppSmartEntity.toString()),
+            VendorsAndServices.cyBearJinniAppSmartEntity.toString(),
+          ),
         );
 
   factory CbjSmartComputerEntity.fromGeneric(
-      GenericSmartComputerDE genericDevice) {
+    GenericSmartComputerDE genericDevice,
+  ) {
     return CbjSmartComputerEntity(
       uniqueId: genericDevice.uniqueId,
       entityUniqueId: genericDevice.entityUniqueId,

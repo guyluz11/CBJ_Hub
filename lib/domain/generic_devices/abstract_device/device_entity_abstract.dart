@@ -178,7 +178,8 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
           entityOriginalName:
               EntityOriginalName('Entity original name is empty'),
           deviceOriginalName: DeviceOriginalName(
-              'Device original name that entity is exists on is empty'),
+            'Device original name that entity is exists on is empty',
+          ),
           entityTypes: EntityType(EntityTypes.light.toString()),
           senderDeviceModel: DeviceSenderDeviceModel('a'),
           senderDeviceOs: DeviceSenderDeviceOs('b'),
@@ -194,7 +195,8 @@ class DeviceEntityNotAbstract extends DeviceEntityAbstract {
           entityKey: EntityKey('entityKey is empty'),
           requestTimeStamp: RequestTimeStamp('requestTimeStamp is empty'),
           lastResponseFromDeviceTimeStamp: LastResponseFromDeviceTimeStamp(
-              'lastResponseFromDeviceTimeStamp is empty'),
+            'lastResponseFromDeviceTimeStamp is empty',
+          ),
           deviceCbjUniqueId: CoreUniqueId(),
         );
 

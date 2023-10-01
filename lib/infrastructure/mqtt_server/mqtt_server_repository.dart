@@ -215,7 +215,7 @@ class MqttServerRepository extends IMqttServerRepository {
       final String deviceDeviceTypeThatChanged = topicsSplitted[3];
 
       final Map<String, dynamic> devicePropertyAndValues = {
-        deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload
+        deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload,
       };
 
       final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();

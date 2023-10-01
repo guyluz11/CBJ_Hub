@@ -82,7 +82,7 @@ class EspHomeNodeRedApi {
       topic: '$topic/$outputDeviceProperty',
       name: '$mqttNodeName - $outputDeviceProperty',
     );
-    nodes += ', ${mqttOutNode.toString()}';
+    nodes += ', $mqttOutNode';
 
     /// Create an EspHome in node
     final NodeRedEspHomeInNode nodeRedEspHomeInNode = NodeRedEspHomeInNode(
@@ -95,7 +95,7 @@ class EspHomeNodeRedApi {
       name: 'ESPHome $entityId in type',
       epsHomeDeviceEntityId: entityId,
     );
-    nodes += ', ${nodeRedEspHomeInNode.toString()}';
+    nodes += ', $nodeRedEspHomeInNode';
 
     /// Create an EspHome out node
     final NodeRedEspHomeOutNode nodeRedEspHomeOutNode = NodeRedEspHomeOutNode(
@@ -104,7 +104,7 @@ class EspHomeNodeRedApi {
       name: 'ESPHome $entityId out type',
       espHomeEntityId: entityId,
     );
-    nodes += ', ${nodeRedEspHomeOutNode.toString()}';
+    nodes += ', $nodeRedEspHomeOutNode';
 
     final NodeRedFunctionNode nodeRedFunctionToJsonNode =
         NodeRedFunctionNode.inputPayloadToJson(
@@ -114,7 +114,7 @@ class EspHomeNodeRedApi {
         ]
       ],
     );
-    nodes += ', ${nodeRedFunctionToJsonNode.toString()}';
+    nodes += ', $nodeRedFunctionToJsonNode';
 
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
@@ -127,7 +127,7 @@ class EspHomeNodeRedApi {
         ]
       ],
     );
-    nodes += ', ${nodeRedMqttInNode.toString()}';
+    nodes += ', $nodeRedMqttInNode';
 
     nodes += '\n]';
 

@@ -22,11 +22,11 @@ Map<int, List<String>> gpioOverviewTasmota = {
   71: ['Button_n8', 'Button active low, no internal pull-up resistor'],
   96: [
     'Button_i1',
-    'Button inverted, active high with internal pull-up resistor'
+    'Button inverted, active high with internal pull-up resistor',
   ],
   97: [
     'Button_i2',
-    'Button inverted, active high with internal pull-up resistor'
+    'Button inverted, active high with internal pull-up resistor',
   ],
   160: ['Switch1', 'Switch, internal pull-up resistor'],
   192: ['Switch_n1', 'Switch, no pull-up resistor'],

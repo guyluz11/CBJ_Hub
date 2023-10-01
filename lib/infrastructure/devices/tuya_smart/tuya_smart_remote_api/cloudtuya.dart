@@ -47,7 +47,7 @@ class CloudTuya {
     }
     final Uri uriTemp = Uri.parse('$uri/auth.do');
     final Map<String, String> headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
 
     final Map<String, dynamic> body = {

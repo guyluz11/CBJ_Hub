@@ -156,7 +156,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       MapEntry<String, RoomEntity>(
         newRoomEntity.uniqueId.getOrCrash(),
         newRoomEntity,
-      )
+      ),
     ]);
     return newRoomEntity;
   }
@@ -466,7 +466,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
             uniqueId: RoomUniqueId.fromUniqueString(discoveredRoomId),
             cbjEntityName: RoomDefaultName.discoveredRoomName(),
           ),
-        )
+        ),
       ]);
     }
     return _allRooms[discoveredRoomId]!;
