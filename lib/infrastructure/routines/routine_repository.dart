@@ -1,13 +1,13 @@
 import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
 import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/routine/i_routine_cbj_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_failures.dart';
 import 'package:cbj_hub/domain/routine/value_objects_routine_cbj.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
@@ -63,7 +63,7 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
 
       getIt<ISavedRoomsRepo>()
           .addRoutineToRoomDiscoveredIfNotExist(tempRoutineCbj);
-      final String routineNodeRedFlowId = await getIt<INodeRedRepository>()
+      final String routineNodeRedFlowId = await getIt<NodeRedRepository>()
           .createNewNodeRedRoutine(tempRoutineCbj);
       if (routineNodeRedFlowId.isNotEmpty) {
         tempRoutineCbj = tempRoutineCbj.copyWith(

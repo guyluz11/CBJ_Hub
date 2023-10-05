@@ -5,9 +5,9 @@ import 'package:cbj_hub/domain/binding/value_objects_routine_cbj.dart';
 import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
 import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
@@ -64,7 +64,7 @@ class BindingCbjRepository implements IBindingCbjRepository {
       await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
       getIt<ISavedRoomsRepo>()
           .addBindingToRoomDiscoveredIfNotExist(tempBindingCbj);
-      final String bindingNodeRedFlowId = await getIt<INodeRedRepository>()
+      final String bindingNodeRedFlowId = await getIt<NodeRedRepository>()
           .createNewNodeRedBinding(tempBindingCbj);
       if (bindingNodeRedFlowId.isNotEmpty) {
         tempBindingCbj = tempBindingCbj.copyWith(
