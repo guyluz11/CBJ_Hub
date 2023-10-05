@@ -6,6 +6,7 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_value_objects.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/google/chromecast_node_red_api/chromecast_node_red_api.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/injection.dart';
@@ -90,7 +91,15 @@ class ChromeCastEntity extends GenericSmartTvDE {
       logger.w('Chromecast last known ip is null');
       return;
     }
-    chromecastNodeRedApi = ChromecastNodeRedApi();
+
+    chromecastNodeRedApi = ChromecastNodeRedApi(
+      nodeRedApiBaseTopic:
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
+      nodeRedDevicesTopic:
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
+      repository: getIt<INodeRedRepository>(),
+    );
+
     chromecastNodeRedApi.setNewYoutubeVideoNodes(
       uniqueId.getOrCrash(),
       lastKnownIp!.getOrCrash(),

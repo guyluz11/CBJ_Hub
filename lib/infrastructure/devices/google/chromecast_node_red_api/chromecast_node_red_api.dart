@@ -1,14 +1,17 @@
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/contrib_castv2_nodes/node_red_castv2_connection_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/contrib_castv2_nodes/node_red_castv2_sender_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_function_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_broker_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_in_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_out_node.dart';
-import 'package:cbj_hub/injection.dart';
+import 'package:nodered/nodered.dart';
 
 class ChromecastNodeRedApi {
+  ChromecastNodeRedApi({
+    required this.nodeRedApiBaseTopic,
+    required this.nodeRedDevicesTopic,
+    required this.repository,
+  });
+
+  final String nodeRedApiBaseTopic;
+  final String nodeRedDevicesTopic;
+  final INodeRedRepository repository;
+
   final String module = 'node-red-contrib-castv2';
 
   final String youtubeVideoTopicProperty = 'youtubeVideo';
@@ -26,12 +29,6 @@ class ChromecastNodeRedApi {
     String deviceIp,
   ) async {
     String nodes = '[\n';
-
-    final String nodeRedApiBaseTopic =
-        getIt<IMqttServerRepository>().getNodeRedApiBaseTopic();
-
-    final String nodeRedDevicesTopic =
-        getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName();
 
     const String mqttNodeName = 'Chromecast';
 
@@ -122,8 +119,7 @@ class ChromecastNodeRedApi {
     nodes += '\n]';
 
     /// Setting the flow
-    final Future<String> settingTheFlowResponse =
-        getIt<INodeRedRepository>().setFlowWithModule(
+    final Future<String> settingTheFlowResponse = repository.setFlowWithModule(
       moduleToUse: module,
       label: 'playYoutubeUrl',
       nodes: nodes,

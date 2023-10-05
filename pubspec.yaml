@@ -60,6 +60,8 @@ dependencies:
   mqtt_client: ^10.0.0
   # Service discovery over multicast DNS (mDNS), Bonjour, and Avahi.
   multicast_dns: ^0.3.2+4
+  nodered:
+    path: ../nodered
   # Helps you discover open ports, devices on subnet and more.
   network_tools: ^4.0.1
   # Provides runtime support for a Dart implementation of protobufs.

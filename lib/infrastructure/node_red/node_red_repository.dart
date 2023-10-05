@@ -4,10 +4,10 @@ import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
 import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_api/node_red_api.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:http/src/response.dart';
 import 'package:injectable/injectable.dart';
+import 'package:nodered/nodered.dart';
 
 /// Control Node-RED, create scenes and more
 @LazySingleton(as: INodeRedRepository)

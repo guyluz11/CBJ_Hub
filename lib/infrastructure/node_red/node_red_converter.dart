@@ -7,11 +7,7 @@ import 'package:cbj_hub/domain/routine/value_objects_routine_cbj.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbenum.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_function_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_inject_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_broker_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_in_node.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_nodes/node_red_mqtt_out_node.dart';
+import 'package:nodered/nodered.dart';
 import 'package:uuid/uuid.dart';
 
 class NodeRedConverter {
@@ -249,9 +245,9 @@ class NodeRedConverter {
       name: nodeName,
       wires: [wires],
       tempId: injectNodeId,
-      daysToRepeat: daysToRepeat,
-      hourToRepeat: hourToRepeat,
-      minutesToRepeat: minutesToRepeat,
+      daysToRepeat: daysToRepeat.getOrCrash(),
+      hourToRepeat: hourToRepeat.getOrCrash(),
+      minutesToRepeat: minutesToRepeat.getOrCrash(),
     );
     return MapEntry(nodeRedInjectNode.id, nodeRedInjectNode.toString());
   }
