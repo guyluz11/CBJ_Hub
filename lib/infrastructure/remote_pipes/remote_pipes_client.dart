@@ -93,7 +93,7 @@ class RemotePipesClient {
     grpcKeepAlive?.cancel();
     final GenericPingDE genericEmptyDE = GenericPingDE.empty();
     grpcKeepAlive = Timer.periodic(const Duration(minutes: 9), (Timer t) {
-      logger.v('Ping device to Remote Pipes');
+      logger.t('Ping device to Remote Pipes');
       sendRequest.add(genericEmptyDE.toInfrastructure());
     });
   }

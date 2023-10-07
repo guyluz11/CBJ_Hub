@@ -62,7 +62,7 @@ class SonoffDiyConnectorConjector implements AbstractCompanyConnectorConjector {
 
       companyDevices.addEntries([deviceAsEntry]);
     }
-    logger.v('New Sonoff diy devices name:$mDnsName');
+    logger.t('New Sonoff diy devices name:$mDnsName');
   }
 
   @override

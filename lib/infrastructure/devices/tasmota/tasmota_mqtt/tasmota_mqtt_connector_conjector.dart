@@ -86,7 +86,7 @@ class TasmotaMqttConnectorConjector
           MapEntry(deviceToAdd.uniqueId.getOrCrash(), deviceToAdd);
 
       companyDevices.addEntries([deviceAsEntry]);
-      logger.v('Adding Tasmota mqtt device');
+      logger.t('Adding Tasmota mqtt device');
     });
   }
 

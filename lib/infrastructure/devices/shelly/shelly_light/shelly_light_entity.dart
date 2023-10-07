@@ -4,11 +4,11 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/shelly/shelly_api/shelly_api_color_bulb.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:color/color.dart';
 import 'package:dartz/dartz.dart';
+import 'package:shelly/shelly.dart';
 
 class ShellyColorLightEntity extends GenericRgbwLightDE {
   ShellyColorLightEntity({
@@ -41,11 +41,11 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     required super.lightColorSaturation,
     required super.lightColorValue,
     required super.lightBrightness,
-    ShellyApiColorBulb? bulbeMode,
+    ShellyApiColorBulb? bulbMode,
   }) : super(
           deviceVendor: DeviceVendor(VendorsAndServices.shelly.toString()),
         ) {
-    shellyColorBulb = bulbeMode ??
+    shellyColorBulb = bulbMode ??
         ShellyApiColorBulb(
           lastKnownIp: deviceLastKnownIp.getOrCrash(),
           mDnsName: deviceMdns.getOrCrash(),
@@ -205,7 +205,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     lightSwitchState = GenericRgbwLightSwitchState(EntityActions.on.toString());
 
     try {
-      logger.v('Turn on Shelly device');
+      logger.t('Turn on Shelly device');
       shellyColorBulb.turnOn();
       return right(unit);
     } catch (e) {
@@ -219,7 +219,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
         GenericRgbwLightSwitchState(EntityActions.off.toString());
 
     try {
-      logger.v('Turn off Shelly device');
+      logger.t('Turn off Shelly device');
       await shellyColorBulb.turnOff();
       return right(unit);
     } catch (exception) {

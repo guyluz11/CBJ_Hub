@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cbj_hub/infrastructure/devices/sonoff_diy/sonoff_diy_api/sonoff_diy_api_device_abstract.dart';
+import 'package:cbj_hub/utils.dart';
 import 'package:http/http.dart' as http;
 
 class SonoffDiyApiWallSwitch extends SonoffApiDeviceAbstract {
@@ -29,7 +30,7 @@ class SonoffDiyApiWallSwitch extends SonoffApiDeviceAbstract {
     final http.Response response =
         await http.post(url, body: body, headers: headers);
     final String responseJson = json.decode(response.body).toString();
-    print(responseJson);
+    logger.t(responseJson);
 
     return responseJson;
   }
@@ -53,7 +54,7 @@ class SonoffDiyApiWallSwitch extends SonoffApiDeviceAbstract {
     final http.Response response =
         await http.post(url, body: body, headers: headers);
     final String responseJson = json.decode(response.body).toString();
-    print(responseJson);
+    logger.t(responseJson);
 
     return responseJson;
   }

@@ -65,7 +65,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 //      String hostName = result.stdout;
 //      hostName = hostName.substring(
 //          0, hostName.length - 1); //  Removes the invisible new line at the end
-//      logger.v('Host name: ' + hostName);
+//      logger.t('Host name: ' + hostName);
       return result.stdout.toString();
     });
     return hostName.trim();
@@ -117,7 +117,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 
   bool doesExistAndStringContainUuid(String blkid, String driveName) {
     return blkid.contains(driveName) &&
-        (blkid.substring(blkid.indexOf(driveName))).contains('UUID="');
+        blkid.substring(blkid.indexOf(driveName)).contains('UUID="');
   }
 
   @override
@@ -129,8 +129,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
     final String? snapCommonEnvironmentVariable =
         getIt<SharedVariables>().getSnapCommonEnvironmentVariable();
     if (snapCommonEnvironmentVariable == null) {
-      localDbFolderPath = '/home/${await currentUserName}/'
-          '';
+      localDbFolderPath = '/home/${await currentUserName}/';
     } else {
       // /var/snap/cbj-hub/common/isar
       localDbFolderPath = snapCommonEnvironmentVariable;

@@ -19,7 +19,7 @@ class DeviceEntityDtoAbstract {
   DeviceEntityDtoAbstract();
 
   factory DeviceEntityDtoAbstract.fromDomain() {
-    logger.v('DeviceEntityDtoAbstract.fromDomain');
+    logger.t('DeviceEntityDtoAbstract.fromDomain');
     return DeviceEntityDtoAbstract();
   }
 
@@ -79,12 +79,12 @@ class DeviceEntityDtoAbstract {
   final String deviceDtoClassInstance = (DeviceEntityDtoAbstract).toString();
 
   Map<String, dynamic> toJson() {
-    logger.v('DeviceEntityDtoAbstract to Json');
+    logger.t('DeviceEntityDtoAbstract to Json');
     return {};
   }
 
   DeviceEntityAbstract toDomain() {
-    logger.v('ToDomain');
+    logger.t('ToDomain');
     return DeviceEntityNotAbstract();
   }
 }

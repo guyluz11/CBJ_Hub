@@ -32,7 +32,6 @@ class WorkRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.boiler:
         break;
       case EntityTypes.browserApp:
@@ -75,7 +74,6 @@ class WorkRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.lightSensor:
         // TODO: Handle this case.
         break;
@@ -128,7 +126,6 @@ class WorkRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.scanner:
         // TODO: Handle this case.
         break;
@@ -147,7 +144,6 @@ class WorkRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.smartWatch:
         // TODO: Handle this case.
         break;
@@ -170,7 +166,6 @@ class WorkRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.teapot:
         // TODO: Handle this case.
         break;

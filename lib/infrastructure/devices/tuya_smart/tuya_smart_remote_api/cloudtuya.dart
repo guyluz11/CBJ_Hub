@@ -47,7 +47,7 @@ class CloudTuya {
     }
     final Uri uriTemp = Uri.parse('$uri/auth.do');
     final Map<String, String> headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
 
     final Map<String, dynamic> body = {
@@ -109,7 +109,6 @@ class CloudTuya {
     final Response response =
         await consistentRequest(uriTemp, headers: headers, body: data);
 
-    final int statusCode = response.statusCode;
     final String responseBody = response.body;
 
     final dynamic a = json.decode(responseBody);
@@ -121,7 +120,7 @@ class CloudTuya {
       return tuyaDeviceList;
     }
 
-    for (final dynamic device in devicesList) {
+    for (final dynamic device in devicesList as Iterable) {
       if (device['ha_type'] != 'scene') {
         final TuyaDeviceAbstract tuyaDevice =
             TuyaDeviceAbstract.fromInternalLinkedHashMap(device);
@@ -158,12 +157,11 @@ class CloudTuya {
     final Response response =
         await consistentRequest(uriTemp, headers: headers, body: data);
 
-    final int statusCode = response.statusCode;
     final String responseBody = response.body;
 
     final dynamic a = json.decode(responseBody);
     final dynamic scenesList = a['payload']['scenes'];
-    logger.v('Scenes:\n$scenesList');
+    logger.t('Scenes:\n$scenesList');
 
     return scenesList;
   }
@@ -221,7 +219,6 @@ class CloudTuya {
     final Response response =
         await consistentRequest(uriTemp, headers: headers, body: data);
 
-    final int statusCode = response.statusCode;
     final String responseBody = response.body;
 
     final dynamic responseDecoded = json.decode(responseBody);

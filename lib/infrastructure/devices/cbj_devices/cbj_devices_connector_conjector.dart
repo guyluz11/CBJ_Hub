@@ -54,7 +54,7 @@ class CbjDevicesConnectorConjector
 
       companyDevices.addEntries([deviceAsEntry]);
 
-      logger.v(
+      logger.t(
         'New Cbj Smart Device name:${entityAsDevice.cbjEntityName.getOrCrash()}',
       );
     }

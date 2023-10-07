@@ -120,7 +120,7 @@ class MqttServerRepository extends IMqttServerRepository {
         .startClean()
         .withWillQos(MqttQos.atLeastOnce);
 
-    logger.v('Client connecting');
+    logger.t('Client connecting');
     client.connectionMessage = connMessage;
     try {
       await client.connect();
@@ -215,7 +215,7 @@ class MqttServerRepository extends IMqttServerRepository {
       final String deviceDeviceTypeThatChanged = topicsSplitted[3];
 
       final Map<String, dynamic> devicePropertyAndValues = {
-        deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload
+        deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload,
       };
 
       final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();
@@ -299,7 +299,7 @@ class MqttServerRepository extends IMqttServerRepository {
     mqttClientTopic.updates.asBroadcastStream();
 
     // myValueStream.listen((event) {
-    //   logger.v(event);
+    //   logger.t(event);
     // });
     // final List<MqttReceivedMessage<MqttMessage?>> result =
     //     await myValueStream.first;
@@ -311,32 +311,32 @@ class MqttServerRepository extends IMqttServerRepository {
 
   /// Callback function for connection succeeded
   void onConnected() {
-    logger.v('Connected');
+    logger.t('Connected');
   }
 
   /// Unconnected
   void onDisconnected() {
-    logger.v('Disconnected');
+    logger.t('Disconnected');
   }
 
   /// subscribe to topic succeeded
   void onSubscribed(String topic) {
-    logger.v('Subscribed topic: $topic');
+    logger.t('Subscribed topic: $topic');
   }
 
   /// subscribe to topic failed
   void onSubscribeFail(String topic) {
-    logger.v('Failed to subscribe $topic');
+    logger.t('Failed to subscribe $topic');
   }
 
   /// unsubscribe succeeded
   void onUnsubscribed(String? topic) {
-    logger.v('Unsubscribed topic: $topic');
+    logger.t('Unsubscribed topic: $topic');
   }
 
   /// PING response received
   void pong() {
-    logger.v('Ping response MQTT client callback invoked');
+    logger.t('Ping response MQTT client callback invoked');
   }
 
   /// Convert device entity properties to mqtt topic and massage
@@ -375,7 +375,7 @@ class MqttServerRepository extends IMqttServerRepository {
     }
     final List<ChangeRecord>? a =
         await readingFromMqttOnce('$pathToDeviceTopic/type');
-    logger.v('This is a $a');
+    logger.t('This is a $a');
     return DeviceEntityDtoAbstract();
   }
 

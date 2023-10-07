@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cbj_hub/utils.dart';
 import 'package:http/http.dart' as http;
 
 abstract class SonoffApiDeviceAbstract {
@@ -45,7 +46,7 @@ abstract class SonoffApiDeviceAbstract {
     final http.Response response =
         await http.post(url, body: body, headers: headers);
     final String responseJson = json.decode(response.body).toString();
-    print(responseJson);
+    logger.t(responseJson);
 
     return responseJson;
   }

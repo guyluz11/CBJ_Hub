@@ -22,7 +22,7 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
   @override
   Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  Future<String> accountLogin(
+  Future<bool> accountLogin(
     GenericEwelinkLoginDE loginDE,
   ) async {
     try {
@@ -35,25 +35,43 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
       discoverNewDevices(activeHost: null);
     } on EwelinkInvalidAccessToken {
       logger.e('invalid access token');
+      return false;
     } on EwelinkOfflineDeviceException {
       logger.e('device is offline');
+      return false;
     } catch (e) {
-      logger.e('error: ${e.toString()}');
+      logger.e('EweLink error: $e');
+      return false;
     }
-    return 'Success';
+    return true;
   }
 
+  Future<bool>? didRequestLogin;
   Future<void> discoverNewDevices({
     required ActiveHost? activeHost,
   }) async {
-    if (ewelink == null) {
-      await accountLogin(GenericEwelinkLoginDE.empty());
-      logger.w(
-          'eWeLink device got found but missing a email and password, please add '
-          'it in the app');
-      // return;
+    if (didRequestLogin != null) {
+      return;
     }
-    final List<EwelinkDevice> devices = await ewelink!.getDevices();
+
+    if (ewelink == null) {
+      didRequestLogin = accountLogin(GenericEwelinkLoginDE.empty());
+      if (!await didRequestLogin!) {
+        didRequestLogin = null;
+        logger.w(
+            'eWeLink device got found but missing a email and password, please add '
+            'it in the app');
+        return;
+      }
+    }
+    didRequestLogin = null;
+
+    List<EwelinkDevice> devices;
+    try {
+      devices = await ewelink!.getDevices();
+    } catch (e) {
+      return;
+    }
 
     for (final EwelinkDevice ewelinkDevice in devices) {
       // Getting device by id adds additional info in the result

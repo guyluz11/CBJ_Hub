@@ -3,13 +3,14 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_value_objects.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_value_objects.dart';
+import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_light/esphome_light_entity.dart';
-import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esphome_node_red_api.dart';
-import 'package:cbj_hub/infrastructure/devices/esphome/esphome_node_red_api/esphome_node_red_server_api_calls.dart';
 import 'package:cbj_hub/infrastructure/devices/esphome/esphome_switch/esphome_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
 import 'package:cbj_hub/injection.dart';
+import 'package:nodered/nodered.dart';
 
 class EspHomeHelpers {
   /// Will create new espHome device node in NodeRed if does not exist.
@@ -33,7 +34,16 @@ class EspHomeHelpers {
     final String tempEspHomeNodeDeviceId =
         espHomeNodeDeviceId ?? UniqueId().getOrCrash();
 
-    await EspHomeNodeRedApi.setNewGlobalEspHomeDeviceNode(
+    final EspHomeNodeRedApi espHomeNodeRedApi = EspHomeNodeRedApi(
+      repository: getIt<NodeRedRepository>(),
+      nodeRedApiBaseTopic:
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
+      nodeRedDevicesTopic:
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
+      nodeRedMqttBrokerNodeName: 'Cbj NodeRed plugs Api Broker',
+    );
+
+    await espHomeNodeRedApi.setNewGlobalEspHomeDeviceNode(
       deviceMdnsName: mDnsName,
       password: devicePassword,
       espHomeDeviceId: tempEspHomeNodeDeviceId,
@@ -43,7 +53,7 @@ class EspHomeHelpers {
     return tempEspHomeNodeDeviceId;
   }
 
-  static Future<List<EspHomeDeviceEntityObject>> retreveOnlyNewEntities({
+  static Future<List<EspHomeDeviceEntityObject>> retrieveOnlyNewEntities({
     required String mDnsName,
     required String devicePassword,
     String? espHomeDeviceNodeId,
@@ -89,7 +99,7 @@ class EspHomeHelpers {
 
     /// Make sure we add only new entities
     final List<EspHomeDeviceEntityObject> entitiesList =
-        await retreveOnlyNewEntities(
+        await retrieveOnlyNewEntities(
       mDnsName: mDnsName,
       devicePassword: devicePassword,
       espHomeDeviceNodeId: espHomeDeviceNodeId,
@@ -101,13 +111,22 @@ class EspHomeHelpers {
 
     final List<DeviceEntityAbstract> deviceEntityList = [];
 
+    final EspHomeNodeRedApi espHomeNodeRedApi = EspHomeNodeRedApi(
+      repository: getIt<NodeRedRepository>(),
+      nodeRedApiBaseTopic:
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
+      nodeRedDevicesTopic:
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
+      nodeRedMqttBrokerNodeName: 'Cbj NodeRed plugs Api Broker',
+    );
+
     for (final EspHomeDeviceEntityObject espHomeDeviceEntityObject
         in entitiesList) {
       final String flowId = UniqueId().getOrCrash();
 
       final String deviceKey = espHomeDeviceEntityObject.key.toString();
 
-      await EspHomeNodeRedApi.setNewStateNodes(
+      await espHomeNodeRedApi.setNewStateNodes(
         espHomeDeviceId: espHomeDeviceNodeId,
         flowId: flowId,
         entityId: deviceKey,

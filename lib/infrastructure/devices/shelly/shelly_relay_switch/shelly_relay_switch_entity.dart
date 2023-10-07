@@ -6,10 +6,10 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_cor
 import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/shelly/shelly_api/shelly_api_relay_switch.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:dartz/dartz.dart';
+import 'package:shelly/shelly.dart';
 
 class ShellyRelaySwitchEntity extends GenericSwitchDE {
   ShellyRelaySwitchEntity({
@@ -113,7 +113,7 @@ class ShellyRelaySwitchEntity extends GenericSwitchDE {
     switchState = GenericSwitchSwitchState(EntityActions.on.toString());
 
     try {
-      logger.v('Turn on Shelly device');
+      logger.t('Turn on Shelly device');
       shellyRelaySwitch.turnOn();
       return right(unit);
     } catch (e) {
@@ -126,7 +126,7 @@ class ShellyRelaySwitchEntity extends GenericSwitchDE {
     switchState = GenericSwitchSwitchState(EntityActions.off.toString());
 
     try {
-      logger.v('Turn off Shelly device');
+      logger.t('Turn off Shelly device');
       await shellyRelaySwitch.turnOff();
       return right(unit);
     } catch (exception) {

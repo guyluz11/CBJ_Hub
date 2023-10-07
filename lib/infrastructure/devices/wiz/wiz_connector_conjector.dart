@@ -62,7 +62,7 @@ class WizConnectorConjector implements AbstractCompanyConnectorConjector {
     //
     //   companyDevices.addEntries([deviceAsEntry]);
     //
-    //   logger.v(
+    //   logger.t(
     //     'New Wiz Ip device name:${entityAsDevice.cbjEntityName.getOrCrash()}',
     //   );
     // }

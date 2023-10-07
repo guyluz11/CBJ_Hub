@@ -123,85 +123,58 @@ class AreaTypeWithDeviceTypePreset {
     switch (areaPurposeType) {
       case AreaPurposesTypes.attic:
         color = Colors.amberAccent;
-        break;
       case AreaPurposesTypes.bathtub:
         color = Colors.lightBlue;
-        break;
       case AreaPurposesTypes.bedroom:
         color = Colors.cyan;
-        break;
       case AreaPurposesTypes.boardGames:
         color = Colors.brown;
-        break;
       case AreaPurposesTypes.childrenRoom:
         color = Colors.lightBlueAccent;
-        break;
       case AreaPurposesTypes.cinemaRoom:
         color = Colors.pink;
-        break;
       case AreaPurposesTypes.diningRoom:
         color = Colors.amber;
-        break;
       case AreaPurposesTypes.holidayCabin:
         color = Colors.lightGreen;
-        break;
       case AreaPurposesTypes.kitchen:
         color = Colors.redAccent;
-        break;
       case AreaPurposesTypes.laundryRoom:
         color = Colors.white12;
-        break;
       case AreaPurposesTypes.livingRoom:
         color = Colors.orangeAccent;
-        break;
       case AreaPurposesTypes.meditation:
         color = Colors.purple;
-        break;
       case AreaPurposesTypes.outside:
         color = Colors.green;
-        break;
       case AreaPurposesTypes.outsideNotPrimary:
         color = Colors.greenAccent;
-        break;
       case AreaPurposesTypes.outsidePrimary:
         color = Colors.lightGreenAccent;
-        break;
       case AreaPurposesTypes.protectedSpace:
         color = Colors.blueGrey;
-        break;
       case AreaPurposesTypes.romantic:
         color = Colors.pinkAccent;
-        break;
       case AreaPurposesTypes.safeRoom:
         color = Colors.indigo;
-        break;
       case AreaPurposesTypes.shower:
         color = Colors.blueAccent;
-        break;
       case AreaPurposesTypes.stairsInside:
         color = Colors.brown;
-        break;
       case AreaPurposesTypes.stairsOutside:
         color = Colors.brown;
-        break;
       case AreaPurposesTypes.studyRoom:
         color = Colors.deepPurpleAccent;
-        break;
       case AreaPurposesTypes.toiletRoom:
         color = Colors.green;
-        break;
       case AreaPurposesTypes.trainingRoom:
         color = Colors.redAccent;
-        break;
       case AreaPurposesTypes.tvRoom:
         color = Colors.deepPurple;
-        break;
       case AreaPurposesTypes.videoGames:
         color = Colors.tealAccent;
-        break;
       case AreaPurposesTypes.workRoom:
         color = Colors.blue;
-        break;
     }
     return color.value;
   }

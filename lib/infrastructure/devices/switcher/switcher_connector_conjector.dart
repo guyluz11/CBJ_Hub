@@ -6,7 +6,6 @@ import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_bli
 import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
-import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_api_object.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_helpers.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_runner/switcher_runner_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_smart_plug/switcher_smart_plug_entity.dart';
@@ -14,6 +13,7 @@ import 'package:cbj_hub/infrastructure/devices/switcher/switcher_v2/switcher_v2_
 import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/abstract_company_connector_conjector.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:injectable/injectable.dart';
+import 'package:switcher_dart/switcher_dart.dart';
 
 @singleton
 class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
@@ -64,7 +64,7 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
 
     companyDevices.addEntries([deviceAsEntry]);
 
-    // logger.v('New switcher devices name:${switcherApiObject.switcherName}');
+    // logger.t('New switcher devices name:${switcherApiObject.switcherName}');
   }
 
   @override

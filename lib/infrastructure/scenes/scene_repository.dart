@@ -5,7 +5,6 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
 import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
@@ -15,6 +14,7 @@ import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
 import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_converter.dart';
+import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
 import 'package:cbj_hub/infrastructure/room/saved_rooms_repo.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/area_type_with_device_type_preset.dart';
 import 'package:cbj_hub/injection.dart';
@@ -88,7 +88,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
         tempSceneCbj.automationString.getOrCrash() !=
             existingScene.automationString.getOrCrash()) {
       sceneNodeRedFlowId =
-          await getIt<INodeRedRepository>().createNewNodeRedScene(tempSceneCbj);
+          await getIt<NodeRedRepository>().createNewNodeRedScene(tempSceneCbj);
     }
 
     if (sceneNodeRedFlowId.isNotEmpty) {
@@ -163,7 +163,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
         sceneCbjEntityTemp =
             sceneCbjEntityTemp.copyWith(nodeRedFlowId: tempScene.nodeRedFlowId);
 
-        nodeRedFlowId = await getIt<INodeRedRepository>()
+        nodeRedFlowId = await getIt<NodeRedRepository>()
             .createNewNodeRedScene(sceneCbjEntityTemp);
 
         sceneCbjEntityTemp = sceneCbjEntityTemp.copyWith(
@@ -396,7 +396,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
         scene = scene.copyWith(nodeRedFlowId: tempScene.nodeRedFlowId);
 
         nodeRedFlowId =
-            await getIt<INodeRedRepository>().createNewNodeRedScene(scene);
+            await getIt<NodeRedRepository>().createNewNodeRedScene(scene);
 
         scene =
             scene.copyWith(nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId));

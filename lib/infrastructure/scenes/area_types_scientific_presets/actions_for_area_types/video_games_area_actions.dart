@@ -33,7 +33,6 @@ class VideoGamesAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.boiler:
         break;
       case EntityTypes.browserApp:
@@ -76,7 +75,6 @@ class VideoGamesAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.lightSensor:
         // TODO: Handle this case.
         break;
@@ -129,8 +127,7 @@ class VideoGamesAreaAction {
             brokerNodeId,
           ),
         ]);
-        // TODO: add light color changing in cycles
-        break;
+      // TODO: add light color changing in cycles
       case EntityTypes.scanner:
         // TODO: Handle this case.
         break;
@@ -149,7 +146,6 @@ class VideoGamesAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.smartWatch:
         // TODO: Handle this case.
         break;
@@ -172,7 +168,6 @@ class VideoGamesAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.teapot:
         // TODO: Handle this case.
         break;

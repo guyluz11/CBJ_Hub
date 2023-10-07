@@ -37,7 +37,7 @@
 //       //   );
 //       // }
 //       // else if (currentType == 'BinarySensorInfo') {
-//       //   logger.v('Esphome BinarySensorInfo is currently not supported');
+//       //   logger.t('Esphome BinarySensorInfo is currently not supported');
 //       // }
 //       else {
 //         logger

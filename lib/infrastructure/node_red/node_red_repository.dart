@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
-import 'package:cbj_hub/domain/node_red/i_node_red_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_api/node_red_api.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:http/src/response.dart';
 import 'package:injectable/injectable.dart';
+import 'package:nodered/nodered.dart';
 
 /// Control Node-RED, create scenes and more
-@LazySingleton(as: INodeRedRepository)
+@LazySingleton()
 class NodeRedRepository extends INodeRedRepository {
   static NodeRedAPI nodeRedApi = NodeRedAPI();
 
@@ -23,7 +22,7 @@ class NodeRedRepository extends INodeRedRepository {
   // /// List of all the bindings JSONs in Node-RED
   // List<String> bindingsList = [];
 
-  @override
+  /// Function to create new scene in Node-RED
   Future<String> createNewNodeRedScene(SceneCbjEntity sceneCbj) async {
     // final String flowId = sceneCbj.uniqueId.getOrCrash();
 
@@ -63,7 +62,7 @@ class NodeRedRepository extends INodeRedRepository {
     return "";
   }
 
-  @override
+  /// Function to create new routine in Node-RED
   Future<String> createNewNodeRedRoutine(RoutineCbjEntity routineCbj) async {
     // await _deviceIsReadyToSendInternetRequests;
     // final String flowId = routineCbj.uniqueId.getOrCrash();
@@ -102,7 +101,7 @@ class NodeRedRepository extends INodeRedRepository {
     return "";
   }
 
-  @override
+  /// Function to create new binding in Node-RED
   Future<String> createNewNodeRedBinding(BindingCbjEntity bindingCbj) async {
     try {
       // if (bindingsList.contains(bindingCbj.uniqueId.getOrCrash())) {

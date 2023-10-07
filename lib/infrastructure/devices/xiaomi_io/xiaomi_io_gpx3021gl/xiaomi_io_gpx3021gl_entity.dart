@@ -49,7 +49,8 @@ class XiaomiIoGpx4021GlEntity extends GenericRgbwLightDE {
         );
 
   factory XiaomiIoGpx4021GlEntity.fromGeneric(
-      GenericRgbwLightDE genericDevice) {
+    GenericRgbwLightDE genericDevice,
+  ) {
     return XiaomiIoGpx4021GlEntity(
       uniqueId: genericDevice.uniqueId,
       entityUniqueId: genericDevice.entityUniqueId,

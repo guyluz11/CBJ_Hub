@@ -56,7 +56,9 @@ class PhilipsHueApiLight {
   }
 
   Future<String> setLightBrightness(
-      String entityUniqueId, int brightness) async {
+    String entityUniqueId,
+    int brightness,
+  ) async {
     final List<Light> lights = await bridge.lights();
 
     for (final Light light in lights) {
