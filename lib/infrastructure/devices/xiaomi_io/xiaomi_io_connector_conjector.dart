@@ -76,7 +76,7 @@ class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
     //
     //   // await for (final tup.Tuple2<InternetAddress, MiIOPacket> miDevice
     //   //     in MiIO.instance.discover(internetAddress)) {
-    //   //   logger.v('miDevice devices $miDevice');
+    //   //   logger.t('miDevice devices $miDevice');
     //   //   // MiIO.inst ance.send(address, packet);
     //   // }
     //
@@ -84,7 +84,7 @@ class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
     //   //
     //   // MiIOPacket miIoPacket = await MiIO.instance.hello(internetAddress);
     //   // MiIOPacket ab = await MiIO.instance.send(internetAddress, miIoPacket);
-    //   // logger.v('This is mi packets $miIoPacket');
+    //   // logger.t('This is mi packets $miIoPacket');
     // } on MiIOError catch (e) {
     //   logger.e(
     //     'Command failed with error from xiaomi device:\n'
@@ -94,7 +94,7 @@ class XiaomiIoConnectorConjector implements AbstractCompanyConnectorConjector {
     // } on Exception catch (e) {
     //   logger.e('Xiaomi command failed with exception:\n$e');
     // } catch (e) {
-    //   logger.v('All else');
+    //   logger.t('All else');
     // }
   }
 

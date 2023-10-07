@@ -260,7 +260,7 @@ class CompaniesConnectorConjector {
         port: mdnsPort,
       );
     } else {
-      logger.v(
+      logger.t(
         'mDNS service type ${hostMdnsInfo.mdnsServiceType} is not supported\n IP: ${activeHost.address}, Port: ${hostMdnsInfo.mdnsPort}, ServiceType: ${hostMdnsInfo.mdnsServiceType}, MdnsName: ${hostMdnsInfo.getOnlyTheStartOfMdnsName()}',
       );
     }

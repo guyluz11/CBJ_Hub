@@ -64,7 +64,7 @@ class SwitcherConnectorConjector implements AbstractCompanyConnectorConjector {
 
     companyDevices.addEntries([deviceAsEntry]);
 
-    // logger.v('New switcher devices name:${switcherApiObject.switcherName}');
+    // logger.t('New switcher devices name:${switcherApiObject.switcherName}');
   }
 
   @override

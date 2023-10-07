@@ -66,7 +66,7 @@ class ShellyConnectorConjector implements AbstractCompanyConnectorConjector {
 
       companyDevices.addEntries([deviceAsEntry]);
     }
-    logger.v('New shelly devices name:$mDnsName');
+    logger.t('New shelly devices name:$mDnsName');
   }
 
   @override

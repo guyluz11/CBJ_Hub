@@ -28,7 +28,7 @@ Future<void> main(List<String> arguments) async {
 
   await getIt<ILocalDbRepository>().initializeDb();
 
-  logger.v('');
+  logger.t('');
 
   await BootUp.setup();
 }

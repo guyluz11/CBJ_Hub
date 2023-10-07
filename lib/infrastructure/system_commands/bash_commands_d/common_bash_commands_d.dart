@@ -65,7 +65,7 @@ class CommonBashCommandsD implements SystemCommandsBaseClassD {
 //      String hostName = result.stdout;
 //      hostName = hostName.substring(
 //          0, hostName.length - 1); //  Removes the invisible new line at the end
-//      logger.v('Host name: ' + hostName);
+//      logger.t('Host name: ' + hostName);
       return result.stdout.toString();
     });
     return hostName.trim();

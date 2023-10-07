@@ -26,7 +26,7 @@ class HubAppServer extends CbjHubServiceBase {
     Stream<ClientStatusRequests> request,
   ) async* {
     try {
-      logger.v('Got new Client');
+      logger.t('Got new Client');
 
       getIt<IAppCommunicationRepository>().getFromApp(
         request: request,

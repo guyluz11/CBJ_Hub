@@ -14,7 +14,7 @@ class BashCommandsForRaspberryPi {
     }
     piVersion = piVersion.substring(piVersion.indexOf('Model'));
 
-    logger.v('This is the Pi Version: $piVersion');
+    logger.t('This is the Pi Version: $piVersion');
 
     piVersion = piVersion.substring(piVersion.indexOf(':') + 2);
 

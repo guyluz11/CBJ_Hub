@@ -7,7 +7,6 @@ import 'package:cbj_hub/utils.dart';
 import 'package:http/src/response.dart';
 import 'package:injectable/injectable.dart';
 import 'package:nodered/nodered.dart';
-import 'package:nodered/src/node_red_nodes/external_nodes/chromecast_node_red_api/i_node_red_repository.dart';
 
 /// Control Node-RED, create scenes and more
 @LazySingleton()

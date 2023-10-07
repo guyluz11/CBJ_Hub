@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 class SharedVariables {
   Future<void> asyncConstractor(String projectRootDirectoryPath) async {
     _projectRootDirectoryPath = projectRootDirectoryPath;
-    logger.v('PATH: $_projectRootDirectoryPath');
+    logger.t('PATH: $_projectRootDirectoryPath');
   }
 
   ///  Save the location of all the files that were created during the snapcraft

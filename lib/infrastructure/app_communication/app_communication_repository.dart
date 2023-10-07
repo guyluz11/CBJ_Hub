@@ -51,7 +51,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   late int hubPort;
 
   Future startLocalServer() async {
-    final server = Server([HubAppServer()]);
+    final server = Server.create(services: [HubAppServer()]);
     await server.serve(port: hubPort);
     logger.i('Hub Server listening for apps clients on port ${server.port}...');
   }
@@ -217,7 +217,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
       }
     }).onError((error) {
       if (error is GrpcError && error.code == 1) {
-        logger.v('Client have disconnected');
+        logger.t('Client have disconnected');
       } else if (error is GrpcError && error.code == 14) {
         final String errorMessage = error.message!;
 

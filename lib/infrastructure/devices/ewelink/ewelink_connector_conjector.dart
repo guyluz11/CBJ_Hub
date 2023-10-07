@@ -32,6 +32,7 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
       );
 
       await ewelink!.getCredentials();
+      discoverNewDevices(activeHost: null);
     } on EwelinkInvalidAccessToken {
       logger.e('invalid access token');
       return false;
@@ -45,20 +46,32 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
     return true;
   }
 
+  Future<bool>? didRequestLogin;
   Future<void> discoverNewDevices({
     required ActiveHost? activeHost,
   }) async {
+    if (didRequestLogin != null) {
+      return;
+    }
+
     if (ewelink == null) {
-      final bool lastRequest =
-          await accountLogin(GenericEwelinkLoginDE.empty());
-      if (!lastRequest) {
+      didRequestLogin = accountLogin(GenericEwelinkLoginDE.empty());
+      if (!await didRequestLogin!) {
+        didRequestLogin = null;
         logger.w(
             'eWeLink device got found but missing a email and password, please add '
             'it in the app');
         return;
       }
     }
-    final List<EwelinkDevice> devices = await ewelink!.getDevices();
+    didRequestLogin = null;
+
+    List<EwelinkDevice> devices;
+    try {
+      devices = await ewelink!.getDevices();
+    } catch (e) {
+      return;
+    }
 
     for (final EwelinkDevice ewelinkDevice in devices) {
       // Getting device by id adds additional info in the result

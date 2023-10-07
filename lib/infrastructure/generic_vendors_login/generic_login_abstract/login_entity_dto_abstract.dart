@@ -11,7 +11,7 @@ class LoginEntityDtoAbstract {
   LoginEntityDtoAbstract();
 
   factory LoginEntityDtoAbstract.fromDomain() {
-    logger.v('LoginEntityDtoAbstract.fromDomain');
+    logger.t('LoginEntityDtoAbstract.fromDomain');
     return LoginEntityDtoAbstract();
   }
 
@@ -41,12 +41,12 @@ class LoginEntityDtoAbstract {
   final String loginDtoClassInstance = (LoginEntityDtoAbstract).toString();
 
   Map<String, dynamic> toJson() {
-    logger.v('LoginEntityDtoAbstract to Json');
+    logger.t('LoginEntityDtoAbstract to Json');
     return {};
   }
 
   LoginEntityAbstract toDomain() {
-    logger.v('ToDomain');
+    logger.t('ToDomain');
     return LoginEntityEmpty();
   }
 }

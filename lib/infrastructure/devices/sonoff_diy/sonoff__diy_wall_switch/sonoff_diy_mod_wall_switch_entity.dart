@@ -113,7 +113,7 @@ class SonoffDiyRelaySwitchEntity extends GenericSwitchDE {
     switchState = GenericSwitchSwitchState(EntityActions.on.toString());
 
     try {
-      logger.v('Turn on Sonoff diy device');
+      logger.t('Turn on Sonoff diy device');
       sonoffDiyRelaySwitch.switchOn();
       return right(unit);
     } catch (e) {
@@ -126,7 +126,7 @@ class SonoffDiyRelaySwitchEntity extends GenericSwitchDE {
     switchState = GenericSwitchSwitchState(EntityActions.off.toString());
 
     try {
-      logger.v('Turn off Sonoff diy device');
+      logger.t('Turn off Sonoff diy device');
       await sonoffDiyRelaySwitch.switchOff();
       return right(unit);
     } catch (exception) {

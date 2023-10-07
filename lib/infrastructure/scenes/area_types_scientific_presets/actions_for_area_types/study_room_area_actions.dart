@@ -32,7 +32,6 @@ class StudyRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.boiler:
         break;
       case EntityTypes.browserApp:
@@ -75,7 +74,6 @@ class StudyRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.lightSensor:
         // TODO: Handle this case.
         break;
@@ -147,7 +145,6 @@ class StudyRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.smartWatch:
         // TODO: Handle this case.
         break;
@@ -170,7 +167,6 @@ class StudyRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.teapot:
         // TODO: Handle this case.
         break;

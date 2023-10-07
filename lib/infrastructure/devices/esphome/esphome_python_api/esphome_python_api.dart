@@ -58,10 +58,10 @@
 //           }
 //         },
 //         onComplete: () {
-//           logger.v('EspHome get all entities scan done');
+//           logger.t('EspHome get all entities scan done');
 //         },
 //         onError: (object, stackTrace) {
-//           logger.v('EspHome device scan error $object\n$stackTrace');
+//           logger.t('EspHome device scan error $object\n$stackTrace');
 //         },
 //       );
 //
@@ -96,7 +96,7 @@
 //               .v('EspHome turn lights on or off action completed successfully');
 //         },
 //         onError: (object, stackTrace) {
-//           logger.v('EspHome device scan error $object\n$stackTrace');
+//           logger.t('EspHome device scan error $object\n$stackTrace');
 //         },
 //       );
 //
@@ -130,7 +130,7 @@
 //               .v('EspHome turn switch on or off action completed successfully');
 //         },
 //         onError: (object, stackTrace) {
-//           logger.v('EspHome device scan error $object\n$stackTrace');
+//           logger.t('EspHome device scan error $object\n$stackTrace');
 //         },
 //       );
 //

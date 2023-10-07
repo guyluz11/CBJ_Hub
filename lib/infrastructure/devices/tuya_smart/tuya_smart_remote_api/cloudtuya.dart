@@ -163,7 +163,7 @@ class CloudTuya {
 
     final dynamic a = json.decode(responseBody);
     final dynamic scenesList = a['payload']['scenes'];
-    logger.v('Scenes:\n$scenesList');
+    logger.t('Scenes:\n$scenesList');
 
     return scenesList;
   }

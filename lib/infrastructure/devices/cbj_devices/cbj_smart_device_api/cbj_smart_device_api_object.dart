@@ -60,7 +60,7 @@ class CbjDevicesApiObject {
     if (sDeviceType == CbjDevicesDevicesTypes.cbjDevicesRunner ||
         sDeviceType == CbjDevicesDevicesTypes.cbjDevicesRunnerMini) {
       if (!isCbjDevicesMessageNew(data, hexSeparatedLetters)) {
-        logger.v('Not new cbjDevices device!');
+        logger.t('Not new cbjDevices device!');
       }
 
       final CbjDevicesDeviceDirection cbjDevicesDeviceDirection =
@@ -79,7 +79,7 @@ class CbjDevicesApiObject {
     }
 
     if (!isCbjDevicesMessage(data, hexSeparatedLetters)) {
-      logger.v('Not old cbjDevices device!');
+      logger.t('Not old cbjDevices device!');
     }
 
     final CbjDevicesDeviceState cbjDevicesDeviceState =
@@ -216,7 +216,7 @@ class CbjDevicesApiObject {
   Future<void> stopBlinds() async {
     if (deviceType != CbjDevicesDevicesTypes.cbjDevicesRunner &&
         deviceType != CbjDevicesDevicesTypes.cbjDevicesRunnerMini) {
-      logger.v('Stop blinds support only for blinds');
+      logger.t('Stop blinds support only for blinds');
       return;
     }
 
@@ -242,7 +242,7 @@ class CbjDevicesApiObject {
   Future<void> setPosition({int pos = 0}) async {
     if (deviceType != CbjDevicesDevicesTypes.cbjDevicesRunner &&
         deviceType != CbjDevicesDevicesTypes.cbjDevicesRunnerMini) {
-      logger.v('Set position support only blinds');
+      logger.t('Set position support only blinds');
       return;
     }
 

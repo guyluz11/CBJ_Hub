@@ -31,7 +31,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.boiler:
         break;
       case EntityTypes.browserApp:
@@ -74,7 +73,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.lightSensor:
         // TODO: Handle this case.
         break;
@@ -115,7 +113,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.scanner:
         // TODO: Handle this case.
         break;
@@ -129,7 +126,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.smartSpeakers:
         // TODO: Handle this case.
         break;
@@ -140,7 +136,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.smartWatch:
         // TODO: Handle this case.
         break;
@@ -163,7 +158,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.teapot:
         // TODO: Turn off.
         break;
@@ -195,7 +189,6 @@ class BedRoomAreaAction {
             brokerNodeId,
           ),
         ]);
-        break;
       case EntityTypes.playerEntity:
         // TODO: Handle this case.
         break;

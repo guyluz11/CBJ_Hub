@@ -205,7 +205,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
     lightSwitchState = GenericRgbwLightSwitchState(EntityActions.on.toString());
 
     try {
-      logger.v('Turn on Shelly device');
+      logger.t('Turn on Shelly device');
       shellyColorBulb.turnOn();
       return right(unit);
     } catch (e) {
@@ -219,7 +219,7 @@ class ShellyColorLightEntity extends GenericRgbwLightDE {
         GenericRgbwLightSwitchState(EntityActions.off.toString());
 
     try {
-      logger.v('Turn off Shelly device');
+      logger.t('Turn off Shelly device');
       await shellyColorBulb.turnOff();
       return right(unit);
     } catch (exception) {
