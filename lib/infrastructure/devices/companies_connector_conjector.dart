@@ -21,7 +21,6 @@ import 'package:cbj_hub/infrastructure/devices/lifx/lifx_connector_conjector.dar
 import 'package:cbj_hub/infrastructure/devices/philips_hue/philips_hue_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/shelly/shelly_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/sonoff_diy/sonoff_diy_connector_conjector.dart';
-import 'package:cbj_hub/infrastructure/devices/switcher/switcher_api/switcher_discover.dart';
 import 'package:cbj_hub/infrastructure/devices/switcher/switcher_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/tasmota/tasmota_ip/tasmota_ip_connector_conjector.dart';
 import 'package:cbj_hub/infrastructure/devices/tuya_smart/tuya_smart_connector_conjector.dart';
@@ -35,6 +34,7 @@ import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:network_tools/network_tools.dart';
+import 'package:switcher_dart/switcher_dart.dart';
 
 class CompaniesConnectorConjector {
   static void updateAllDevicesReposWithDeviceChanges(

@@ -52,7 +52,7 @@ class EspHomeHelpers {
     return tempEspHomeNodeDeviceId;
   }
 
-  static Future<List<EspHomeDeviceEntityObject>> retreveOnlyNewEntities({
+  static Future<List<EspHomeDeviceEntityObject>> retrieveOnlyNewEntities({
     required String mDnsName,
     required String devicePassword,
     String? espHomeDeviceNodeId,
@@ -98,7 +98,7 @@ class EspHomeHelpers {
 
     /// Make sure we add only new entities
     final List<EspHomeDeviceEntityObject> entitiesList =
-        await retreveOnlyNewEntities(
+        await retrieveOnlyNewEntities(
       mDnsName: mDnsName,
       devicePassword: devicePassword,
       espHomeDeviceNodeId: espHomeDeviceNodeId,
@@ -111,12 +111,13 @@ class EspHomeHelpers {
     final List<DeviceEntityAbstract> deviceEntityList = [];
 
     final EspHomeNodeRedApi espHomeNodeRedApi = EspHomeNodeRedApi(
-        repository: getIt<NodeRedRepository>(),
-        nodeRedApiBaseTopic:
-            getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
-        nodeRedDevicesTopic:
-            getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
-        nodeRedMqttBrokerNodeName: 'Cbj NodeRed plugs Api Broker');
+      repository: getIt<NodeRedRepository>(),
+      nodeRedApiBaseTopic:
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
+      nodeRedDevicesTopic:
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
+      nodeRedMqttBrokerNodeName: 'Cbj NodeRed plugs Api Broker',
+    );
 
     for (final EspHomeDeviceEntityObject espHomeDeviceEntityObject
         in entitiesList) {

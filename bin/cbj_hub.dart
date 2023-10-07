@@ -6,9 +6,11 @@ import 'package:cbj_hub/infrastructure/shared_variables.dart';
 import 'package:cbj_hub/infrastructure/system_commands/device_pin_manager.dart';
 import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:network_tools/network_tools.dart';
 
 Future<void> main(List<String> arguments) async {
   // arguments[0] is the location of the project
+  configureNetworkTools('network_tools_db');
   configureInjection(Env.prod);
 
   try {

@@ -22,7 +22,7 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
   @override
   Map<String, DeviceEntityAbstract> companyDevices = {};
 
-  Future<String> accountLogin(
+  Future<bool> accountLogin(
     GenericEwelinkLoginDE loginDE,
   ) async {
     try {
@@ -32,27 +32,31 @@ class EwelinkConnectorConjector implements AbstractCompanyConnectorConjector {
       );
 
       await ewelink!.getCredentials();
-      discoverNewDevices(activeHost: null);
     } on EwelinkInvalidAccessToken {
       logger.e('invalid access token');
+      return false;
     } on EwelinkOfflineDeviceException {
       logger.e('device is offline');
+      return false;
     } catch (e) {
-      // ignore: unnecessary_brace_in_string_interps
-      logger.e('error: $e');
+      logger.e('EweLink error: $e');
+      return false;
     }
-    return 'Success';
+    return true;
   }
 
   Future<void> discoverNewDevices({
     required ActiveHost? activeHost,
   }) async {
     if (ewelink == null) {
-      await accountLogin(GenericEwelinkLoginDE.empty());
-      logger.w(
-          'eWeLink device got found but missing a email and password, please add '
-          'it in the app');
-      // return;
+      final bool lastRequest =
+          await accountLogin(GenericEwelinkLoginDE.empty());
+      if (!lastRequest) {
+        logger.w(
+            'eWeLink device got found but missing a email and password, please add '
+            'it in the app');
+        return;
+      }
     }
     final List<EwelinkDevice> devices = await ewelink!.getDevices();
 

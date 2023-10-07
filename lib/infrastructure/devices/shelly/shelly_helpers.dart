@@ -4,12 +4,12 @@ import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abs
 import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_value_objects.dart';
 import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_value_objects.dart';
-import 'package:cbj_hub/infrastructure/devices/shelly/shelly_api/shelly_api_color_bulb.dart';
 import 'package:cbj_hub/infrastructure/devices/shelly/shelly_light/shelly_light_entity.dart';
 import 'package:cbj_hub/infrastructure/devices/shelly/shelly_relay_switch/shelly_relay_switch_entity.dart';
 import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbenum.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:color/color.dart';
+import 'package:shelly/shelly.dart';
 
 class ShellyHelpers {
   static Future<List<DeviceEntityAbstract>> addDiscoverdDevice({
@@ -28,7 +28,7 @@ class ShellyHelpers {
     final List<DeviceEntityAbstract> deviceEntityList = [];
 
     try {
-      // TODO: shelly duo bulbe needs type that as the time of writing is
+      // TODO: shelly duo bulb needs type that as the time of writing is
       // not supported, bulb + brightness + white temperature (not rgb).
       // Lets create new type and add it.
       if (mDnsName.contains('colorbulb')) {
@@ -46,14 +46,14 @@ class ShellyHelpers {
         dynamic bulbLightProp = responseAsJson['lights'][0];
 
         final String bulbMod = bulbLightProp['mode'] as String;
-        shellyApiDeviceAbstract.bulbeMode =
-            bulbMod == 'color' ? ShellyBulbeMode.colore : ShellyBulbeMode.white;
+        shellyApiDeviceAbstract.bulbMode =
+            bulbMod == 'color' ? ShellyBulbMode.colore : ShellyBulbMode.white;
 
         final int brightness = bulbLightProp['brightness'] as int;
         final int gain =
             bulbLightProp['gain'] as int; // Brightness for color mod
         final int currentBrightness =
-            shellyApiDeviceAbstract.bulbeMode == ShellyBulbeMode.colore
+            shellyApiDeviceAbstract.bulbMode == ShellyBulbMode.colore
                 ? gain
                 : brightness;
         final int temp = bulbLightProp['temp'] as int;
@@ -95,7 +95,7 @@ class ShellyHelpers {
           deviceHostName: DeviceHostName(mDnsName.toLowerCase()),
           deviceMdns: DeviceMdns(mDnsName),
           deviceLastKnownIp: DeviceLastKnownIp(ip),
-          bulbeMode: shellyApiDeviceAbstract,
+          bulbMode: shellyApiDeviceAbstract,
           deviceUniqueId: DeviceUniqueId('0'),
           devicesMacAddress: DevicesMacAddress('0'),
           entityKey: EntityKey('0'),
@@ -118,7 +118,7 @@ class ShellyHelpers {
 
         dynamic bulbLightProp = responseAsJson['lights'][0];
 
-        shellyApiDeviceAbstract.bulbeMode = ShellyBulbeMode.white;
+        shellyApiDeviceAbstract.bulbMode = ShellyBulbMode.white;
 
         final int brightness = bulbLightProp['brightness'] as int;
 
@@ -155,7 +155,7 @@ class ShellyHelpers {
           deviceHostName: DeviceHostName(mDnsName.toLowerCase()),
           deviceMdns: DeviceMdns(mDnsName),
           deviceLastKnownIp: DeviceLastKnownIp(ip),
-          bulbeMode: shellyApiDeviceAbstract,
+          bulbMode: shellyApiDeviceAbstract,
           deviceUniqueId: DeviceUniqueId('0'),
           devicesMacAddress: DevicesMacAddress('0'),
           entityKey: EntityKey('0'),

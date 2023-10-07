@@ -2,6 +2,7 @@ name: cbj_hub
 description: Easy to use open source Hub to control your smart devices from one app.
 version: 1.3.0+6
 homepage: https://cybearjinni.com
+issue_tracker: https://github.com/osociety/network_tools/issues
 publish_to: none
 
 environment:
@@ -16,11 +17,12 @@ dependencies:
   compute: ^1.0.2
   # Collection of cyclic redundancy check (CRC) routines as Dart converters.
   crclib: ^3.0.0
-  # Functional programming thingies, let you use multiple return types
+  # Interact directly with eWeLink API
   dart_ewelink_api:
     git:
       url: 'https://github.com/guyluz11/dart_ewelink_api.git'
       ref: 'develop'
+  # Functional programming thingies, let you use multiple return types
   dartz: ^0.10.1
   # Allow returning more than one type of object
   equatable: ^2.0.5
@@ -36,8 +38,9 @@ dependencies:
   http: ^1.1.0
   # Philips Hue API
   hue_dart:
-    git:
-      url: 'https://github.com/guyluz11/hue_dart.git'
+    path: ../hue_dart
+#    git:
+#      url: 'https://github.com/guyluz11/hue_dart.git'
   # Convenient code generator for get_it
   injectable: ^2.3.0
   # Utility library that checks for an Active Internet connection
@@ -51,19 +54,19 @@ dependencies:
   # Port of Kotlin's Kotlin Standard library for Dart/Flutter projects
   kt_dart: ^1.1.0
   # Implementation of the LIFX HTTP API
-  lifx_http_api:
-    git: 'https://github.com/guyluz11/lifx_http_api.git'
+  lifx_http_api: ^0.0.17
   # Small, easy to use and extensible logger which prints beautiful logs.
   logger: ^2.0.2+1
   # A server and browser based MQTT client for Dart.
   mi_iot_token: ^1.1.0
+  # Server and browser based MQTT client
   mqtt_client: ^10.0.0
   # Service discovery over multicast DNS (mDNS), Bonjour, and Avahi.
   multicast_dns: ^0.3.2+4
-  nodered:
-    path: ../nodered
   # Helps you discover open ports, devices on subnet and more.
   network_tools: ^4.0.1
+  # Interact directly with NodeRED API
+  nodered: ^1.0.1+1
   # Provides runtime support for a Dart implementation of protobufs.
   protobuf: ^3.1.0
   # Python Environment Manager and Executor for dart and flutter
@@ -73,6 +76,10 @@ dependencies:
   rxdart: ^0.27.7
   # Simple, fast generation of RFC4122 UUIDs.
   uuid: ^4.1.0
+  # Communicate with Shelly smart devices
+  shelly: ^1.0.0
+  # Control Switcher smart home accessories
+  switcher_dart: ^1.0.0
   # Dart library for controlling Yeelight products over LAN.
   yeedart: ^0.3.2
 

@@ -45,7 +45,7 @@ class ShellyConnectorConjector implements AbstractCompanyConnectorConjector {
       }
     }
 
-    final List<DeviceEntityAbstract> espDevice =
+    final List<DeviceEntityAbstract> shellyDevice =
         await ShellyHelpers.addDiscoverdDevice(
       mDnsName: mDnsName,
       ip: ip,
@@ -53,11 +53,11 @@ class ShellyConnectorConjector implements AbstractCompanyConnectorConjector {
       uniqueDeviceId: tempCoreUniqueId,
     );
 
-    if (espDevice.isEmpty) {
+    if (shellyDevice.isEmpty) {
       return;
     }
 
-    for (final DeviceEntityAbstract entityAsDevice in espDevice) {
+    for (final DeviceEntityAbstract entityAsDevice in shellyDevice) {
       final DeviceEntityAbstract deviceToAdd =
           CompaniesConnectorConjector.addDiscoverdDeviceToHub(entityAsDevice);
 
