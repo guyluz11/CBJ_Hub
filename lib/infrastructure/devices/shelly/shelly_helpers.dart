@@ -39,11 +39,11 @@ class ShellyHelpers {
         );
 
         final String status = await shellyApiDeviceAbstract.getStatus();
-        dynamic responseAsJson = json.decode(status);
+        final dynamic responseAsJson = json.decode(status);
 
         final String mac = responseAsJson['mac'] as String;
 
-        dynamic bulbLightProp = responseAsJson['lights'][0];
+        final dynamic bulbLightProp = responseAsJson['lights'][0];
 
         final String bulbMod = bulbLightProp['mode'] as String;
         shellyApiDeviceAbstract.bulbMode =
@@ -112,11 +112,11 @@ class ShellyHelpers {
         );
 
         final String status = await shellyApiDeviceAbstract.getStatus();
-        dynamic responseAsJson = json.decode(status);
+        final dynamic responseAsJson = json.decode(status);
 
         final String mac = responseAsJson['mac'] as String;
 
-        dynamic bulbLightProp = responseAsJson['lights'][0];
+        final dynamic bulbLightProp = responseAsJson['lights'][0];
 
         shellyApiDeviceAbstract.bulbMode = ShellyBulbMode.white;
 

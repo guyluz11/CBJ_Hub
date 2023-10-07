@@ -536,7 +536,7 @@ class EspHomeApiClient {
       '${socket.remoteAddress.address}:${socket.remotePort}',
     );
 
-    final PingRequest pingRequest = PingRequest();
+    PingRequest();
 
     const int numOfByteBeforeData = 3;
 
@@ -571,7 +571,7 @@ class EspHomeApiClient {
       ' ${socket.remoteAddress.address}:${socket.remotePort}',
     );
 
-    final DeviceInfoRequest deviceInfoRequest = DeviceInfoRequest();
+    DeviceInfoRequest();
 
     const int numOfByteBeforeData = 3;
 
@@ -606,7 +606,7 @@ class EspHomeApiClient {
       ' ${socket.remoteAddress.address}:${socket.remotePort}',
     );
 
-    final SubscribeStatesRequest subscribeStateReq = SubscribeStatesRequest();
+    SubscribeStatesRequest();
 
     const int numOfByteBeforeData = 3;
 
@@ -710,7 +710,7 @@ class EspHomeApiClient {
       ' ${socket.remoteAddress.address}:${socket.remotePort}',
     );
 
-    final ListEntitiesRequest listEntitiesRequest = ListEntitiesRequest();
+    ListEntitiesRequest();
 
     const int numOfByteBeforeData = 3;
 
@@ -754,7 +754,7 @@ class EspHomeApiClient {
   /// fName = _connect_init_frame_helper
   /// Step 3 in connect process: initialize the frame helper and init read loop.
   Future<void> connectInitFrameHelper() async {
-    final Socket socket = await getSocket();
+    await getSocket();
 
     await listenToResponses();
   }

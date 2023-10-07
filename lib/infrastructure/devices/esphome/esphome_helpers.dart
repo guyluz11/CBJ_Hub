@@ -35,12 +35,13 @@ class EspHomeHelpers {
         espHomeNodeDeviceId ?? UniqueId().getOrCrash();
 
     final EspHomeNodeRedApi espHomeNodeRedApi = EspHomeNodeRedApi(
-        repository: getIt<NodeRedRepository>(),
-        nodeRedApiBaseTopic:
-            getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
-        nodeRedDevicesTopic:
-            getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
-        nodeRedMqttBrokerNodeName: 'Cbj NodeRed plugs Api Broker');
+      repository: getIt<NodeRedRepository>(),
+      nodeRedApiBaseTopic:
+          getIt<IMqttServerRepository>().getNodeRedApiBaseTopic(),
+      nodeRedDevicesTopic:
+          getIt<IMqttServerRepository>().getNodeRedDevicesTopicTypeName(),
+      nodeRedMqttBrokerNodeName: 'Cbj NodeRed plugs Api Broker',
+    );
 
     await espHomeNodeRedApi.setNewGlobalEspHomeDeviceNode(
       deviceMdnsName: mDnsName,

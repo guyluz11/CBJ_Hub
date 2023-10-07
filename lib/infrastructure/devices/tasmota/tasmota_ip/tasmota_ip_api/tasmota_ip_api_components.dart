@@ -1,6 +1,6 @@
-/// Values from here https://tasmota.github.io/docs/Components/
-/// Stored in the following way.
-/// MapEntry(Number label: [UI Label, Comment])
+// Values from here https://tasmota.github.io/docs/Components/
+// Stored in the following way.
+// MapEntry(Number label: [UI Label, Comment])
 
 Map<int, List<String>> gpioOverviewTasmota = {
   0: ['None', 'Not used'],

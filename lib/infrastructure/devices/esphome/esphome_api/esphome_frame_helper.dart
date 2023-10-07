@@ -1,4 +1,4 @@
-/// data class from _frame_helper.py in aioesphomeapi
+// data class from _frame_helper.py in aioesphomeapi
 
 /// aioesphomeapi:
 /// cName = Packet

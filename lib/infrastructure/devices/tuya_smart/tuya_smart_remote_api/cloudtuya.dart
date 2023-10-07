@@ -109,7 +109,6 @@ class CloudTuya {
     final Response response =
         await consistentRequest(uriTemp, headers: headers, body: data);
 
-    final int statusCode = response.statusCode;
     final String responseBody = response.body;
 
     final dynamic a = json.decode(responseBody);
@@ -158,7 +157,6 @@ class CloudTuya {
     final Response response =
         await consistentRequest(uriTemp, headers: headers, body: data);
 
-    final int statusCode = response.statusCode;
     final String responseBody = response.body;
 
     final dynamic a = json.decode(responseBody);
@@ -221,7 +219,6 @@ class CloudTuya {
     final Response response =
         await consistentRequest(uriTemp, headers: headers, body: data);
 
-    final int statusCode = response.statusCode;
     final String responseBody = response.body;
 
     final dynamic responseDecoded = json.decode(responseBody);
