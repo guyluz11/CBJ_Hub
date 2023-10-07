@@ -38,9 +38,8 @@ dependencies:
   http: ^1.1.0
   # Philips Hue API
   hue_dart:
-    path: ../hue_dart
-#    git:
-#      url: 'https://github.com/guyluz11/hue_dart.git'
+    git:
+      url: 'https://github.com/guyluz11/hue_dart.git'
   # Convenient code generator for get_it
   injectable: ^2.3.1
   # Utility library that checks for an Active Internet connection
