@@ -2,10 +2,6 @@ import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/pr
 import 'package:mqtt_client/mqtt_client.dart';
 
 abstract class IAppCommunicationRepository {
-  IAppCommunicationRepository() {
-    instance = this;
-  }
-
   static late IAppCommunicationRepository instance;
 
   Future<void> getFromApp({

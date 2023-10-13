@@ -5,7 +5,6 @@ import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_integrations_controller/injection.dart';
 
 /// A cbj web server to interact with get current state requests from mqtt as
 /// well as website to change devices state locally on the network without
@@ -28,7 +27,7 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
             final String deviceId = pathArgs[1];
 
             final ISavedDevicesRepo savedDevicesRepo =
-                getItCbj<ISavedDevicesRepo>();
+                ISavedDevicesRepo.instance;
 
             final Map<String, DeviceEntityAbstract> allDevices =
                 await savedDevicesRepo.getAllDevices();

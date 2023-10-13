@@ -17,7 +17,6 @@ import 'package:cbj_integrations_controller/infrastructure/generic_devices/gener
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_switch_device/generic_switch_entity.dart';
-import 'package:cbj_integrations_controller/injection.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 // ignore: implementation_imports
@@ -220,7 +219,7 @@ class MqttServerRepository extends IMqttServerRepository {
         deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload,
       };
 
-      final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
+      final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
       final Map<String, DeviceEntityAbstract> allDevices =
           await savedDevicesRepo.getAllDevices();
@@ -383,7 +382,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   /// Resend the device object throw mqtt
   Future<void> findDeviceAndResendItToMqtt(String deviceId) async {
-    final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
+    final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
     final Map<String, DeviceEntityAbstract> allDevices =
         await savedDevicesRepo.getAllDevices();
@@ -412,7 +411,7 @@ class MqttServerRepository extends IMqttServerRepository {
     bool? gotFromApp,
   }) async {
     if (entityFromTheApp is DeviceEntityAbstract) {
-      final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
+      final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
       final Map<String, DeviceEntityAbstract> allDevices =
           await savedDevicesRepo.getAllDevices();
       final DeviceEntityAbstract? savedDeviceEntity =

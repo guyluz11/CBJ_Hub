@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cbj_hub/domain/room/room_entity.dart';
-import 'package:cbj_hub/domain/room/value_objects_room.dart';
-import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/room/room_entity.dart';
+import 'package:cbj_integrations_controller/domain/room/value_objects_room.dart';
+import 'package:cbj_integrations_controller/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/infrastructure/devices/companies_connector_conjector.dart';
 import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_integrations_controller/injection.dart';
 import 'package:cbj_integrations_controller/utils.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:rxdart/rxdart.dart';
@@ -33,7 +32,7 @@ class Connector {
       }
     });
 
-    final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
+    final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
     final Map<String, DeviceEntityAbstract> allDevices =
         await savedDevicesRepo.getAllDevices();
@@ -66,7 +65,7 @@ class Connector {
   static Future<void> updateDevicesFromMqttDeviceChange(
     MapEntry<String, Map<String, dynamic>> deviceChangeFromMqtt,
   ) async {
-    final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
+    final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
     final Map<String, DeviceEntityAbstract> allDevices =
         await savedDevicesRepo.getAllDevices();
