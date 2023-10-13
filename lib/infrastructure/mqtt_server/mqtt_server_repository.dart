@@ -1,31 +1,33 @@
 import 'dart:convert';
 
 import 'package:cbj_hub/application/connector/connector.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_light_device/generic_light_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_switch_device/generic_switch_entity.dart';
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
-import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:injectable/injectable.dart';
+import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_light_device/generic_light_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_switch_device/generic_switch_entity.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 // ignore: implementation_imports
 import 'package:mqtt_client/src/observable/src/records.dart';
 
-@LazySingleton(as: IMqttServerRepository)
 class MqttServerRepository extends IMqttServerRepository {
+  MqttServerRepository() {
+    IMqttServerRepository.instance = this;
+  }
+
   /// Static instance of connection to mqtt broker
   static MqttServerClient client = MqttServerClient('127.0.0.1', 'CBJ_Hub');
 
@@ -218,7 +220,7 @@ class MqttServerRepository extends IMqttServerRepository {
         deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload,
       };
 
-      final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();
+      final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
 
       final Map<String, DeviceEntityAbstract> allDevices =
           await savedDevicesRepo.getAllDevices();
@@ -381,7 +383,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   /// Resend the device object throw mqtt
   Future<void> findDeviceAndResendItToMqtt(String deviceId) async {
-    final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();
+    final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
 
     final Map<String, DeviceEntityAbstract> allDevices =
         await savedDevicesRepo.getAllDevices();
@@ -410,7 +412,7 @@ class MqttServerRepository extends IMqttServerRepository {
     bool? gotFromApp,
   }) async {
     if (entityFromTheApp is DeviceEntityAbstract) {
-      final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();
+      final ISavedDevicesRepo savedDevicesRepo = getItCbj<ISavedDevicesRepo>();
       final Map<String, DeviceEntityAbstract> allDevices =
           await savedDevicesRepo.getAllDevices();
       final DeviceEntityAbstract? savedDeviceEntity =

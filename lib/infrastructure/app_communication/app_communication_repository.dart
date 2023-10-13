@@ -2,42 +2,39 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cbj_hub/domain/app_communication/i_app_communication_repository.dart';
-import 'package:cbj_hub/domain/core/value_objects.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_hub/domain/generic_devices/generic_empty_device/generic_empty_entity.dart';
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/domain/remote_pipes/remote_pipes_entity.dart';
 import 'package:cbj_hub/domain/room/room_entity.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/routine/i_routine_cbj_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
-import 'package:cbj_hub/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
-import 'package:cbj_hub/infrastructure/devices/device_helper/device_helper.dart';
-import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_hub/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_hub/infrastructure/generic_vendors_login/vendor_helper.dart';
 import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_client.dart';
-import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_dtos.dart';
 import 'package:cbj_hub/infrastructure/room/room_entity_dtos.dart';
 import 'package:cbj_hub/infrastructure/routines/routine_cbj_dtos.dart';
 import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
-import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:cbj_integrations_controller/domain/core/value_objects.dart';
+import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/domain/vendors/login_abstract/login_entity_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/devices/device_helper/device_helper.dart';
+import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/value_objects_core.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_empty_device/generic_empty_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_vendors_login/vendor_helper.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:grpc/grpc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:rxdart/rxdart.dart';
 
-@LazySingleton(as: IAppCommunicationRepository)
 class AppCommunicationRepository extends IAppCommunicationRepository {
   AppCommunicationRepository() {
+    IAppCommunicationRepository.instance = this;
     if (currentEnv == Env.prod) {
       hubPort = 50055;
     } else {
@@ -99,14 +96,14 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     dataToSend.listen((MqttPublishMessage event) async {
       logger.i('Got hub requests to app');
 
-      (await getIt<ISavedDevicesRepo>().getAllDevices())
+      (await getItCbj<ISavedDevicesRepo>().getAllDevices())
           .forEach((String id, deviceEntityToSend) {
         final DeviceEntityDtoAbstract deviceDtoAbstract =
             DeviceHelper.convertDomainToDto(deviceEntityToSend);
         HubRequestsToApp.streamRequestsToApp.sink.add(deviceDtoAbstract);
       });
 
-      (await getIt<ISceneCbjRepository>().getAllScenesAsMap())
+      (await getItCbj<ISceneCbjRepository>().getAllScenesAsMap())
           .forEach((key, value) {
         HubRequestsToApp.streamRequestsToApp.sink.add(value.toInfrastructure());
       });
@@ -129,7 +126,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         deviceEntityFromApp.entityStateGRPC =
             EntityState(EntityStateGRPC.waitingInComp.toString());
 
-        getIt<IMqttServerRepository>().postToHubMqtt(
+        IMqttServerRepository.instance.postToHubMqtt(
           entityFromTheApp: deviceEntityFromApp,
           gotFromApp: true,
         );
@@ -138,11 +135,11 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
           jsonDecode(event.allRemoteCommands) as Map<String, dynamic>,
         ).toDomain();
 
-        getIt<ISavedRoomsRepo>().saveAndActiveRoomToDb(
+        ISavedRoomsRepo.instance.saveAndActiveRoomToDb(
           roomEntity: roomEntityFromApp,
         );
 
-        getIt<IMqttServerRepository>().postToHubMqtt(
+        IMqttServerRepository.instance.postToHubMqtt(
           entityFromTheApp: roomEntityFromApp,
           gotFromApp: true,
         );
@@ -150,7 +147,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         final LoginEntityAbstract loginEntityFromApp =
             VendorHelper.convertJsonStringToDomain(event.allRemoteCommands);
 
-        getIt<ISavedDevicesRepo>()
+        getItCbj<ISavedDevicesRepo>()
             .saveAndActivateVendorLoginCredentialsDomainToDb(
           loginEntity: loginEntityFromApp,
         );
@@ -159,14 +156,13 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         AppCommunicationRepository.sendAllDevicesFromHubRequestsStream();
         AppCommunicationRepository.sendAllScenesFromHubRequestsStream();
       } else if (event.sendingType == SendingType.remotePipesInformation) {
-        final Map<String, dynamic> jsonDecoded =
-            jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
-
-        final RemotePipesEntity remotePipes =
-            RemotePipesDtos.fromJson(jsonDecoded).toDomain();
-
-        getIt<ISavedDevicesRepo>()
-            .saveAndActivateRemotePipesDomainToDb(remotePipes: remotePipes);
+        // TODO: Fix after new cbj_integrations_controller
+        // final Map<String, dynamic> jsonDecoded =
+        //     jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
+        // final RemotePipesEntity remotePipes =
+        //     RemotePipesDtos.fromJson(jsonDecoded).toDomain();
+        // getItCbj<ISavedDevicesRepo>()
+        //     .saveAndActivateRemotePipesDomainToDb(remotePipes: remotePipes);
       } else if (event.sendingType == SendingType.sceneType) {
         final Map<String, dynamic> jsonSceneFromJsonString =
             jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
@@ -184,9 +180,9 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         // );
 
         if (sceneStateGrpcTemp == EntityStateGRPC.addingNewScene.toString()) {
-          getIt<ISceneCbjRepository>().addNewSceneAndSaveInDb(sceneCbj);
+          getItCbj<ISceneCbjRepository>().addNewSceneAndSaveInDb(sceneCbj);
         } else {
-          getIt<ISceneCbjRepository>().activateScene(sceneCbj);
+          getItCbj<ISceneCbjRepository>().activateScene(sceneCbj);
         }
       } else if (event.sendingType == SendingType.routineType) {
         final Map<String, dynamic> jsonRoutineFromJsonString =
@@ -206,11 +202,11 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
 
         if (routineStateGrpcTemp ==
             EntityStateGRPC.addingNewRoutine.toString()) {
-          getIt<IRoutineCbjRepository>()
+          getItCbj<IRoutineCbjRepository>()
               .addNewRoutineAndSaveItToLocalDb(routineCbj);
         } else {
           // For a way to active it manually
-          // getIt<IRoutineCbjRepository>().activateRoutine(routineCbj);
+          // getItCbj<IRoutineCbjRepository>().activateRoutine(routineCbj);
         }
       } else {
         logger.w('Request from app does not support this sending device type');
@@ -267,7 +263,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// HubRequestsToApp stream
   static Future<void> sendAllRoomsFromHubRequestsStream() async {
     final Map<String, RoomEntity> allRooms =
-        await getIt<ISavedRoomsRepo>().getAllRooms();
+        await ISavedRoomsRepo.instance.getAllRooms();
 
     if (allRooms.isNotEmpty) {
       allRooms.map((String id, RoomEntity d) {
@@ -283,10 +279,10 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// HubRequestsToApp stream
   static Future<void> sendAllDevicesFromHubRequestsStream() async {
     final Map<String, DeviceEntityAbstract> allDevices =
-        await getIt<ISavedDevicesRepo>().getAllDevices();
+        await getItCbj<ISavedDevicesRepo>().getAllDevices();
 
     final Map<String, RoomEntity> allRooms =
-        await getIt<ISavedRoomsRepo>().getAllRooms();
+        await ISavedRoomsRepo.instance.getAllRooms();
 
     if (allRooms.isNotEmpty) {
       /// The delay fix this issue in gRPC for some reason
@@ -312,7 +308,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// HubRequestsToApp stream
   static Future<void> sendAllScenesFromHubRequestsStream() async {
     final Map<String, SceneCbjEntity> allScenes =
-        await getIt<ISceneCbjRepository>().getAllScenesAsMap();
+        await getItCbj<ISceneCbjRepository>().getAllScenesAsMap();
 
     if (allScenes.isNotEmpty) {
       allScenes.map((String id, SceneCbjEntity d) {

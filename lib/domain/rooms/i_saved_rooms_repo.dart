@@ -1,12 +1,18 @@
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/room/room_entity.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class ISavedRoomsRepo {
+  ISavedRoomsRepo() {
+    instance = this;
+  }
+
+  static late ISavedRoomsRepo instance;
+
   /// Setting up all rooms from db
   Future<void> setUpAllFromDb();
 

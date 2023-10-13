@@ -1,14 +1,11 @@
-import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/routine/i_routine_cbj_repository.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_failures.dart';
-import 'package:cbj_hub/domain/routine/value_objects_routine_cbj.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
-import 'package:cbj_hub/injection.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
@@ -18,13 +15,14 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
 
   @override
   Future<void> setUpAllFromDb() async {
-    await getIt<ILocalDbRepository>().getRoutinesFromDb().then((value) {
-      value.fold((l) => null, (r) async {
-        for (final element in r) {
-          await addNewRoutine(element);
-        }
-      });
-    });
+    // TODO: Fix after new cbj_integrations_controller
+    // await getItCbj<ILocalDbRepository>().getRoutinesFromDb().then((value) {
+    //   value.fold((l) => null, (r) async {
+    //     for (final element in r) {
+    //       await addNewRoutine(element);
+    //     }
+    //   });
+    // });
   }
 
   @override
@@ -38,17 +36,20 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
   }
 
   @override
-  Future<Either<LocalDbFailures, Unit>> saveAndActivateRoutineToDb() {
-    return getIt<ILocalDbRepository>().saveRoutines(
-      routineList: List<RoutineCbjEntity>.from(_allRoutines.values),
-    );
+  Future<Either<LocalDbFailures, Unit>> saveAndActivateRoutineToDb() async {
+    // TODO: Fix after new cbj_integrations_controller
+    //
+    // return getItCbj<ILocalDbRepository>().saveRoutines(
+    //   routineList: List<RoutineCbjEntity>.from(_allRoutines.values),
+    // );
+    return left(const LocalDbFailures.unableToUpdate());
   }
 
   @override
   Future<Either<RoutineCbjFailure, Unit>> addNewRoutine(
     RoutineCbjEntity routineCbj,
   ) async {
-    RoutineCbjEntity tempRoutineCbj = routineCbj;
+    final RoutineCbjEntity tempRoutineCbj = routineCbj;
 
     /// Check if routine already exist
     if (findRoutineIfAlreadyBeenAdded(tempRoutineCbj) == null) {
@@ -61,15 +62,17 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
       /// If it is new routine
       _allRoutines[entityId] = tempRoutineCbj;
 
-      getIt<ISavedRoomsRepo>()
+      ISavedRoomsRepo.instance
           .addRoutineToRoomDiscoveredIfNotExist(tempRoutineCbj);
-      final String routineNodeRedFlowId = await getIt<NodeRedRepository>()
-          .createNewNodeRedRoutine(tempRoutineCbj);
-      if (routineNodeRedFlowId.isNotEmpty) {
-        tempRoutineCbj = tempRoutineCbj.copyWith(
-          nodeRedFlowId: RoutineCbjNodeRedFlowId(routineNodeRedFlowId),
-        );
-      }
+      // TODO: Fix after new cbj_integrations_controller
+      // final String routineNodeRedFlowId = await getItCbj<NodeRedRepository>()
+      //     .createNewNodeRedRoutine(tempRoutineCbj);
+      // if (routineNodeRedFlowId.isNotEmpty) {
+      //   tempRoutineCbj = tempRoutineCbj.copyWith(
+      //     nodeRedFlowId: RoutineCbjNodeRedFlowId(routineNodeRedFlowId),
+      //   );
+      // }
+      return left(const RoutineCbjFailure.unableToUpdate());
     }
     return right(unit);
   }
@@ -79,7 +82,7 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
     RoutineCbjEntity routineCbj,
   ) async {
     await addNewRoutine(routineCbj);
-    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+    await getItCbj<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
     await saveAndActivateRoutineToDb();
 
     return right(unit);
@@ -90,7 +93,7 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
     RoutineCbjEntity routineCbj,
   ) async {
     final String fullPathOfRoutine = await getFullMqttPathOfRoutine(routineCbj);
-    getIt<IMqttServerRepository>()
+    IMqttServerRepository.instance
         .publishMessage(fullPathOfRoutine, DateTime.now().toString());
 
     return true;
@@ -100,9 +103,9 @@ class RoutineCbjRepository implements IRoutineCbjRepository {
   @override
   Future<String> getFullMqttPathOfRoutine(RoutineCbjEntity routineCbj) async {
     final String hubBaseTopic =
-        getIt<IMqttServerRepository>().getHubBaseTopic();
+        IMqttServerRepository.instance.getHubBaseTopic();
     final String routinesTopicTypeName =
-        getIt<IMqttServerRepository>().getRoutinesTopicTypeName();
+        IMqttServerRepository.instance.getRoutinesTopicTypeName();
     final String routineId = routineCbj.firstNodeId.getOrCrash()!;
 
     return '$hubBaseTopic/$routinesTopicTypeName/$routineId';

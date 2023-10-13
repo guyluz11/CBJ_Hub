@@ -1,15 +1,15 @@
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
-import 'package:cbj_hub/domain/matirial_colors/colors.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
-import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/actions_for_area_types/bed_room_area_actions.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/actions_for_area_types/outside_area_actions.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/actions_for_area_types/study_room_area_actions.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/actions_for_area_types/video_games_area_actions.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/actions_for_area_types/work_room_area_actions.dart';
-import 'package:cbj_hub/injection.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/domain/matirial_colors/colors.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:dartz/dartz.dart';
 
 /// Pre define actions for each device in each area type
@@ -21,7 +21,7 @@ class AreaTypeWithDeviceTypePreset {
     required String brokerNodeId,
   }) async {
     final Either<LocalDbFailures, DeviceEntityAbstract> dTemp =
-        await getIt<ISavedDevicesRepo>().getDeviceById(deviceId);
+        await getItCbj<ISavedDevicesRepo>().getDeviceById(deviceId);
     if (dTemp.isLeft()) {
       return left(const SceneCbjFailure.unexpected());
     }

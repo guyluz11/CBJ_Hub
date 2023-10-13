@@ -1,4 +1,4 @@
-import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
 import 'package:dartz/dartz.dart';
 

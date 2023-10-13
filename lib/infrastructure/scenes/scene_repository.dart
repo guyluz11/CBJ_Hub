@@ -1,24 +1,22 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
 import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
-import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_hub/infrastructure/node_red/node_red_converter.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
 import 'package:cbj_hub/infrastructure/room/saved_rooms_repo.dart';
 import 'package:cbj_hub/infrastructure/scenes/area_types_scientific_presets/area_type_with_device_type_preset.dart';
-import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:kt_dart/kt.dart';
@@ -30,13 +28,14 @@ class SceneCbjRepository implements ISceneCbjRepository {
 
   @override
   Future<void> setUpAllFromDb() async {
-    await getIt<ILocalDbRepository>().getScenesFromDb().then((value) {
-      value.fold((l) => null, (r) {
-        for (final element in r) {
-          addNewScene(element);
-        }
-      });
-    });
+    // TODO: Fix after new cbj_integrations_controller
+    // await getItCbj<ILocalDbRepository>().getScenesFromDb().then((value) {
+    //   value.fold((l) => null, (r) {
+    //     for (final element in r) {
+    //       addNewScene(element);
+    //     }
+    //   });
+    // });
   }
 
   @override
@@ -52,11 +51,13 @@ class SceneCbjRepository implements ISceneCbjRepository {
   @override
   Future<Either<LocalDbFailures, Unit>>
       saveAndActivateScenesAndSmartDevicesToDb() async {
-    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+    await getItCbj<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
 
-    return getIt<ILocalDbRepository>().saveScenes(
-      sceneList: List<SceneCbjEntity>.from(_allScenes.values),
-    );
+    // TODO: Fix after new cbj_integrations_controller
+    // return getItCbj<ILocalDbRepository>().saveScenes(
+    //   sceneList: List<SceneCbjEntity>.from(_allScenes.values),
+    // );
+    return left(const LocalDbFailures.unableToUpdate());
   }
 
   @override
@@ -87,8 +88,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
     if (existingScene == null ||
         tempSceneCbj.automationString.getOrCrash() !=
             existingScene.automationString.getOrCrash()) {
-      sceneNodeRedFlowId =
-          await getIt<NodeRedRepository>().createNewNodeRedScene(tempSceneCbj);
+      // TODO: Fix after new cbj_integrations_controller
+      // sceneNodeRedFlowId =
+      //     await getItCbj<NodeRedRepository>().createNewNodeRedScene(tempSceneCbj);
     }
 
     if (sceneNodeRedFlowId.isNotEmpty) {
@@ -96,7 +98,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
         nodeRedFlowId: SceneCbjNodeRedFlowId(sceneNodeRedFlowId),
       );
     }
-    getIt<ISavedRoomsRepo>().addSceneToRoomDiscoveredIfNotExist(tempSceneCbj);
+    ISavedRoomsRepo.instance.addSceneToRoomDiscoveredIfNotExist(tempSceneCbj);
     _allScenes[tempSceneCbj.uniqueId.getOrCrash()] = tempSceneCbj;
     return right(sceneNodeRedFlowId);
   }
@@ -114,7 +116,7 @@ class SceneCbjRepository implements ISceneCbjRepository {
   @override
   Future<bool> activateScene(SceneCbjEntity sceneCbj) async {
     final String fullPathOfScene = await getFullMqttPathOfScene(sceneCbj);
-    getIt<IMqttServerRepository>()
+    IMqttServerRepository.instance
         .publishMessage(fullPathOfScene, DateTime.now().toString());
 
     return true;
@@ -124,9 +126,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
   @override
   Future<String> getFullMqttPathOfScene(SceneCbjEntity sceneCbj) async {
     final String hubBaseTopic =
-        getIt<IMqttServerRepository>().getHubBaseTopic();
+        IMqttServerRepository.instance.getHubBaseTopic();
     final String scenesTopicTypeName =
-        getIt<IMqttServerRepository>().getScenesTopicTypeName();
+        IMqttServerRepository.instance.getScenesTopicTypeName();
     final String sceneId = sceneCbj.firstNodeId.getOrCrash()!;
 
     return '$hubBaseTopic/$scenesTopicTypeName/$sceneId';
@@ -162,9 +164,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
       if (tempScene != null) {
         sceneCbjEntityTemp =
             sceneCbjEntityTemp.copyWith(nodeRedFlowId: tempScene.nodeRedFlowId);
-
-        nodeRedFlowId = await getIt<NodeRedRepository>()
-            .createNewNodeRedScene(sceneCbjEntityTemp);
+        // TODO: Fix after new cbj_integrations_controller
+        // nodeRedFlowId = await getItCbj<NodeRedRepository>()
+        //     .createNewNodeRedScene(sceneCbjEntityTemp);
 
         sceneCbjEntityTemp = sceneCbjEntityTemp.copyWith(
           nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId),
@@ -395,8 +397,9 @@ class SceneCbjRepository implements ISceneCbjRepository {
       if (tempScene != null) {
         scene = scene.copyWith(nodeRedFlowId: tempScene.nodeRedFlowId);
 
-        nodeRedFlowId =
-            await getIt<NodeRedRepository>().createNewNodeRedScene(scene);
+        // TODO: Fix after new cbj_integrations_controller
+        // nodeRedFlowId =
+        //     await getItCbj<NodeRedRepository>().createNewNodeRedScene(scene);
 
         scene =
             scene.copyWith(nodeRedFlowId: SceneCbjNodeRedFlowId(nodeRedFlowId));

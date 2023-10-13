@@ -1,4 +1,4 @@
-import 'package:cbj_hub/domain/core/value_objects.dart';
+import 'package:cbj_integrations_controller/domain/core/value_objects.dart';
 import 'package:cbj_hub/domain/scene/value_objects_scene_cbj.dart';
 import 'package:cbj_hub/infrastructure/scenes/scene_cbj_dtos.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

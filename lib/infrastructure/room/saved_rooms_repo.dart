@@ -2,47 +2,48 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/room/room_entity.dart';
 import 'package:cbj_hub/domain/room/value_objects_room.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_hub/domain/scene/scene_cbj_failures.dart';
-import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
-import 'package:cbj_hub/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_hub/injection.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:dartz/dartz.dart';
-import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: ISavedRoomsRepo)
 class SavedRoomsRepo extends ISavedRoomsRepo {
+  SavedRoomsRepo() {
+    ISavedRoomsRepo.instance = this;
+  }
+
   static final HashMap<String, RoomEntity> _allRooms =
       HashMap<String, RoomEntity>();
 
   @override
   Future<void> setUpAllFromDb() async {
-    await getIt<ILocalDbRepository>().getRoomsFromDb().then((value) {
-      value.fold((l) => null, (rooms) {
-        /// Gets all rooms from db, if there are non it will create and return
-        /// only a discovered room
-        if (rooms.isEmpty) {
-          final RoomEntity discoveredRoom = RoomEntity.empty().copyWith(
-            uniqueId: RoomUniqueId.discoveredRoomId(),
-            cbjEntityName: RoomDefaultName.discoveredRoomName(),
-          );
-          rooms.add(discoveredRoom);
-        }
-        for (final element in rooms) {
-          addOrUpdateRoom(element);
-        }
-      });
-    });
+    // TODO: Fix after new cbj_integrations_controller
+    // await getItCbj<ILocalDbRepository>().getRoomsFromDb().then((value) {
+    //   value.fold((l) => null, (rooms) {
+    //     /// Gets all rooms from db, if there are non it will create and return
+    //     /// only a discovered room
+    //     if (rooms.isEmpty) {
+    //       final RoomEntity discoveredRoom = RoomEntity.empty().copyWith(
+    //         uniqueId: RoomUniqueId.discoveredRoomId(),
+    //         cbjEntityName: RoomDefaultName.discoveredRoomName(),
+    //       );
+    //       rooms.add(discoveredRoom);
+    //     }
+    //     for (final element in rooms) {
+    //       addOrUpdateRoom(element);
+    //     }
+    //   });
+    // });
   }
 
   @override
@@ -260,27 +261,28 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
       _allRooms[roomId] = roomEntityCombinedDevices;
     }
     // TODO: check if this line is not redundant
-    await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+    await getItCbj<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
 
     await createScenesForAllSelectedRoomTypes(
       roomEntity: roomEntityTemp,
       newRoom: newRoom,
     );
 
-    await getIt<ISceneCbjRepository>()
+    await getItCbj<ISceneCbjRepository>()
         .addDevicesToMultipleScenesAreaTypeWithPreSetActions(
       devicesId: newDevicesList,
       scenesId: _allRooms[roomId]!.roomScenesId.getOrCrash(),
       areaTypes: _allRooms[roomId]!.roomTypes.getOrCrash(),
     );
-
-    final Future<Either<LocalDbFailures, Unit>> saveRoomToDbResponse =
-        getIt<ILocalDbRepository>().saveRoomsToDb(
-      roomsList: List<RoomEntity>.from(_allRooms.values),
-    );
-
-    AppCommunicationRepository.sendAllRoomsFromHubRequestsStream();
-    return saveRoomToDbResponse;
+    // TODO: Fix after new cbj_integrations_controller
+    // final Future<Either<LocalDbFailures, Unit>> saveRoomToDbResponse =
+    //     getItCbj<ILocalDbRepository>().saveRoomsToDb(
+    //   roomsList: List<RoomEntity>.from(_allRooms.values),
+    // );
+    //
+    // AppCommunicationRepository.sendAllRoomsFromHubRequestsStream();
+    // return saveRoomToDbResponse;
+    return left(const LocalDbFailures.unableToUpdate());
   }
 
   @override
@@ -330,7 +332,7 @@ class SavedRoomsRepo extends ISavedRoomsRepo {
         final String areaNameEdited = areaNameCapsWithSpces(areaPurposeType);
 
         final Either<SceneCbjFailure, SceneCbjEntity> sceneOrFailure =
-            await getIt<ISceneCbjRepository>()
+            await getItCbj<ISceneCbjRepository>()
                 .addOrUpdateNewSceneInHubFromDevicesPropertyActionList(
           areaNameEdited,
           [],

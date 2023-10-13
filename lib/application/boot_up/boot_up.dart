@@ -1,12 +1,8 @@
 import 'package:cbj_hub/application/connector/connector.dart';
-import 'package:cbj_hub/domain/cbj_web_server/i_cbj_web_server_repository.dart';
-import 'package:cbj_hub/domain/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
-import 'package:cbj_hub/domain/scene/i_scene_cbj_repository.dart';
-import 'package:cbj_hub/infrastructure/devices/companies_connector_conjector.dart';
-import 'package:cbj_hub/injection.dart';
+import 'package:cbj_hub/infrastructure/cbj_web_server/cbj_web_server_repository.dart';
+import 'package:cbj_hub/infrastructure/mqtt_server/mqtt_server_repository.dart';
+import 'package:cbj_hub/infrastructure/room/saved_rooms_repo.dart';
+import 'package:cbj_integrations_controller/initialize_integrations_controller.dart';
 
 class BootUp {
   BootUp() {
@@ -15,35 +11,25 @@ class BootUp {
 
   static Future<void> setup() async {
     // Return all saved rooms
-    final ISavedRoomsRepo savedRoomsRepo = getIt<ISavedRoomsRepo>();
-    final ISceneCbjRepository savedScenesRepo = getIt<ISceneCbjRepository>();
+    // TODO: Fix after new cbj_integrations_controller
+    // final ISavedRoomsRepo savedRoomsRepo = ISavedRoomsRepo.instance;
+    // TODO: Fix after new cbj_integrations_controller
+    // final ISceneCbjRepository savedScenesRepo = getItCbj<ISceneCbjRepository>();
 
-    await savedRoomsRepo.getAllRooms();
+    // await savedRoomsRepo.getAllRooms();
+    //
+    // await savedScenesRepo.getAllScenesAsMap();
+    setInstancesOfRepos();
 
-    await savedScenesRepo.getAllScenesAsMap();
-
-    // Return all saved devices
-    final ISavedDevicesRepo savedDevicesRepo = getIt<ISavedDevicesRepo>();
-
-    final Map<String, DeviceEntityAbstract> allDevices =
-        await savedDevicesRepo.getAllDevices();
-
-    CompaniesConnectorConjector.addAllDevicesToItsRepos(allDevices);
-
-    CompaniesConnectorConjector.searchAllMdnsDevicesAndSetThemUp();
-
-    CompaniesConnectorConjector.searchPingableDevicesAndSetThemUpByHostName();
-
-    CompaniesConnectorConjector.searchDevicesByBindingIntoSockets();
-
-    CompaniesConnectorConjector.searchDevicesByMqttPath();
-
-    CompaniesConnectorConjector.notImplementedDevicesSearch();
-
-    await getIt<IMqttServerRepository>().asyncConstractor();
-
-    getIt<ICbjWebServerRepository>();
+    await setupIntegrationsController();
 
     Connector.startConnector();
+  }
+
+  /// All instances of Repos
+  static void setInstancesOfRepos() {
+    MqttServerRepository();
+    CbjWebServerRepository();
+    SavedRoomsRepo();
   }
 }

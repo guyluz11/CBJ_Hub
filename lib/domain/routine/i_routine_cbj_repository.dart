@@ -1,4 +1,4 @@
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_failures.dart';
 import 'package:dartz/dartz.dart';

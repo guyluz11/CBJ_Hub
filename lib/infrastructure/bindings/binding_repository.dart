@@ -1,14 +1,11 @@
 import 'package:cbj_hub/domain/binding/binding_cbj_entity.dart';
 import 'package:cbj_hub/domain/binding/binding_cbj_failures.dart';
 import 'package:cbj_hub/domain/binding/i_binding_cbj_repository.dart';
-import 'package:cbj_hub/domain/binding/value_objects_routine_cbj.dart';
-import 'package:cbj_hub/domain/local_db/i_local_db_repository.dart';
-import 'package:cbj_hub/domain/local_db/local_db_failures.dart';
-import 'package:cbj_hub/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_hub/domain/rooms/i_saved_rooms_repo.dart';
-import 'package:cbj_hub/domain/saved_devices/i_saved_devices_repo.dart';
-import 'package:cbj_hub/infrastructure/node_red/node_red_repository.dart';
-import 'package:cbj_hub/injection.dart';
+import 'package:cbj_integrations_controller/domain/local_db/local_db_failures.dart';
+import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
@@ -18,13 +15,14 @@ class BindingCbjRepository implements IBindingCbjRepository {
 
   @override
   Future<void> setUpAllFromDb() async {
-    await getIt<ILocalDbRepository>().getBindingsFromDb().then((value) {
-      value.fold((l) => null, (r) async {
-        for (final element in r) {
-          await addNewBinding(element);
-        }
-      });
-    });
+    // TODO: Fix after new cbj_integrations_controller
+    // await getItCbj<ILocalDbRepository>().getBindingsFromDb().then((value) {
+    //   value.fold((l) => null, (r) async {
+    //     for (final element in r) {
+    //       await addNewBinding(element);
+    //     }
+    //   });
+    // });
   }
 
   @override
@@ -38,10 +36,12 @@ class BindingCbjRepository implements IBindingCbjRepository {
   }
 
   @override
-  Future<Either<LocalDbFailures, Unit>> saveAndActivateBindingToDb() {
-    return getIt<ILocalDbRepository>().saveBindings(
-      bindingList: List<BindingCbjEntity>.from(_allBindings.values),
-    );
+  Future<Either<LocalDbFailures, Unit>> saveAndActivateBindingToDb() async {
+    // TODO: Fix after new cbj_integrations_controller
+    // return getItCbj<ILocalDbRepository>().saveBindings(
+    //   bindingList: List<BindingCbjEntity>.from(_allBindings.values),
+    // );
+    return left(const LocalDbFailures.unableToUpdate());
   }
 
   @override
@@ -61,16 +61,17 @@ class BindingCbjRepository implements IBindingCbjRepository {
       /// If it is new binding
       _allBindings[entityId] = tempBindingCbj;
 
-      await getIt<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
-      getIt<ISavedRoomsRepo>()
+      await getItCbj<ISavedDevicesRepo>().saveAndActivateSmartDevicesToDb();
+      ISavedRoomsRepo.instance
           .addBindingToRoomDiscoveredIfNotExist(tempBindingCbj);
-      final String bindingNodeRedFlowId = await getIt<NodeRedRepository>()
-          .createNewNodeRedBinding(tempBindingCbj);
-      if (bindingNodeRedFlowId.isNotEmpty) {
-        tempBindingCbj = tempBindingCbj.copyWith(
-          nodeRedFlowId: BindingCbjNodeRedFlowId(bindingNodeRedFlowId),
-        );
-      }
+      // TODO: Fix after new cbj_integrations_controller
+      // final String bindingNodeRedFlowId = await getItCbj<NodeRedRepository>()
+      //     .createNewNodeRedBinding(tempBindingCbj);
+      // if (bindingNodeRedFlowId.isNotEmpty) {
+      //   tempBindingCbj = tempBindingCbj.copyWith(
+      //     nodeRedFlowId: BindingCbjNodeRedFlowId(bindingNodeRedFlowId),
+      //   );
+      // }
       await saveAndActivateBindingToDb();
     }
     return right(unit);
@@ -79,7 +80,7 @@ class BindingCbjRepository implements IBindingCbjRepository {
   @override
   Future<bool> activateBinding(BindingCbjEntity bindingCbj) async {
     final String fullPathOfBinding = await getFullMqttPathOfBinding(bindingCbj);
-    getIt<IMqttServerRepository>()
+    IMqttServerRepository.instance
         .publishMessage(fullPathOfBinding, DateTime.now().toString());
 
     return true;
@@ -89,9 +90,9 @@ class BindingCbjRepository implements IBindingCbjRepository {
   @override
   Future<String> getFullMqttPathOfBinding(BindingCbjEntity bindingCbj) async {
     final String hubBaseTopic =
-        getIt<IMqttServerRepository>().getHubBaseTopic();
+        IMqttServerRepository.instance.getHubBaseTopic();
     final String bindingsTopicTypeName =
-        getIt<IMqttServerRepository>().getBindingsTopicTypeName();
+        IMqttServerRepository.instance.getBindingsTopicTypeName();
     final String bindingId = bindingCbj.firstNodeId.getOrCrash()!;
 
     return '$hubBaseTopic/$bindingsTopicTypeName/$bindingId';

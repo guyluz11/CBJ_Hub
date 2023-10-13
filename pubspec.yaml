@@ -11,6 +11,8 @@ environment:
 dependencies:
   # Contains utility classes in the style of dart:async to work with asynchronous computations.
   async: ^2.11.0
+  cbj_integrations_controller:
+    path: ../cbj_integrations_controller
   # Package to create, convert, alter, and compare colors in a variety of colorspaces.
   color: ^3.0.0
   # Compute function made available for all non-Flutter Dart programs
@@ -82,16 +84,19 @@ dependencies:
   # Dart library for controlling Yeelight products over LAN.
   yeedart: ^0.3.2
 
+dependency_overrides:
+  # Defines the annotations used by json_serializable
+  get_it: ^7.6.0
+
 dev_dependencies:
   # A build system for Dart code generation and modular compilation.
   build_runner:
-
   # A generator for injectable library
   # Code generator for unions/pattern-matching/copy.
   freezed: ^2.4.1
   # Automatically generates Hive TypeAdapters to store any class
   hive_generator: ^2.0.1
-  # Injectable is a convenient code generator for get_it.
+  # Injectable is a convenient code generator for get _it.
   injectable_generator: ^2.4.0
   # Code generator for the Isar Database. Finds classes annotated with @Collection.
 #  isar_generator: ^3.0.5

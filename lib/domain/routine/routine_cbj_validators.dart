@@ -1,5 +1,5 @@
-import 'package:cbj_hub/domain/generic_devices/device_type_enums.dart';
 import 'package:cbj_hub/domain/routine/routine_cbj_failures.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_devices/device_type_enums.dart';
 import 'package:dartz/dartz.dart';
 
 Either<RoutineCbjFailure<String>, String> validateRoutineNotEmpty(
