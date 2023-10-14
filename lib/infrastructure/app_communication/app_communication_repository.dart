@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cbj_hub/domain/app_communication/i_app_communication_repository.dart';
-import 'package:cbj_hub/domain/remote_pipes/remote_pipes_entity.dart';
 import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
 import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_client.dart';
 import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_dtos.dart';
@@ -160,9 +159,9 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
       } else if (event.sendingType == SendingType.remotePipesInformation) {
         final Map<String, dynamic> jsonDecoded =
             jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
-        final RemotePipesEntity remotePipes =
-            RemotePipesDtos.fromJson(jsonDecoded).toDomain();
         // TODO: Fix after new cbj_integrations_controller
+        // final RemotePipesEntity remotePipes =
+        RemotePipesDtos.fromJson(jsonDecoded).toDomain();
         // ISavedDevicesRepo.instance
         //     .saveAndActivateRemotePipesDomainToDb(remotePipes: remotePipes);
       } else if (event.sendingType == SendingType.sceneType) {
