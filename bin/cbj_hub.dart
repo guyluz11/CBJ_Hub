@@ -9,6 +9,7 @@ import 'package:cbj_integrations_controller/infrastructure/routines/routine_repo
 import 'package:cbj_integrations_controller/infrastructure/saved_devices/saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/infrastructure/scenes/scene_repository.dart';
 import 'package:cbj_integrations_controller/infrastructure/shared_variables.dart';
+import 'package:cbj_integrations_controller/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_integrations_controller/initialize_integrations_controller.dart';
 import 'package:cbj_integrations_controller/injection.dart';
 import 'package:network_tools/network_tools.dart' as network;
@@ -24,6 +25,7 @@ Future<void> main(List<String> arguments) async {
 
 /// All instances of Repos
 void setInstancesOfRepos() {
+  SystemCommandsManager();
   MqttServerRepository();
   CbjWebServerRepository();
   SavedRoomsRepo();
