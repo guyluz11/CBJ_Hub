@@ -15,10 +15,6 @@ import 'package:grpc/service_api.dart';
 
 /// Server to get and send information to the app
 class HubAppServer extends CbjHubServiceBase {
-  /// The app call this method and getting stream of all the changes of the
-  /// internet devices
-  Stream<MapEntry<String, String>> streamOfChanges() async* {}
-
   @override
   Stream<RequestsAndStatusFromHub> clientTransferEntities(
     ServiceCall call,
