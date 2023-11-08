@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cbj_hub/application/boot_up/boot_up.dart';
 import 'package:cbj_hub/infrastructure/cbj_web_server/cbj_web_server_repository.dart';
 import 'package:cbj_hub/infrastructure/mqtt_server/mqtt_server_repository.dart';
@@ -12,19 +14,18 @@ import 'package:cbj_integrations_controller/infrastructure/shared_variables.dart
 import 'package:cbj_integrations_controller/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_integrations_controller/initialize_integrations_controller.dart';
 import 'package:cbj_integrations_controller/injection.dart';
-import 'package:network_tools/network_tools.dart' as network;
 
 Future<void> main(List<String> arguments) async {
-  setInstancesOfRepos();
+  setInstancesOfRepos(arguments.firstOrNull ?? Directory.current.path);
   // arguments[0] is the location of the project
-  network.configureNetworkTools('network_tools_db');
+  // network.configureNetworkTools('network_tools_db');
   await initializeIntegrationsController(arguments: arguments, env: Env.devPc);
 
   await BootUp.setup();
 }
 
 /// All instances of Repos
-void setInstancesOfRepos() {
+void setInstancesOfRepos(String projectRootDirectoryPath) {
   SystemCommandsManager();
   MqttServerRepository();
   CbjWebServerRepository();
@@ -35,5 +36,5 @@ void setInstancesOfRepos() {
   NodeRedRepository();
   BindingCbjRepository();
   SceneCbjRepository();
-  SharedVariables();
+  SharedVariables(projectRootDirectoryPath);
 }
