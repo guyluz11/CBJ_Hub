@@ -348,14 +348,3 @@ class HubRequestsToApp {
   static BehaviorSubject<dynamic> streamRequestsToApp =
       BehaviorSubject<dynamic>();
 }
-
-/// Requests and updates from app to the hub
-class AppRequestsToHub {
-  /// Stream controller of the requests from the hub
-  static final appRequestsToHubStreamController =
-      StreamController<RequestsAndStatusFromHub>();
-
-  /// Stream of the requests from the hub
-  static Stream<RequestsAndStatusFromHub> get appRequestsToHubStream =>
-      appRequestsToHubStreamController.stream;
-}
