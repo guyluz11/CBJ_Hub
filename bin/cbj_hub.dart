@@ -14,12 +14,17 @@ import 'package:cbj_integrations_controller/infrastructure/shared_variables.dart
 import 'package:cbj_integrations_controller/infrastructure/system_commands/system_commands_manager_d.dart';
 import 'package:cbj_integrations_controller/initialize_integrations_controller.dart';
 import 'package:cbj_integrations_controller/injection.dart';
+import 'package:network_tools/network_tools.dart';
 
 Future<void> main(List<String> arguments) async {
+  configureNetworkTools('network_tools_db');
+
   setInstancesOfRepos(arguments.firstOrNull ?? Directory.current.path);
   // arguments[0] is the location of the project
-  // network.configureNetworkTools('network_tools_db');
-  await initializeIntegrationsController(arguments: arguments, env: Env.devPc);
+  await initializeIntegrationsController(
+    projectRootDirectoryPath: arguments.firstOrNull ?? Directory.current.path,
+    env: Env.devPc,
+  );
 
   await BootUp.setup();
 }
