@@ -41,5 +41,5 @@ void setInstancesOfRepos(String projectRootDirectoryPath) {
   NodeRedRepository();
   BindingCbjRepository();
   SceneCbjRepository();
-  SharedVariables(projectRootDirectoryPath);
+  SharedVariables().projectRootDirectoryPath = projectRootDirectoryPath;
 }
