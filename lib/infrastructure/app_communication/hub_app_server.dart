@@ -25,7 +25,7 @@ class HubAppServer extends CbjHubServiceBase {
       );
 
       yield* HubRequestsToApp.streamRequestsToApp
-          .map(DeviceHelperMethods.dynamicToRequestsAndStatusFromHub)
+          .map(DeviceHelperMethods().dynamicToRequestsAndStatusFromHub)
           .handleError((error) => logger.e('Stream have error $error'));
     } catch (e) {
       logger.e('Hub server error $e');

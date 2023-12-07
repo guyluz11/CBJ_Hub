@@ -87,7 +87,8 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     dataToSend.listen((MqttPublishMessage event) async {
       logger.i('Got hub requests to app');
 
-      (await ISavedDevicesRepo.instance.getAllDevices())
+      ISavedDevicesRepo.instance
+          .getAllDevices()
           .forEach((String id, deviceEntityToSend) {
         final DeviceEntityDtoAbstract deviceDtoAbstract =
             DeviceHelper.convertDomainToDto(deviceEntityToSend);
@@ -135,12 +136,12 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
             '$error',
           );
           startRemotePipesWhenThereIsConnectionToWww(requestUrl);
-        } else {
-          logger.e(
-            'Un none errno number\n'
-            '$error',
-          );
+          return;
         }
+        logger.e(
+          'Un none errno number\n'
+          '$error',
+        );
       } else {
         if (error is GrpcError &&
             isRemotePipes &&
@@ -148,9 +149,9 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
             !error.message!.contains('errorCode: 0')) {
           logger.i('Client stream got terminated to create new one\n$error');
           startRemotePipesWhenThereIsConnectionToWww(requestUrl);
-        } else {
-          logger.e('Client stream error\n$error');
+          return;
         }
+        logger.e('Client stream error\n$error');
       }
     });
   }
@@ -160,16 +161,17 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   @override
   Future<void> sendAllRoomsFromHubRequestsStream() async {
     final Map<String, RoomEntity> allRooms =
-        await ISavedRoomsRepo.instance.getAllRooms();
+        ISavedRoomsRepo.instance.getAllRooms();
 
-    if (allRooms.isNotEmpty) {
-      allRooms.map((String id, RoomEntity d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-        return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
-      });
-    } else {
-      logger.w("Can't find rooms in the  local DB");
+    if (allRooms.isEmpty) {
+      logger.w("Can't find rooms in the local DB");
+
+      return;
     }
+    allRooms.map((String id, RoomEntity d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
+    });
   }
 
   /// Trigger to send all devices from hub to app using the
@@ -177,29 +179,30 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   @override
   Future<void> sendAllDevicesFromHubRequestsStream() async {
     final Map<String, DeviceEntityAbstract> allDevices =
-        await ISavedDevicesRepo.instance.getAllDevices();
+        ISavedDevicesRepo.instance.getAllDevices();
 
     final Map<String, RoomEntity> allRooms =
-        await ISavedRoomsRepo.instance.getAllRooms();
+        ISavedRoomsRepo.instance.getAllRooms();
 
-    if (allRooms.isNotEmpty) {
-      /// The delay fix this issue in gRPC for some reason
-      /// https://github.com/grpc/grpc-dart/issues/558
-      allRooms.map((String id, RoomEntity d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-        return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
-      });
-
-      allDevices.map((String id, DeviceEntityAbstract d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-        return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
-      });
-    } else {
+    if (allRooms.isEmpty) {
       logger.w("Can't find smart devices in the local DB, sending empty");
       final DeviceEntityAbstract emptyEntity = GenericEmptyDE.empty();
       HubRequestsToApp.streamRequestsToApp.sink
           .add(emptyEntity.toInfrastructure());
+      return;
     }
+
+    /// The delay fix this issue in gRPC for some reason
+    /// https://github.com/grpc/grpc-dart/issues/558
+    allRooms.map((String id, RoomEntity d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
+    });
+
+    allDevices.map((String id, DeviceEntityAbstract d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
+    });
   }
 
   /// Trigger to send all scenes from hub to app using the

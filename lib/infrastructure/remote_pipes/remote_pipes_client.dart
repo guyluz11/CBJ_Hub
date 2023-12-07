@@ -27,7 +27,7 @@ class RemotePipesClient {
       response = stub!.hubTransferEntities(
         /// Transfer all requests from hub to the remote pipes->app
         HubRequestsToApp.streamRequestsToApp
-            .map(DeviceHelperMethods.dynamicToRequestsAndStatusFromHub)
+            .map(DeviceHelperMethods().dynamicToRequestsAndStatusFromHub)
             .handleError((error) {
           logger.e('Stream have error $error');
         }),

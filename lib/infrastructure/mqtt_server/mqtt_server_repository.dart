@@ -49,7 +49,7 @@ class MqttServerRepository extends IMqttServerRepository {
   static Future<MqttServerClient>? clientFuture;
 
   @override
-  Future<void> asyncConstractor() async {
+  Future<void> asyncConstructor() async {
     clientFuture = connect();
     await clientFuture;
   }
@@ -411,9 +411,8 @@ class MqttServerRepository extends IMqttServerRepository {
     bool? gotFromApp,
   }) async {
     if (entityFromTheApp is DeviceEntityAbstract) {
-      final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
       final Map<String, DeviceEntityAbstract> allDevices =
-          await savedDevicesRepo.getAllDevices();
+          await ISavedDevicesRepo.instance.getAllDevices();
       final DeviceEntityAbstract? savedDeviceEntity =
           allDevices[entityFromTheApp.getDeviceId()];
 
