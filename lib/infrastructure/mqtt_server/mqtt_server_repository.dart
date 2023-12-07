@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cbj_hub/application/connector/connector.dart';
-import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
@@ -17,6 +16,7 @@ import 'package:cbj_integrations_controller/infrastructure/generic_devices/gener
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_switch_device/generic_switch_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 // ignore: implementation_imports
@@ -49,7 +49,7 @@ class MqttServerRepository extends IMqttServerRepository {
   static Future<MqttServerClient>? clientFuture;
 
   @override
-  Future<void> asyncConstractor() async {
+  Future<void> asyncConstructor() async {
     clientFuture = connect();
     await clientFuture;
   }
@@ -411,9 +411,8 @@ class MqttServerRepository extends IMqttServerRepository {
     bool? gotFromApp,
   }) async {
     if (entityFromTheApp is DeviceEntityAbstract) {
-      final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
       final Map<String, DeviceEntityAbstract> allDevices =
-          await savedDevicesRepo.getAllDevices();
+          await ISavedDevicesRepo.instance.getAllDevices();
       final DeviceEntityAbstract? savedDeviceEntity =
           allDevices[entityFromTheApp.getDeviceId()];
 
