@@ -1,37 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cbj_hub/domain/app_communication/i_app_communication_repository.dart';
 import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
 import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_client.dart';
-import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_dtos.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:cbj_integrations_controller/domain/app_communication/i_app_communication_repository.dart';
 import 'package:cbj_integrations_controller/domain/core/value_objects.dart';
-import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
 import 'package:cbj_integrations_controller/domain/room/room_entity.dart';
 import 'package:cbj_integrations_controller/domain/rooms/i_saved_rooms_repo.dart';
-import 'package:cbj_integrations_controller/domain/routine/i_routine_cbj_repository.dart';
-import 'package:cbj_integrations_controller/domain/routine/routine_cbj_entity.dart';
 import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_integrations_controller/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_integrations_controller/domain/scene/value_objects_scene_cbj.dart';
-import 'package:cbj_integrations_controller/domain/vendors/login_abstract/login_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/value_objects_core.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_empty_device/generic_empty_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_vendors_login/vendor_helper.dart';
-import 'package:cbj_integrations_controller/infrastructure/room/room_entity_dtos.dart';
-import 'package:cbj_integrations_controller/infrastructure/routines/routine_cbj_dtos.dart';
-import 'package:cbj_integrations_controller/infrastructure/scenes/scene_cbj_dtos.dart';
+import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
 import 'package:cbj_integrations_controller/injection.dart';
 import 'package:grpc/grpc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mqtt_client/mqtt_client.dart';
-import 'package:rxdart/rxdart.dart';
 
 class AppCommunicationRepository extends IAppCommunicationRepository {
   AppCommunicationRepository() {
@@ -97,7 +87,8 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     dataToSend.listen((MqttPublishMessage event) async {
       logger.i('Got hub requests to app');
 
-      (await ISavedDevicesRepo.instance.getAllDevices())
+      ISavedDevicesRepo.instance
+          .getAllDevices()
           .forEach((String id, deviceEntityToSend) {
         final DeviceEntityDtoAbstract deviceDtoAbstract =
             DeviceHelper.convertDomainToDto(deviceEntityToSend);
@@ -117,102 +108,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     required String requestUrl,
     required bool isRemotePipes,
   }) async {
-    request.listen((event) async {
-      logger.i('Got From App');
-
-      if (event.sendingType == SendingType.entityType) {
-        final DeviceEntityAbstract deviceEntityFromApp =
-            DeviceHelper.convertJsonStringToDomain(event.allRemoteCommands);
-
-        deviceEntityFromApp.entityStateGRPC =
-            EntityState(EntityStateGRPC.waitingInComp.toString());
-
-        IMqttServerRepository.instance.postToHubMqtt(
-          entityFromTheApp: deviceEntityFromApp,
-          gotFromApp: true,
-        );
-      } else if (event.sendingType == SendingType.roomType) {
-        final RoomEntity roomEntityFromApp = RoomEntityDtos.fromJson(
-          jsonDecode(event.allRemoteCommands) as Map<String, dynamic>,
-        ).toDomain();
-
-        ISavedRoomsRepo.instance.saveAndActiveRoomToDb(
-          roomEntity: roomEntityFromApp,
-        );
-
-        IMqttServerRepository.instance.postToHubMqtt(
-          entityFromTheApp: roomEntityFromApp,
-          gotFromApp: true,
-        );
-      } else if (event.sendingType == SendingType.vendorLoginType) {
-        final LoginEntityAbstract loginEntityFromApp =
-            VendorHelper.convertJsonStringToDomain(event.allRemoteCommands);
-
-        ISavedDevicesRepo.instance
-            .saveAndActivateVendorLoginCredentialsDomainToDb(
-          loginEntity: loginEntityFromApp,
-        );
-      } else if (event.sendingType == SendingType.firstConnection) {
-        AppCommunicationRepository.sendAllRoomsFromHubRequestsStream();
-        AppCommunicationRepository.sendAllDevicesFromHubRequestsStream();
-        AppCommunicationRepository.sendAllScenesFromHubRequestsStream();
-      } else if (event.sendingType == SendingType.remotePipesInformation) {
-        final Map<String, dynamic> jsonDecoded =
-            jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
-        // TODO: Fix after new cbj_integrations_controller
-        // final RemotePipesEntity remotePipes =
-        RemotePipesDtos.fromJson(jsonDecoded).toDomain();
-        // ISavedDevicesRepo.instance
-        //     .saveAndActivateRemotePipesDomainToDb(remotePipes: remotePipes);
-      } else if (event.sendingType == SendingType.sceneType) {
-        final Map<String, dynamic> jsonSceneFromJsonString =
-            jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
-
-        final SceneCbjEntity sceneCbj =
-            SceneCbjDtos.fromJson(jsonSceneFromJsonString).toDomain();
-
-        final String sceneStateGrpcTemp =
-            sceneCbj.entityStateGRPC.getOrCrash()!;
-
-        // sceneCbj.copyWith(
-        //   entityStateGRPC: SceneCbjDeviceStateGRPC(
-        //     EntityStateGRPC.waitingInComp.toString(),
-        //   ),
-        // );
-
-        if (sceneStateGrpcTemp == EntityStateGRPC.addingNewScene.toString()) {
-          ISceneCbjRepository.instance.addNewSceneAndSaveInDb(sceneCbj);
-        } else {
-          ISceneCbjRepository.instance.activateScene(sceneCbj);
-        }
-      } else if (event.sendingType == SendingType.routineType) {
-        final Map<String, dynamic> jsonRoutineFromJsonString =
-            jsonDecode(event.allRemoteCommands) as Map<String, dynamic>;
-
-        final RoutineCbjEntity routineCbj =
-            RoutineCbjDtos.fromJson(jsonRoutineFromJsonString).toDomain();
-
-        final String routineStateGrpcTemp =
-            routineCbj.entityStateGRPC.getOrCrash()!;
-
-        // routineCbj.copyWith(
-        //   entityStateGRPC: RoutineCbjDeviceStateGRPC(
-        //     EntityStateGRPC.waitingInComp.toString(),
-        //   ),
-        // );
-
-        if (routineStateGrpcTemp ==
-            EntityStateGRPC.addingNewRoutine.toString()) {
-          IRoutineCbjRepository.instance
-              .addNewRoutineAndSaveItToLocalDb(routineCbj);
-        } else {
-          // For a way to active it manually
-          // IRoutineCbjRepository.instance.activateRoutine(routineCbj);
-        }
-      } else {
-        logger.w('Request from app does not support this sending device type');
-      }
-    }).onError((error) {
+    request.listen((event) async {}).onError((error) {
       if (error is GrpcError && error.code == 1) {
         logger.t('Client have disconnected');
       } else if (error is GrpcError && error.code == 14) {
@@ -240,12 +136,12 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
             '$error',
           );
           startRemotePipesWhenThereIsConnectionToWww(requestUrl);
-        } else {
-          logger.e(
-            'Un none errno number\n'
-            '$error',
-          );
+          return;
         }
+        logger.e(
+          'Un none errno number\n'
+          '$error',
+        );
       } else {
         if (error is GrpcError &&
             isRemotePipes &&
@@ -253,61 +149,66 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
             !error.message!.contains('errorCode: 0')) {
           logger.i('Client stream got terminated to create new one\n$error');
           startRemotePipesWhenThereIsConnectionToWww(requestUrl);
-        } else {
-          logger.e('Client stream error\n$error');
+          return;
         }
+        logger.e('Client stream error\n$error');
       }
     });
   }
 
   /// Trigger to send all rooms from hub to app using the
   /// HubRequestsToApp stream
-  static Future<void> sendAllRoomsFromHubRequestsStream() async {
+  @override
+  Future<void> sendAllRoomsFromHubRequestsStream() async {
     final Map<String, RoomEntity> allRooms =
-        await ISavedRoomsRepo.instance.getAllRooms();
+        ISavedRoomsRepo.instance.getAllRooms();
 
-    if (allRooms.isNotEmpty) {
-      allRooms.map((String id, RoomEntity d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-        return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
-      });
-    } else {
-      logger.w("Can't find rooms in the  local DB");
+    if (allRooms.isEmpty) {
+      logger.w("Can't find rooms in the local DB");
+
+      return;
     }
+    allRooms.map((String id, RoomEntity d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
+    });
   }
 
   /// Trigger to send all devices from hub to app using the
   /// HubRequestsToApp stream
-  static Future<void> sendAllDevicesFromHubRequestsStream() async {
+  @override
+  Future<void> sendAllDevicesFromHubRequestsStream() async {
     final Map<String, DeviceEntityAbstract> allDevices =
-        await ISavedDevicesRepo.instance.getAllDevices();
+        ISavedDevicesRepo.instance.getAllDevices();
 
     final Map<String, RoomEntity> allRooms =
-        await ISavedRoomsRepo.instance.getAllRooms();
+        ISavedRoomsRepo.instance.getAllRooms();
 
-    if (allRooms.isNotEmpty) {
-      /// The delay fix this issue in gRPC for some reason
-      /// https://github.com/grpc/grpc-dart/issues/558
-      allRooms.map((String id, RoomEntity d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-        return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
-      });
-
-      allDevices.map((String id, DeviceEntityAbstract d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-        return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
-      });
-    } else {
+    if (allRooms.isEmpty) {
       logger.w("Can't find smart devices in the local DB, sending empty");
       final DeviceEntityAbstract emptyEntity = GenericEmptyDE.empty();
       HubRequestsToApp.streamRequestsToApp.sink
           .add(emptyEntity.toInfrastructure());
+      return;
     }
+
+    /// The delay fix this issue in gRPC for some reason
+    /// https://github.com/grpc/grpc-dart/issues/558
+    allRooms.map((String id, RoomEntity d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
+    });
+
+    allDevices.map((String id, DeviceEntityAbstract d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
+    });
   }
 
   /// Trigger to send all scenes from hub to app using the
   /// HubRequestsToApp stream
-  static Future<void> sendAllScenesFromHubRequestsStream() async {
+  @override
+  Future<void> sendAllScenesFromHubRequestsStream() async {
     final Map<String, SceneCbjEntity> allScenes =
         await ISceneCbjRepository.instance.getAllScenesAsMap();
 
@@ -340,11 +241,4 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
           .add(emptyScene.toInfrastructure());
     }
   }
-}
-
-/// Connect all streams from the internet devices into one stream that will be
-/// send to mqtt broker to update devices states
-class HubRequestsToApp {
-  static BehaviorSubject<dynamic> streamRequestsToApp =
-      BehaviorSubject<dynamic>();
 }

@@ -12,6 +12,7 @@ dependencies:
   # Contains utility classes in the style of dart:async to work with asynchronous computations.
   async: ^2.11.0
   cbj_integrations_controller:
+#    path: ../cbj_integrations_controller
     git: https://github.com/CyBear-Jinni/cbj_integrations_controller.git
   # Package to create, convert, alter, and compare colors in a variety of colorspaces.
   color: ^3.0.0
@@ -50,7 +51,7 @@ dependencies:
   # Service discovery over multicast DNS (mDNS), Bonjour, and Avahi.
   multicast_dns: ^0.3.2+4
   # Helps you discover open ports, devices on subnet and more.
-  network_tools: ^4.0.1
+  network_tools: ^4.0.2
   # Provides runtime support for a Dart implementation of protobufs.
   protobuf: ^3.1.0
   # Extends the capabilities of Dart Streams and StreamControllers.
