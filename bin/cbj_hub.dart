@@ -27,5 +27,5 @@ void setInstancesOfRepos(String projectRootDirectoryPath) {
   MqttServerRepository();
   CbjWebServerRepository();
   NodeRedRepository();
-  SharedVariables().projectRootDirectoryPath = projectRootDirectoryPath;
+  SharedVariables().asyncConstructor(projectRootDirectoryPath);
 }

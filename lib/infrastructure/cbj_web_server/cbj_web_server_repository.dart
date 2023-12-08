@@ -30,7 +30,7 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
                 ISavedDevicesRepo.instance;
 
             final Map<String, DeviceEntityAbstract> allDevices =
-                await savedDevicesRepo.getAllDevices();
+                savedDevicesRepo.getAllDevices();
 
             DeviceEntityAbstract? deviceObjectOfDeviceId;
 

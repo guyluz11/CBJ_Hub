@@ -222,7 +222,7 @@ class MqttServerRepository extends IMqttServerRepository {
       final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
       final Map<String, DeviceEntityAbstract> allDevices =
-          await savedDevicesRepo.getAllDevices();
+          savedDevicesRepo.getAllDevices();
 
       for (final DeviceEntityAbstract d in allDevices.values) {
         if (d.getDeviceId() == deviceId) {
@@ -385,7 +385,7 @@ class MqttServerRepository extends IMqttServerRepository {
     final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
     final Map<String, DeviceEntityAbstract> allDevices =
-        await savedDevicesRepo.getAllDevices();
+        savedDevicesRepo.getAllDevices();
 
     DeviceEntityAbstract? deviceObjectOfDeviceId;
 
@@ -412,7 +412,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }) async {
     if (entityFromTheApp is DeviceEntityAbstract) {
       final Map<String, DeviceEntityAbstract> allDevices =
-          await ISavedDevicesRepo.instance.getAllDevices();
+          ISavedDevicesRepo.instance.getAllDevices();
       final DeviceEntityAbstract? savedDeviceEntity =
           allDevices[entityFromTheApp.getDeviceId()];
 

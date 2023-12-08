@@ -68,7 +68,7 @@ class Connector {
     final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
     final Map<String, DeviceEntityAbstract> allDevices =
-        await savedDevicesRepo.getAllDevices();
+        savedDevicesRepo.getAllDevices();
 
     final Map<String, dynamic> devicePropertyAndValues =
         deviceChangeFromMqtt.value;
@@ -110,7 +110,7 @@ class Connector {
           if (property == 'entityStateGRPC' &&
               propertyValueString == EntityStateGRPC.ack.toString()) {
             final Map<String, RoomEntity> rooms =
-                await ISavedRoomsRepo.instance.getAllRooms();
+                ISavedRoomsRepo.instance.getAllRooms();
 
             HubRequestsToApp.streamRequestsToApp.sink
                 .add(savedDeviceWithSameIdAsMqtt.toInfrastructure());
