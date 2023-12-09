@@ -12,13 +12,13 @@ import 'package:cbj_integrations_controller/domain/room/room_entity.dart';
 import 'package:cbj_integrations_controller/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_integrations_controller/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_integrations_controller/domain/scene/value_objects_scene_cbj.dart';
+import 'package:cbj_integrations_controller/infrastructure/core/injection.dart';
 import 'package:cbj_integrations_controller/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_empty_device/generic_empty_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
-import 'package:cbj_integrations_controller/injection.dart';
 import 'package:grpc/grpc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -82,7 +82,6 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     startRemotePipesConnection(remotePipesDomain);
   }
 
-  @override
   void sendToApp(Stream<MqttPublishMessage> dataToSend) {
     dataToSend.listen((MqttPublishMessage event) async {
       logger.i('Got hub requests to app');
