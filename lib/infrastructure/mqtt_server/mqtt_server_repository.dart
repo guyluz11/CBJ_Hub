@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:cbj_hub/application/connector/connector.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/domain/connector.dart';
+import 'package:cbj_integrations_controller/domain/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/value_objects_core.dart';
@@ -194,7 +194,7 @@ class MqttServerRepository extends IMqttServerRepository {
         return;
       }
 
-      Connector.updateDevicesFromMqttDeviceChange(
+      Connector().updateDevicesFromMqttDeviceChange(
         MapEntry(
           deviceId,
           {deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload},
@@ -296,7 +296,6 @@ class MqttServerRepository extends IMqttServerRepository {
   Future<List<ChangeRecord>?> readingFromMqttOnce(String topic) async {
     final MqttClientTopicFilter mqttClientTopic =
         MqttClientTopicFilter(topic, client.updates);
-    // final Stream<List<MqttReceivedMessage<MqttMessage?>>> myValueStream =
     mqttClientTopic.updates.asBroadcastStream();
 
     // myValueStream.listen((event) {
@@ -524,8 +523,7 @@ class MqttServerRepository extends IMqttServerRepository {
         deviceFromApp.value.entityStateGRPC =
             EntityState(entityFromTheApp.entityStateGRPC.getOrCrash());
       }
-
-      ConnectorStreamToMqtt.toMqttController.sink.add(deviceFromApp);
+      Connector().fromMqtt(deviceFromApp);
     } else {
       logger.w(
         'Entity from app type ${entityFromTheApp.runtimeType} not '
@@ -553,7 +551,7 @@ class MqttServerRepository extends IMqttServerRepository {
       entityFromTheHub,
     );
 
-    ConnectorStreamToMqtt.toMqttController.sink.add(deviceInMapEntry);
+    Connector().fromMqtt(deviceInMapEntry);
 
     // } else {
     //   logger.w(

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cbj_hub/domain/cbj_web_server/i_cbj_web_server_repository.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
 

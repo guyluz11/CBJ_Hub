@@ -1,4 +1,5 @@
-import 'package:cbj_hub/application/connector/connector.dart';
+import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
+import 'package:cbj_integrations_controller/domain/connector.dart';
 import 'package:cbj_integrations_controller/initialize_integrations_controller.dart';
 
 class BootUp {
@@ -8,6 +9,9 @@ class BootUp {
 
   Future<void> setup() async {
     await setupIntegrationsController();
-    Connector.startConnector();
+    Connector().startConnector();
+    Future.delayed(const Duration(milliseconds: 3000)).whenComplete(() {
+      AppCommunicationRepository();
+    });
   }
 }
