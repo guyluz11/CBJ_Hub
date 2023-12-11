@@ -185,8 +185,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
 
     if (allRooms.isEmpty) {
       logger.w("Can't find smart devices in the local DB, sending empty");
-      final DeviceEntityAbstract emptyEntity =
-          GenericGenericUnsupportedDE.empty();
+      final DeviceEntityAbstract emptyEntity = GenericUnsupportedDE.empty();
       HubRequestsToApp.streamRequestsToApp.sink
           .add(emptyEntity.toInfrastructure());
       return;
