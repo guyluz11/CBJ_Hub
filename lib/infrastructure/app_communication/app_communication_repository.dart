@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
-import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_client.dart';
+import 'package:cbj_hub/infrastructure/remote_pipes_client.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/domain/core/value_objects.dart';
 import 'package:cbj_integrations_controller/domain/i_app_communication_repository.dart';
