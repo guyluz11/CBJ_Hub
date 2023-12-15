@@ -15,9 +15,9 @@ import 'package:cbj_integrations_controller/domain/scene/value_objects_scene_cbj
 import 'package:cbj_integrations_controller/infrastructure/core/injection.dart';
 import 'package:cbj_integrations_controller/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_empty_device/generic_empty_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_empty_entity/generic_empty_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
 import 'package:grpc/grpc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';

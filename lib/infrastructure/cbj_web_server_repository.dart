@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:cbj_hub/domain/i_cbj_web_server_repository.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_abstract.dart';
 
 /// A cbj web server to interact with get current state requests from mqtt as
 /// well as website to change devices state locally on the network without
