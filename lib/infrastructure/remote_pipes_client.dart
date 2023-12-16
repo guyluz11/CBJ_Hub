@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cbj_integrations_controller/domain/i_app_communication_repository.dart';
 import 'package:cbj_integrations_controller/infrastructure/core/utils.dart';
-import 'package:cbj_integrations_controller/infrastructure/devices/helper_methods/device_helper_methods.dart';
+import 'package:cbj_integrations_controller/infrastructure/devices/device_helper/device_helper_methods.dart';
 import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
 import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
 import 'package:grpc/grpc.dart';
