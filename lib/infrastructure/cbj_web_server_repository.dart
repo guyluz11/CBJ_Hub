@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:cbj_hub/domain/i_cbj_web_server_repository.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_base.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_base.dart';
 
 /// A cbj web server to interact with get current state requests from mqtt as
 /// well as website to change devices state locally on the network without
@@ -29,12 +29,12 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
             final ISavedDevicesRepo savedDevicesRepo =
                 ISavedDevicesRepo.instance;
 
-            final Map<String, DeviceEntityAbstract> allDevices =
+            final Map<String, DeviceEntityBase> allDevices =
                 savedDevicesRepo.getAllDevices();
 
-            DeviceEntityAbstract? deviceObjectOfDeviceId;
+            DeviceEntityBase? deviceObjectOfDeviceId;
 
-            for (final DeviceEntityAbstract d in allDevices.values) {
+            for (final DeviceEntityBase d in allDevices.values) {
               if (d.getDeviceId() == deviceId) {
                 deviceObjectOfDeviceId = d;
                 break;
@@ -42,7 +42,7 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
             }
             if (deviceObjectOfDeviceId != null) {
               final String requestedDeviceProperty = pathArgs[2];
-              final DeviceEntityDtoAbstract deviceEntityDtoAbstract =
+              final DeviceEntityDtoBase deviceEntityDtoAbstract =
                   deviceObjectOfDeviceId.toInfrastructure();
               final Map<String, dynamic> deviceEntityJson =
                   deviceEntityDtoAbstract.toJson();

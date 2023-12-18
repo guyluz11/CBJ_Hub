@@ -4,8 +4,8 @@ import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/domain/connector.dart';
 import 'package:cbj_integrations_controller/domain/i_mqtt_server_repository.dart';
 import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_abstract.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_base.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_base.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/value_objects_core.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_blinds_entity/generic_blinds_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_boiler_entity/generic_boiler_entity.dart';
@@ -221,10 +221,10 @@ class MqttServerRepository extends IMqttServerRepository {
 
       final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
-      final Map<String, DeviceEntityAbstract> allDevices =
+      final Map<String, DeviceEntityBase> allDevices =
           savedDevicesRepo.getAllDevices();
 
-      for (final DeviceEntityAbstract d in allDevices.values) {
+      for (final DeviceEntityBase d in allDevices.values) {
         if (d.getDeviceId() == deviceId) {
           final Map<String, dynamic> deviceAsJson =
               d.toInfrastructure().toJson();
@@ -251,8 +251,8 @@ class MqttServerRepository extends IMqttServerRepository {
             } else {
               deviceAsJson[property] = propertyValueString;
             }
-            final DeviceEntityDtoAbstract savedDeviceWithSameIdAsMqtt =
-                DeviceEntityDtoAbstract.fromJson(deviceAsJson);
+            final DeviceEntityDtoBase savedDeviceWithSameIdAsMqtt =
+                DeviceEntityDtoBase.fromJson(deviceAsJson);
 
             HubRequestsToApp.streamRequestsToApp.sink
                 .add(savedDeviceWithSameIdAsMqtt);
@@ -275,8 +275,8 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> publishDeviceEntity(DeviceEntityAbstract deviceEntity) async {
-    final DeviceEntityDtoAbstract deviceAsDto = deviceEntity.toInfrastructure();
+  Future<void> publishDeviceEntity(DeviceEntityBase deviceEntity) async {
+    final DeviceEntityDtoBase deviceAsDto = deviceEntity.toInfrastructure();
 
     final Map<String, String> devicePropertiesAsMqttTopicsAndValues =
         deviceEntityPropertiesToListOfTopicAndValue(deviceAsDto);
@@ -341,7 +341,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   /// Convert device entity properties to mqtt topic and massage
   Map<String, String> deviceEntityPropertiesToListOfTopicAndValue(
-    DeviceEntityDtoAbstract deviceEntity,
+    DeviceEntityDtoBase deviceEntity,
   ) {
     final Map<String, dynamic> json = deviceEntity.toJson();
     final String deviceId = json['id'].toString();
@@ -364,7 +364,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   /// Get saved device dto from mqtt by device id
-  Future<DeviceEntityDtoAbstract> getDeviceDtoFromMqtt(
+  Future<DeviceEntityDtoBase> getDeviceDtoFromMqtt(
     String deviceId, {
     String? deviceComponentKey,
   }) async {
@@ -376,19 +376,19 @@ class MqttServerRepository extends IMqttServerRepository {
     final List<ChangeRecord>? a =
         await readingFromMqttOnce('$pathToDeviceTopic/type');
     logger.t('This is a $a');
-    return DeviceEntityDtoAbstract();
+    return DeviceEntityDtoBase();
   }
 
   /// Resend the device object throw mqtt
   Future<void> findDeviceAndResendItToMqtt(String deviceId) async {
     final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
-    final Map<String, DeviceEntityAbstract> allDevices =
+    final Map<String, DeviceEntityBase> allDevices =
         savedDevicesRepo.getAllDevices();
 
-    DeviceEntityAbstract? deviceObjectOfDeviceId;
+    DeviceEntityBase? deviceObjectOfDeviceId;
 
-    for (final DeviceEntityAbstract d in allDevices.values) {
+    for (final DeviceEntityBase d in allDevices.values) {
       if (d.getDeviceId() == deviceId) {
         deviceObjectOfDeviceId = d;
         break;
@@ -409,10 +409,10 @@ class MqttServerRepository extends IMqttServerRepository {
     dynamic entityFromTheApp,
     bool? gotFromApp,
   }) async {
-    if (entityFromTheApp is DeviceEntityAbstract) {
-      final Map<String, DeviceEntityAbstract> allDevices =
+    if (entityFromTheApp is DeviceEntityBase) {
+      final Map<String, DeviceEntityBase> allDevices =
           ISavedDevicesRepo.instance.getAllDevices();
-      final DeviceEntityAbstract? savedDeviceEntity =
+      final DeviceEntityBase? savedDeviceEntity =
           allDevices[entityFromTheApp.getDeviceId()];
 
       if (savedDeviceEntity == null) {
@@ -420,7 +420,7 @@ class MqttServerRepository extends IMqttServerRepository {
         return;
       }
 
-      MapEntry<String, DeviceEntityAbstract> deviceFromApp;
+      MapEntry<String, DeviceEntityBase> deviceFromApp;
 
       if (savedDeviceEntity is GenericLightDE &&
           entityFromTheApp is GenericLightDE) {
@@ -534,7 +534,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   @override
   Future<void> postToAppMqtt({
-    required DeviceEntityAbstract entityFromTheHub,
+    required DeviceEntityBase entityFromTheHub,
   }) async {
     // if (entityFromTheHub is Map<String, dynamic>) {
     // if (entityFromTheHub['entityStateGRPC'] !=
@@ -563,7 +563,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   @override
   Future<void> postSmartDeviceToAppMqtt({
-    required DeviceEntityAbstract entityFromTheHub,
+    required DeviceEntityBase entityFromTheHub,
   }) async {
     postToAppMqtt(entityFromTheHub: entityFromTheHub);
   }
