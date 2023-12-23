@@ -2,23 +2,23 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
-import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_client.dart';
+import 'package:cbj_hub/infrastructure/remote_pipes_client.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:cbj_integrations_controller/domain/app_communication/i_app_communication_repository.dart';
 import 'package:cbj_integrations_controller/domain/core/value_objects.dart';
+import 'package:cbj_integrations_controller/domain/i_app_communication_repository.dart';
+import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/domain/i_saved_rooms_repo.dart';
 import 'package:cbj_integrations_controller/domain/room/room_entity.dart';
-import 'package:cbj_integrations_controller/domain/rooms/i_saved_rooms_repo.dart';
-import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
 import 'package:cbj_integrations_controller/domain/scene/i_scene_cbj_repository.dart';
 import 'package:cbj_integrations_controller/domain/scene/scene_cbj_entity.dart';
 import 'package:cbj_integrations_controller/domain/scene/value_objects_scene_cbj.dart';
+import 'package:cbj_integrations_controller/infrastructure/core/injection.dart';
 import 'package:cbj_integrations_controller/infrastructure/devices/device_helper/device_helper.dart';
 import 'package:cbj_integrations_controller/infrastructure/gen/cbj_hub_server/protoc_as_dart/cbj_hub_server.pbgrpc.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_empty_device/generic_empty_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_base.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_base.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_empty_entity/generic_empty_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
-import 'package:cbj_integrations_controller/injection.dart';
 import 'package:grpc/grpc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -82,7 +82,6 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     startRemotePipesConnection(remotePipesDomain);
   }
 
-  @override
   void sendToApp(Stream<MqttPublishMessage> dataToSend) {
     dataToSend.listen((MqttPublishMessage event) async {
       logger.i('Got hub requests to app');
@@ -90,7 +89,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
       ISavedDevicesRepo.instance
           .getAllDevices()
           .forEach((String id, deviceEntityToSend) {
-        final DeviceEntityDtoAbstract deviceDtoAbstract =
+        final DeviceEntityDtoBase deviceDtoAbstract =
             DeviceHelper.convertDomainToDto(deviceEntityToSend);
         HubRequestsToApp.streamRequestsToApp.sink.add(deviceDtoAbstract);
       });
@@ -178,7 +177,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// HubRequestsToApp stream
   @override
   Future<void> sendAllDevicesFromHubRequestsStream() async {
-    final Map<String, DeviceEntityAbstract> allDevices =
+    final Map<String, DeviceEntityBase> allDevices =
         ISavedDevicesRepo.instance.getAllDevices();
 
     final Map<String, RoomEntity> allRooms =
@@ -186,7 +185,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
 
     if (allRooms.isEmpty) {
       logger.w("Can't find smart devices in the local DB, sending empty");
-      final DeviceEntityAbstract emptyEntity = GenericEmptyDE.empty();
+      final DeviceEntityBase emptyEntity = GenericUnsupportedDE.empty();
       HubRequestsToApp.streamRequestsToApp.sink
           .add(emptyEntity.toInfrastructure());
       return;
@@ -199,7 +198,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
       return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
     });
 
-    allDevices.map((String id, DeviceEntityAbstract d) {
+    allDevices.map((String id, DeviceEntityBase d) {
       HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
       return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
     });

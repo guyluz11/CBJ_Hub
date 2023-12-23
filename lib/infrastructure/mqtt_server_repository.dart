@@ -1,21 +1,21 @@
 import 'dart:convert';
 
-import 'package:cbj_hub/application/connector/connector.dart';
 import 'package:cbj_hub/utils.dart';
-import 'package:cbj_integrations_controller/domain/mqtt_server/i_mqtt_server_repository.dart';
-import 'package:cbj_integrations_controller/domain/saved_devices/i_saved_devices_repo.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/device_entity_dto_abstract.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/abstract_device/value_objects_core.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_blinds_device/generic_blinds_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_boiler_device/generic_boiler_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_dimmable_light_device/generic_dimmable_light_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_light_device/generic_light_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_rgbw_light_device/generic_rgbw_light_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_computer_device/generic_smart_computer_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_plug_device/generic_smart_plug_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_smart_tv/generic_smart_tv_entity.dart';
-import 'package:cbj_integrations_controller/infrastructure/generic_devices/generic_switch_device/generic_switch_entity.dart';
+import 'package:cbj_integrations_controller/domain/connector.dart';
+import 'package:cbj_integrations_controller/domain/i_mqtt_server_repository.dart';
+import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_base.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/device_entity_dto_base.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/abstract_entity/value_objects_core.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_blinds_entity/generic_blinds_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_boiler_entity/generic_boiler_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_dimmable_light_entity/generic_dimmable_light_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_light_entity/generic_light_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_rgbw_light_entity/generic_rgbw_light_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_smart_computer_entity/generic_smart_computer_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_smart_plug_entity/generic_smart_plug_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_smart_tv_entity/generic_smart_tv_entity.dart';
+import 'package:cbj_integrations_controller/infrastructure/generic_entities/generic_switch_entity/generic_switch_entity.dart';
 import 'package:cbj_integrations_controller/infrastructure/hub_client/hub_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -194,7 +194,7 @@ class MqttServerRepository extends IMqttServerRepository {
         return;
       }
 
-      Connector.updateDevicesFromMqttDeviceChange(
+      Connector().updateDevicesFromMqttDeviceChange(
         MapEntry(
           deviceId,
           {deviceDeviceTypeThatChanged: mqttPublishMessage[0].payload},
@@ -221,11 +221,11 @@ class MqttServerRepository extends IMqttServerRepository {
 
       final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
-      final Map<String, DeviceEntityAbstract> allDevices =
-          await savedDevicesRepo.getAllDevices();
+      final Map<String, DeviceEntityBase> allDevices =
+          savedDevicesRepo.getAllDevices();
 
-      for (final DeviceEntityAbstract d in allDevices.values) {
-        if (d.getDeviceId() == deviceId) {
+      for (final DeviceEntityBase d in allDevices.values) {
+        if (d.getCbjDeviceId == deviceId) {
           final Map<String, dynamic> deviceAsJson =
               d.toInfrastructure().toJson();
 
@@ -251,8 +251,8 @@ class MqttServerRepository extends IMqttServerRepository {
             } else {
               deviceAsJson[property] = propertyValueString;
             }
-            final DeviceEntityDtoAbstract savedDeviceWithSameIdAsMqtt =
-                DeviceEntityDtoAbstract.fromJson(deviceAsJson);
+            final DeviceEntityDtoBase savedDeviceWithSameIdAsMqtt =
+                DeviceEntityDtoBase.fromJson(deviceAsJson);
 
             HubRequestsToApp.streamRequestsToApp.sink
                 .add(savedDeviceWithSameIdAsMqtt);
@@ -275,8 +275,8 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> publishDeviceEntity(DeviceEntityAbstract deviceEntity) async {
-    final DeviceEntityDtoAbstract deviceAsDto = deviceEntity.toInfrastructure();
+  Future<void> publishDeviceEntity(DeviceEntityBase deviceEntity) async {
+    final DeviceEntityDtoBase deviceAsDto = deviceEntity.toInfrastructure();
 
     final Map<String, String> devicePropertiesAsMqttTopicsAndValues =
         deviceEntityPropertiesToListOfTopicAndValue(deviceAsDto);
@@ -296,7 +296,6 @@ class MqttServerRepository extends IMqttServerRepository {
   Future<List<ChangeRecord>?> readingFromMqttOnce(String topic) async {
     final MqttClientTopicFilter mqttClientTopic =
         MqttClientTopicFilter(topic, client.updates);
-    // final Stream<List<MqttReceivedMessage<MqttMessage?>>> myValueStream =
     mqttClientTopic.updates.asBroadcastStream();
 
     // myValueStream.listen((event) {
@@ -342,7 +341,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   /// Convert device entity properties to mqtt topic and massage
   Map<String, String> deviceEntityPropertiesToListOfTopicAndValue(
-    DeviceEntityDtoAbstract deviceEntity,
+    DeviceEntityDtoBase deviceEntity,
   ) {
     final Map<String, dynamic> json = deviceEntity.toJson();
     final String deviceId = json['id'].toString();
@@ -365,7 +364,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   /// Get saved device dto from mqtt by device id
-  Future<DeviceEntityDtoAbstract> getDeviceDtoFromMqtt(
+  Future<DeviceEntityDtoBase> getDeviceDtoFromMqtt(
     String deviceId, {
     String? deviceComponentKey,
   }) async {
@@ -377,20 +376,20 @@ class MqttServerRepository extends IMqttServerRepository {
     final List<ChangeRecord>? a =
         await readingFromMqttOnce('$pathToDeviceTopic/type');
     logger.t('This is a $a');
-    return DeviceEntityDtoAbstract();
+    return DeviceEntityDtoBase();
   }
 
   /// Resend the device object throw mqtt
   Future<void> findDeviceAndResendItToMqtt(String deviceId) async {
     final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
-    final Map<String, DeviceEntityAbstract> allDevices =
-        await savedDevicesRepo.getAllDevices();
+    final Map<String, DeviceEntityBase> allDevices =
+        savedDevicesRepo.getAllDevices();
 
-    DeviceEntityAbstract? deviceObjectOfDeviceId;
+    DeviceEntityBase? deviceObjectOfDeviceId;
 
-    for (final DeviceEntityAbstract d in allDevices.values) {
-      if (d.getDeviceId() == deviceId) {
+    for (final DeviceEntityBase d in allDevices.values) {
+      if (d.getCbjDeviceId == deviceId) {
         deviceObjectOfDeviceId = d;
         break;
       }
@@ -410,18 +409,18 @@ class MqttServerRepository extends IMqttServerRepository {
     dynamic entityFromTheApp,
     bool? gotFromApp,
   }) async {
-    if (entityFromTheApp is DeviceEntityAbstract) {
-      final Map<String, DeviceEntityAbstract> allDevices =
-          await ISavedDevicesRepo.instance.getAllDevices();
-      final DeviceEntityAbstract? savedDeviceEntity =
-          allDevices[entityFromTheApp.getDeviceId()];
+    if (entityFromTheApp is DeviceEntityBase) {
+      final Map<String, DeviceEntityBase> allDevices =
+          ISavedDevicesRepo.instance.getAllDevices();
+      final DeviceEntityBase? savedDeviceEntity =
+          allDevices[entityFromTheApp.getCbjDeviceId];
 
       if (savedDeviceEntity == null) {
         logger.w('Device id does not match existing device');
         return;
       }
 
-      MapEntry<String, DeviceEntityAbstract> deviceFromApp;
+      MapEntry<String, DeviceEntityBase> deviceFromApp;
 
       if (savedDeviceEntity is GenericLightDE &&
           entityFromTheApp is GenericLightDE) {
@@ -524,8 +523,7 @@ class MqttServerRepository extends IMqttServerRepository {
         deviceFromApp.value.entityStateGRPC =
             EntityState(entityFromTheApp.entityStateGRPC.getOrCrash());
       }
-
-      ConnectorStreamToMqtt.toMqttController.sink.add(deviceFromApp);
+      Connector().fromMqtt(deviceFromApp);
     } else {
       logger.w(
         'Entity from app type ${entityFromTheApp.runtimeType} not '
@@ -536,7 +534,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   @override
   Future<void> postToAppMqtt({
-    required DeviceEntityAbstract entityFromTheHub,
+    required DeviceEntityBase entityFromTheHub,
   }) async {
     // if (entityFromTheHub is Map<String, dynamic>) {
     // if (entityFromTheHub['entityStateGRPC'] !=
@@ -553,7 +551,7 @@ class MqttServerRepository extends IMqttServerRepository {
       entityFromTheHub,
     );
 
-    ConnectorStreamToMqtt.toMqttController.sink.add(deviceInMapEntry);
+    Connector().fromMqtt(deviceInMapEntry);
 
     // } else {
     //   logger.w(
@@ -565,7 +563,7 @@ class MqttServerRepository extends IMqttServerRepository {
 
   @override
   Future<void> postSmartDeviceToAppMqtt({
-    required DeviceEntityAbstract entityFromTheHub,
+    required DeviceEntityBase entityFromTheHub,
   }) async {
     postToAppMqtt(entityFromTheHub: entityFromTheHub);
   }
