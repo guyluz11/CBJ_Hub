@@ -225,7 +225,7 @@ class MqttServerRepository extends IMqttServerRepository {
           savedDevicesRepo.getAllDevices();
 
       for (final DeviceEntityBase d in allDevices.values) {
-        if (d.getDeviceId() == deviceId) {
+        if (d.getCbjDeviceId == deviceId) {
           final Map<String, dynamic> deviceAsJson =
               d.toInfrastructure().toJson();
 
@@ -389,7 +389,7 @@ class MqttServerRepository extends IMqttServerRepository {
     DeviceEntityBase? deviceObjectOfDeviceId;
 
     for (final DeviceEntityBase d in allDevices.values) {
-      if (d.getDeviceId() == deviceId) {
+      if (d.getCbjDeviceId == deviceId) {
         deviceObjectOfDeviceId = d;
         break;
       }
@@ -413,7 +413,7 @@ class MqttServerRepository extends IMqttServerRepository {
       final Map<String, DeviceEntityBase> allDevices =
           ISavedDevicesRepo.instance.getAllDevices();
       final DeviceEntityBase? savedDeviceEntity =
-          allDevices[entityFromTheApp.getDeviceId()];
+          allDevices[entityFromTheApp.getCbjDeviceId];
 
       if (savedDeviceEntity == null) {
         logger.w('Device id does not match existing device');

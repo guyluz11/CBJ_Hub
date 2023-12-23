@@ -7,10 +7,9 @@ import 'package:cbj_integrations_controller/infrastructure/core/initialize_integ
 import 'package:cbj_integrations_controller/infrastructure/core/injection.dart';
 import 'package:cbj_integrations_controller/infrastructure/node_red/node_red_repository.dart';
 import 'package:cbj_integrations_controller/infrastructure/shared_variables.dart';
-import 'package:network_tools/network_tools.dart';
 
 Future<void> main(List<String> arguments) async {
-  configureNetworkTools('network_tools_db');
+  // configureNetworkTools('network_tools_db');
 
   setInstancesOfRepos(arguments.firstOrNull ?? Directory.current.path);
   // arguments[0] is the location of the project

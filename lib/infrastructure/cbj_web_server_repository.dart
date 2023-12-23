@@ -35,7 +35,7 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
             DeviceEntityBase? deviceObjectOfDeviceId;
 
             for (final DeviceEntityBase d in allDevices.values) {
-              if (d.getDeviceId() == deviceId) {
+              if (d.getCbjDeviceId == deviceId) {
                 deviceObjectOfDeviceId = d;
                 break;
               }
