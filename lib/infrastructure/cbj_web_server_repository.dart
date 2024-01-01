@@ -24,7 +24,7 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
         final List<String> pathArgs = request.uri.pathSegments;
         if (pathArgs.length >= 3) {
           if (pathArgs[0] == 'Devices') {
-            final String deviceId = pathArgs[1];
+            final String entityId = pathArgs[1];
 
             final ISavedDevicesRepo savedDevicesRepo =
                 ISavedDevicesRepo.instance;
@@ -35,7 +35,7 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
             DeviceEntityBase? deviceObjectOfDeviceId;
 
             for (final DeviceEntityBase d in allDevices.values) {
-              if (d.getCbjDeviceId == deviceId) {
+              if (d.getCbjDeviceId == entityId) {
                 deviceObjectOfDeviceId = d;
                 break;
               }
@@ -56,17 +56,17 @@ class CbjWebServerRepository extends ICbjWebServerRepository {
               }
               if (requestedFielAction != null) {
                 logger.i(
-                  'Web server response of device id $deviceId with property $requestedDeviceProperty is action $requestedFielAction',
+                  'Web server response of device id $entityId with property $requestedDeviceProperty is action $requestedFielAction',
                 );
                 request.response.write(requestedFielAction);
               } else {
                 logger.w(
-                  'Device id $deviceId exist but requested property could not be found',
+                  'Entitey id $entityId exist but requested property could not be found',
                 );
                 request.response.write('null');
               }
             } else {
-              logger.w('Device id $deviceId does not exist');
+              logger.w('Entitey id $entityId does not exist');
               request.response.write('null');
             }
           } else {

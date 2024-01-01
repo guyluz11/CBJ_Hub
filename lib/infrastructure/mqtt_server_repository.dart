@@ -400,7 +400,7 @@ class MqttServerRepository extends IMqttServerRepository {
       );
       postToHubMqtt(entityFromTheApp: deviceObjectOfDeviceId);
     } else {
-      logger.w('Device id does not exist');
+      logger.w('Entity id does not exist');
     }
   }
 
@@ -416,7 +416,7 @@ class MqttServerRepository extends IMqttServerRepository {
           allDevices[entityFromTheApp.getCbjDeviceId];
 
       if (savedDeviceEntity == null) {
-        logger.w('Device id does not match existing device');
+        logger.w('Entity id does not match existing device');
         return;
       }
 
@@ -521,7 +521,7 @@ class MqttServerRepository extends IMqttServerRepository {
       }
       if (gotFromApp != null && gotFromApp == true) {
         deviceFromApp.value.entityStateGRPC =
-            EntityState(entityFromTheApp.entityStateGRPC.getOrCrash());
+            EntityState.state(entityFromTheApp.entityStateGRPC.state);
       }
       Connector().fromMqtt(deviceFromApp);
     } else {

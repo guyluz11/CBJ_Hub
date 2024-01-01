@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
 import 'package:cbj_hub/infrastructure/remote_pipes_client.dart';
 import 'package:cbj_hub/utils.dart';
+import 'package:cbj_integrations_controller/domain/core/request_types.dart';
 import 'package:cbj_integrations_controller/domain/core/value_objects.dart';
 import 'package:cbj_integrations_controller/domain/i_app_communication_repository.dart';
 import 'package:cbj_integrations_controller/domain/i_saved_devices_repo.dart';
@@ -131,7 +132,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         /// Request didn't reached the internet
         else if (!errorMessage.contains('errno = -3')) {
           logger.w(
-            'Device does not have network\n'
+            'Entity does not have network\n'
             '$error',
           );
           startRemotePipesWhenThereIsConnectionToWww(requestUrl);
