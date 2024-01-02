@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:cbj_hub/application/boot_up.dart';
 import 'package:cbj_hub/infrastructure/cbj_web_server_repository.dart';
 import 'package:cbj_hub/infrastructure/mqtt_server_repository.dart';
-import 'package:cbj_integrations_controller/infrastructure/core/initialize_integrations_controller.dart';
-import 'package:cbj_integrations_controller/infrastructure/core/injection.dart';
-import 'package:cbj_integrations_controller/infrastructure/node_red/node_red_repository.dart';
-import 'package:cbj_integrations_controller/infrastructure/shared_variables.dart';
+import 'package:cbj_integrations_controller/integrations_controller.dart';
 
 Future<void> main(List<String> arguments) async {
   // configureNetworkTools('network_tools_db');

@@ -1,5 +1,5 @@
 import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
-import 'package:cbj_integrations_controller/infrastructure/core/initialize_integrations_controller.dart';
+import 'package:cbj_integrations_controller/integrations_controller.dart';
 
 class BootUp {
   BootUp() {
