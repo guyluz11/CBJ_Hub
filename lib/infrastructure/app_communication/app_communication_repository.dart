@@ -149,19 +149,19 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     });
   }
 
-  /// Trigger to send all rooms from hub to app using the
+  /// Trigger to send all areas from hub to app using the
   /// HubRequestsToApp stream
   @override
-  Future<void> sendAllRoomsFromHubRequestsStream() async {
-    // final Map<String, RoomEntity> allRooms =
-    // ISavedRoomsRepo.instance.getAllRooms();
+  Future<void> sendAllAreasFromHubRequestsStream() async {
+    // final Map<String, AreaEntity> allAreas =
+    // ISavedAreasRepo.instance.getAllAreas();
 
-    // if (allRooms.isEmpty) {
-    //   logger.w("Can't find rooms in the local DB");
+    // if (allAreas.isEmpty) {
+    //   logger.w("Can't find areas in the local DB");
 
     //   return;
     // }
-    // allRooms.map((String id, RoomEntity d) {
+    // allAreas.map((String id, AreaEntity d) {
     //   HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
     //   return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
     // });
@@ -174,10 +174,10 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     // final Map<String, DeviceEntityBase> allDevices =
     // ISavedDevicesRepo.instance.getAllDevices();
 
-    // final Map<String, RoomEntity> allRooms =
-    // ISavedRoomsRepo.instance.getAllRooms();
+    // final Map<String, AreaEntity> allAreas =
+    // ISavedAreasRepo.instance.getAllAreas();
 
-    // if (allRooms.isEmpty) {
+    // if (allAreas.isEmpty) {
     //   logger.w("Can't find smart devices in the local DB, sending empty");
     //   final DeviceEntityBase emptyEntity = GenericUnsupportedDE.empty();
     //   HubRequestsToApp.streamRequestsToApp.sink
@@ -187,7 +187,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
 
     // /// The delay fix this issue in gRPC for some reason
     // /// https://github.com/grpc/grpc-dart/issues/558
-    // allRooms.map((String id, RoomEntity d) {
+    // allAreas.map((String id, AreaEntity d) {
     //   HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
     //   return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
     // });
