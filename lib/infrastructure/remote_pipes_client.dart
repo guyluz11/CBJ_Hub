@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 import 'package:grpc/grpc.dart';
 
@@ -24,7 +25,7 @@ class RemotePipesClient {
         HubRequestsToApp.streamRequestsToApp
             .map(DeviceHelperMethods().dynamicToRequestsAndStatusFromHub)
             .handleError((error) {
-          icLogger.e('Stream have error $error');
+          logger.e('Stream have error $error');
         }),
       );
 
@@ -35,7 +36,7 @@ class RemotePipesClient {
         isRemotePipes: true,
       );
     } catch (e) {
-      icLogger.e('Caught error: $e');
+      logger.e('Caught error: $e');
       await channel?.terminate();
     }
   }

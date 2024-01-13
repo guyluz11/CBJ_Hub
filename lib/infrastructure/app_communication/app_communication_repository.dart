@@ -93,7 +93,9 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
     required String requestUrl,
     required bool isRemotePipes,
   }) async {
-    request.listen((event) async {}).onError((error) {
+    request
+        .listen(DeviceHelperMethods().handleClientStatusRequests)
+        .onError((error) {
       if (error is GrpcError && error.code == 1) {
         logger.t('Client have disconnected');
       } else if (error is GrpcError && error.code == 14) {
@@ -145,57 +147,37 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// HubRequestsToApp stream
   @override
   Future<void> sendAllAreasFromHubRequestsStream() async {
-    // final Map<String, AreaEntity> allAreas =
-    // ISavedAreasRepo.instance.getAllAreas();
+    final Map<String, AreaEntity> allAreas = await IcSynchronizer().getAreas();
 
-    // if (allAreas.isEmpty) {
-    //   logger.w("Can't find areas in the local DB");
+    if (allAreas.isEmpty) {
+      logger.w("Can't find areas in the local DB");
 
-    //   return;
-    // }
-    // allAreas.map((String id, AreaEntity d) {
-    //   HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-    //   return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
-    // });
+      return;
+    }
+    allAreas.map((String id, AreaEntity d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
+    });
   }
 
   /// Trigger to send all devices from hub to app using the
   /// HubRequestsToApp stream
   @override
-  Future<void> sendAllDevicesFromHubRequestsStream() async {
-    // final Map<String, DeviceEntityBase> allDevices =
-    // ISavedDevicesRepo.instance.getAllDevices();
+  Future<void> sendAllEntitiesFromHubRequestsStream() async {
+    final Map<String, DeviceEntityBase> allDevices =
+        await IcSynchronizer().getEntities();
 
-    // final Map<String, AreaEntity> allAreas =
-    // ISavedAreasRepo.instance.getAllAreas();
-
-    // if (allAreas.isEmpty) {
-    //   logger.w("Can't find smart devices in the local DB, sending empty");
-    //   final DeviceEntityBase emptyEntity = GenericUnsupportedDE.empty();
-    //   HubRequestsToApp.streamRequestsToApp.sink
-    //       .add(emptyEntity.toInfrastructure());
-    //   return;
-    // }
-
-    // /// The delay fix this issue in gRPC for some reason
-    // /// https://github.com/grpc/grpc-dart/issues/558
-    // allAreas.map((String id, AreaEntity d) {
-    //   HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-    //   return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
-    // });
-
-    // allDevices.map((String id, DeviceEntityBase d) {
-    //   HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
-    //   return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
-    // });
+    allDevices.map((String id, DeviceEntityBase d) {
+      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
+    });
   }
 
   /// Trigger to send all scenes from hub to app using the
   /// HubRequestsToApp stream
   @override
   Future<void> sendAllScenesFromHubRequestsStream() async {
-    final Map<String, SceneCbjEntity> allScenes =
-        await ISceneCbjRepository.instance.getAllScenesAsMap();
+    final Map<String, SceneCbjEntity> allScenes = IcSynchronizer().getScenes();
 
     if (allScenes.isNotEmpty) {
       allScenes.map((String id, SceneCbjEntity d) {
@@ -203,27 +185,28 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
         return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
       });
     } else {
-      logger.w("Can't find any scenes in the local DB, sending empty");
-      final SceneCbjEntity emptyScene = SceneCbjEntity(
-        uniqueId: UniqueId(),
-        name: SceneCbjName('Empty'),
-        backgroundColor: SceneCbjBackgroundColor(000.toString()),
-        image: SceneCbjBackgroundImage(null),
-        iconCodePoint: SceneCbjIconCodePoint(null),
-        automationString: SceneCbjAutomationString(null),
-        nodeRedFlowId: SceneCbjNodeRedFlowId(null),
-        firstNodeId: SceneCbjFirstNodeId(null),
-        lastDateOfExecute: SceneCbjLastDateOfExecute(null),
-        entityStateGRPC:
-            SceneCbjDeviceStateGRPC(EntityStateGRPC.ack.toString()),
-        senderDeviceModel: SceneCbjSenderDeviceModel(null),
-        senderDeviceOs: SceneCbjSenderDeviceOs(null),
-        senderId: SceneCbjSenderId(null),
-        compUuid: SceneCbjCompUuid(null),
-        stateMassage: SceneCbjStateMassage(null),
-      );
-      HubRequestsToApp.streamRequestsToApp.sink
-          .add(emptyScene.toInfrastructure());
+      // logger.w("Can't find any scenes in the local DB, sending empty");
+      // final SceneCbjEntity emptyScene = SceneCbjEntity(
+      //   uniqueId: UniqueId(),
+      //   name: SceneCbjName('Empty'),
+      //   backgroundColor: SceneCbjBackgroundColor(000.toString()),
+      //   image: SceneCbjBackgroundImage(null),
+      //   iconCodePoint: SceneCbjIconCodePoint(null),
+      //   automationString: SceneCbjAutomationString(null),
+      //   nodeRedFlowId: SceneCbjNodeRedFlowId(null),
+      //   firstNodeId: SceneCbjFirstNodeId(null),
+      //   lastDateOfExecute: SceneCbjLastDateOfExecute(null),
+      //   entityStateGRPC:
+      //       SceneCbjDeviceStateGRPC(EntityStateGRPC.ack.toString()),
+      //   senderDeviceModel: SceneCbjSenderDeviceModel(null),
+      //   senderDeviceOs: SceneCbjSenderDeviceOs(null),
+      //   senderId: SceneCbjSenderId(null),
+      //   compUuid: SceneCbjCompUuid(null),
+      //   stateMassage: SceneCbjStateMassage(null),
+      //   actions: [],
+      // );
+      // HubRequestsToApp.streamRequestsToApp.sink
+      // .add(emptyScene.toInfrastructure());
     }
   }
 }
