@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 
-import 'package:cbj_hub/infrastructure/app_communication/hub_app_server.dart';
+import 'package:cbj_hub/infrastructure/hub_server/hub_server.dart';
 import 'package:cbj_hub/infrastructure/remote_pipes_client.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
@@ -9,9 +10,9 @@ import 'package:grpc/grpc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
-class AppCommunicationRepository extends IAppCommunicationRepository {
-  AppCommunicationRepository() {
-    IAppCommunicationRepository.instance = this;
+class HubServerController extends IHubServerController {
+  HubServerController() {
+    IHubServerController.instance = this;
     if (currentEnv == Env.prod) {
       hubPort = 50055;
     } else {
@@ -31,7 +32,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   }
 
   @override
-  Future<void> startRemotePipesConnection(String remotePipesDomain) async {
+  Future startRemotePipesConnection(String remotePipesDomain) async {
     const int remotePipesPort = 50056;
     RemotePipesClient.createStreamWithHub(
       remotePipesDomain,
@@ -54,7 +55,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   }
 
   @override
-  Future<void> startRemotePipesWhenThereIsConnectionToWww(
+  Future startRemotePipesWhenThereIsConnectionToWww(
     String remotePipesDomain,
   ) async {
     while (true) {
@@ -88,7 +89,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   }
 
   @override
-  Future<void> getFromApp({
+  Future getFromApp({
     required Stream<ClientStatusRequests> request,
     required String requestUrl,
     required bool isRemotePipes,
@@ -146,7 +147,7 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// Trigger to send all areas from hub to app using the
   /// HubRequestsToApp stream
   @override
-  Future<void> sendAllAreasFromHubRequestsStream() async {
+  Future sendAllAreasFromHubRequestsStream() async {
     final Map<String, AreaEntity> allAreas = await IcSynchronizer().getAreas();
 
     if (allAreas.isEmpty) {
@@ -155,7 +156,12 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
       return;
     }
     allAreas.map((String id, AreaEntity d) {
-      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      final RequestsAndStatusFromHub request = RequestsAndStatusFromHub(
+        sendingType: SendingType.areaType.name,
+        allRemoteCommands: jsonEncode(d.toInfrastructure().toJson()),
+      );
+
+      HubRequestsToApp.stream.sink.add(request);
       return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
     });
   }
@@ -163,12 +169,17 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// Trigger to send all devices from hub to app using the
   /// HubRequestsToApp stream
   @override
-  Future<void> sendAllEntitiesFromHubRequestsStream() async {
+  Future sendAllEntitiesFromHubRequestsStream() async {
     final Map<String, DeviceEntityBase> allDevices =
         await IcSynchronizer().getEntities();
 
     allDevices.map((String id, DeviceEntityBase d) {
-      HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+      final RequestsAndStatusFromHub request = RequestsAndStatusFromHub(
+        sendingType: SendingType.entityType.name,
+        allRemoteCommands: DeviceHelper.convertDomainToJsonString(d),
+      );
+
+      HubRequestsToApp.stream.sink.add(request);
       return MapEntry(id, DeviceHelper.convertDomainToJsonString(d));
     });
   }
@@ -176,12 +187,16 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
   /// Trigger to send all scenes from hub to app using the
   /// HubRequestsToApp stream
   @override
-  Future<void> sendAllScenesFromHubRequestsStream() async {
+  Future sendAllScenesFromHubRequestsStream() async {
     final Map<String, SceneCbjEntity> allScenes = IcSynchronizer().getScenes();
 
     if (allScenes.isNotEmpty) {
       allScenes.map((String id, SceneCbjEntity d) {
-        HubRequestsToApp.streamRequestsToApp.sink.add(d.toInfrastructure());
+        final RequestsAndStatusFromHub request = RequestsAndStatusFromHub(
+          sendingType: SendingType.sceneType.name,
+          allRemoteCommands: jsonEncode(d.toInfrastructure().toJson()),
+        );
+        HubRequestsToApp.stream.sink.add(request);
         return MapEntry(id, jsonEncode(d.toInfrastructure().toJson()));
       });
     } else {
@@ -208,5 +223,55 @@ class AppCommunicationRepository extends IAppCommunicationRepository {
       // HubRequestsToApp.streamRequestsToApp.sink
       // .add(emptyScene.toInfrastructure());
     }
+  }
+
+  @override
+  Future sendAllEntities() async {
+    final Map<String, DeviceEntityBase> entities =
+        await IcSynchronizer().getEntities();
+
+    final Map<String, String> entityIdEntityAsString = entities.map(
+      (key, value) =>
+          MapEntry(key, DeviceHelper.convertDomainToJsonString(value)),
+    );
+
+    final RequestsAndStatusFromHub request = RequestsAndStatusFromHub(
+      sendingType: SendingType.allEntities.name,
+      allRemoteCommands: jsonEncode(entityIdEntityAsString),
+    );
+    HubRequestsToApp.stream.sink.add(request);
+  }
+
+  @override
+  Future sendAllAreas() async {
+    final HashMap<String, AreaEntity> areas = await IcSynchronizer().getAreas();
+
+    final Map<String, String> entityIdEntityAsString = areas.map(
+      (key, value) =>
+          MapEntry(key, jsonEncode(value.toInfrastructure().toJson())),
+    );
+
+    final RequestsAndStatusFromHub request = RequestsAndStatusFromHub(
+      sendingType: SendingType.allAreas.name,
+      allRemoteCommands: jsonEncode(entityIdEntityAsString),
+    );
+    HubRequestsToApp.stream.sink.add(request);
+  }
+
+  @override
+  Future sendAllScenes() async {
+    final Map<String, DeviceEntityBase> automations =
+        await IcSynchronizer().getEntities();
+
+    final Map<String, String> entityIdEntityAsString = automations.map(
+      (key, value) =>
+          MapEntry(key, jsonEncode(value.toInfrastructure().toJson())),
+    );
+
+    final RequestsAndStatusFromHub request = RequestsAndStatusFromHub(
+      sendingType: SendingType.allScenes.name,
+      allRemoteCommands: jsonEncode(entityIdEntityAsString),
+    );
+    HubRequestsToApp.stream.sink.add(request);
   }
 }

@@ -5,7 +5,7 @@ abstract class ICbjWebServerRepository {
   static late ICbjWebServerRepository instance;
 
   /// Start the web server
-  Future<void> startWebServer();
+  Future startWebServer();
 
   /// Get device state
   void getDeviceState(String id) {}

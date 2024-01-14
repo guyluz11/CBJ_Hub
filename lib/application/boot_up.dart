@@ -1,4 +1,4 @@
-import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
+import 'package:cbj_hub/infrastructure/hub_server/hub_server_controller.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 
 class BootUp {
@@ -6,11 +6,11 @@ class BootUp {
     setup();
   }
 
-  Future<void> setup() async {
+  Future setup() async {
     await setupIntegrationsController();
     // Connector().startConnector();
     Future.delayed(const Duration(milliseconds: 3000)).whenComplete(() {
-      AppCommunicationRepository();
+      HubServerController();
     });
   }
 }

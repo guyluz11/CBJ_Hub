@@ -5,7 +5,7 @@ import 'package:cbj_hub/infrastructure/cbj_web_server_repository.dart';
 import 'package:cbj_hub/infrastructure/mqtt_server_repository.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 
-Future<void> main(List<String> arguments) async {
+Future main(List<String> arguments) async {
   // configureNetworkTools('network_tools_db');
 
   setInstancesOfRepos(arguments.firstOrNull ?? Directory.current.path);

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cbj_hub/infrastructure/hub_server/hub_server.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 import 'package:grpc/grpc.dart';
@@ -11,7 +12,7 @@ class RemotePipesClient {
 
   // createStreamWithRemotePipes
   ///  Turn smart device on
-  static Future<void> createStreamWithHub(
+  static Future createStreamWithHub(
     String addressToHub,
     int hubPort,
   ) async {
@@ -22,7 +23,7 @@ class RemotePipesClient {
       final ResponseStream<ClientStatusRequests> response =
           stub!.hubTransferEntities(
         /// Transfer all requests from hub to the remote pipes->app
-        HubRequestsToApp.streamRequestsToApp
+        HubRequestsToApp.stream
             .map(DeviceHelperMethods().dynamicToRequestsAndStatusFromHub)
             .handleError((error) {
           logger.e('Stream have error $error');
@@ -30,7 +31,7 @@ class RemotePipesClient {
       );
 
       /// All responses from the app->remote pipes going int the hub
-      IAppCommunicationRepository.instance.getFromApp(
+      IHubServerController.instance.getFromApp(
         request: response,
         requestUrl: addressToHub,
         isRemotePipes: true,

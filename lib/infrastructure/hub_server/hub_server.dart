@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 import 'package:grpc/service_api.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Server to get and send information to the app
 class HubAppServer extends CbjHubServiceBase {
@@ -14,14 +17,13 @@ class HubAppServer extends CbjHubServiceBase {
     try {
       logger.t('Got new Client');
 
-      IAppCommunicationRepository.instance.getFromApp(
+      IHubServerController.instance.getFromApp(
         request: request,
         requestUrl: 'Error, Hub does not suppose to have request URL',
         isRemotePipes: false,
       );
 
-      yield* HubRequestsToApp.streamRequestsToApp
-          .map(DeviceHelperMethods().dynamicToRequestsAndStatusFromHub)
+      yield* HubRequestsToApp.stream
           .handleError((error) => logger.e('Stream have error $error'));
     } catch (e) {
       logger.e('Hub server error $e');
@@ -59,5 +61,33 @@ class HubAppServer extends CbjHubServiceBase {
   ) async* {
     // TODO: implement registerHub
     throw UnimplementedError();
+  }
+}
+
+/// Requests and updates from hub to the app
+class HubRequestsToApp {
+  static BehaviorSubject<RequestsAndStatusFromHub> stream =
+      BehaviorSubject<RequestsAndStatusFromHub>();
+}
+
+/// App requests for the hub to execute
+class AppRequestsToHub {
+  /// Stream controller of the app request for the hub
+
+  static StreamGroup<ClientStatusRequests> appRequestsToHubStreamBroadcast =
+      StreamGroup.broadcast();
+
+  static bool boolListenWorking = false;
+
+  static final appRequestsToHubStreamController =
+      StreamController<ClientStatusRequests>();
+
+  static Future listenToApp() async {
+    if (boolListenWorking) {
+      return;
+    }
+    boolListenWorking = true;
+    appRequestsToHubStreamBroadcast
+        .add(appRequestsToHubStreamController.stream);
   }
 }

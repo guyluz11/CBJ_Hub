@@ -32,7 +32,7 @@ class MqttServerRepository extends IMqttServerRepository {
   static Future<MqttServerClient>? clientFuture;
 
   @override
-  Future<void> asyncConstructor() async {
+  Future asyncConstructor() async {
     clientFuture = connect();
     await clientFuture;
   }
@@ -119,7 +119,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> subscribeToTopic(String topic) async {
+  Future subscribeToTopic(String topic) async {
     client.subscribe(topic, MqttQos.atLeastOnce);
   }
 
@@ -161,7 +161,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> allHubDevicesSubscriptions() async {
+  Future allHubDevicesSubscriptions() async {
     streamOfAllDevicesHubSubscriptions().listen(
         (List<MqttReceivedMessage<MqttMessage?>> mqttPublishMessage) async {
       final String messageTopic = mqttPublishMessage[0].topic;
@@ -187,7 +187,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> sendToApp() async {
+  Future sendToApp() async {
     streamOfAllDeviceAppSubscriptions().listen(
         (List<MqttReceivedMessage<MqttMessage?>> mqttPublishMessage) async {
       final String messageTopic = mqttPublishMessage[0].topic;
@@ -247,7 +247,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> publishMessage(String topic, String message) async {
+  Future publishMessage(String topic, String message) async {
     try {
       final builder = MqttClientPayloadBuilder();
       builder.addUTF8String(message);
@@ -258,7 +258,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> publishDeviceEntity(DeviceEntityBase deviceEntity) async {
+  Future publishDeviceEntity(DeviceEntityBase deviceEntity) async {
     final DeviceEntityDtoBase deviceAsDto = deviceEntity.toInfrastructure();
 
     final Map<String, String> devicePropertiesAsMqttTopicsAndValues =
@@ -363,7 +363,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   /// Resend the device object throw mqtt
-  Future<void> findDeviceAndResendItToMqtt(String deviceId) async {
+  Future findDeviceAndResendItToMqtt(String deviceId) async {
     // final ISavedDevicesRepo savedDevicesRepo = ISavedDevicesRepo.instance;
 
     // final Map<String, DeviceEntityBase> allDevices =
@@ -388,7 +388,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> postToHubMqtt({
+  Future postToHubMqtt({
     dynamic entityFromTheApp,
     bool? gotFromApp,
   }) async {
@@ -516,7 +516,7 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> postToAppMqtt({
+  Future postToAppMqtt({
     required DeviceEntityBase entityFromTheHub,
   }) async {
     // if (entityFromTheHub is Map<String, dynamic>) {
@@ -545,9 +545,10 @@ class MqttServerRepository extends IMqttServerRepository {
   }
 
   @override
-  Future<void> postSmartDeviceToAppMqtt({
+  Future postSmartDeviceToAppMqtt({
     required DeviceEntityBase entityFromTheHub,
   }) async {
     postToAppMqtt(entityFromTheHub: entityFromTheHub);
   }
+
 }
