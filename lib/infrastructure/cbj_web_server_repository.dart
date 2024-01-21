@@ -1,11 +1,10 @@
-import 'package:cbj_hub/domain/i_cbj_web_server_repository.dart';
+part of 'package:cbj_hub/domain/i_cbj_web_server_repository.dart';
 
 /// A cbj web server to interact with get current state requests from mqtt as
 /// well as website to change devices state locally on the network without
 /// the need of installing any app.
-class CbjWebServerRepository extends ICbjWebServerRepository {
-  CbjWebServerRepository() {
-    ICbjWebServerRepository.instance = this;
+class _CbjWebServerRepository extends ICbjWebServerRepository {
+  _CbjWebServerRepository() {
     startWebServer();
   }
 

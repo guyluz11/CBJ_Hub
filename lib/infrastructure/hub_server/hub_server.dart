@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:cbj_hub/domain/i_hub_server_controller.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 import 'package:grpc/service_api.dart';
@@ -20,7 +21,6 @@ class HubAppServer extends CbjHubServiceBase {
       IHubServerController.instance.getFromApp(
         request: request,
         requestUrl: 'Error, Hub does not suppose to have request URL',
-        isRemotePipes: false,
       );
 
       yield* HubRequestsToApp.stream
@@ -59,8 +59,7 @@ class HubAppServer extends CbjHubServiceBase {
     ServiceCall call,
     Stream<RequestsAndStatusFromHub> request,
   ) async* {
-    // TODO: implement registerHub
-    throw UnimplementedError();
+    /// Not in use here, remote pipes comunication with hub use this function
   }
 }
 

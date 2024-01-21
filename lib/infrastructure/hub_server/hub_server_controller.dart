@@ -1,18 +1,7 @@
-import 'dart:async';
-import 'dart:collection';
-import 'dart:convert';
+part of 'package:cbj_hub/domain/i_hub_server_controller.dart';
 
-import 'package:cbj_hub/infrastructure/hub_server/hub_server.dart';
-import 'package:cbj_hub/infrastructure/remote_pipes_client.dart';
-import 'package:cbj_hub/utils.dart';
-import 'package:cbj_integrations_controller/integrations_controller.dart';
-import 'package:grpc/grpc.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-
-class HubServerController extends IHubServerController {
-  HubServerController() {
-    IHubServerController.instance = this;
+class _HubServerController extends IHubServerController {
+  _HubServerController() {
     if (currentEnv == Env.prod) {
       hubPort = 50055;
     } else {
@@ -29,44 +18,6 @@ class HubServerController extends IHubServerController {
     final server = Server.create(services: [HubAppServer()]);
     await server.serve(port: hubPort);
     logger.i('Hub Server listening for apps clients on port ${server.port}...');
-  }
-
-  @override
-  Future startRemotePipesConnection(String remotePipesDomain) async {
-    const int remotePipesPort = 50056;
-    RemotePipesClient.createStreamWithHub(
-      remotePipesDomain,
-      // 'homeservice-one-service.default.g.com',
-      remotePipesPort,
-    );
-    await Future.delayed(const Duration(minutes: 1));
-    RemotePipesClient.createStreamWithHub(
-      remotePipesDomain,
-      // 'homeservice-one-service.default.g.com',
-      remotePipesPort,
-    );
-
-    // Here for easy find and local testing
-    // RemotePipesClient.createStreamWithHub('127.0.0.1', 50056);
-    logger.i(
-      'Creating connection with remote pipes to the domain $remotePipesDomain'
-      ' on port $remotePipesPort',
-    );
-  }
-
-  @override
-  Future startRemotePipesWhenThereIsConnectionToWww(
-    String remotePipesDomain,
-  ) async {
-    while (true) {
-      final bool result = await InternetConnectionChecker().hasConnection;
-      if (result) {
-        break;
-      }
-      await Future.delayed(const Duration(minutes: 2));
-    }
-    logger.i('Internet detected, will try to reconnect to Remote Pipes');
-    startRemotePipesConnection(remotePipesDomain);
   }
 
   void sendToApp(Stream<MqttPublishMessage> dataToSend) {
@@ -92,57 +43,8 @@ class HubServerController extends IHubServerController {
   Future getFromApp({
     required Stream<ClientStatusRequests> request,
     required String requestUrl,
-    required bool isRemotePipes,
-  }) async {
-    request
-        .listen(DeviceHelperMethods().handleClientStatusRequests)
-        .onError((error) {
-      if (error is GrpcError && error.code == 1) {
-        logger.t('Client have disconnected');
-      } else if (error is GrpcError && error.code == 14) {
-        final String errorMessage = error.message!;
-
-        if (error.message == null || !isRemotePipes) {
-          logger.e('Client stream error without message\n$error');
-        } else if (!errorMessage.contains('errorCode: 0')) {
-          logger.i('Closing last stream\n$error');
-        }
-
-        /// Request reached the internet but the didn't arrive to remote pipes
-        /// service
-        else if (!errorMessage.contains('errno = -2')) {
-          logger.e(
-            'Remote Pipes service does not exist, check URL\n'
-            '$error',
-          );
-        }
-
-        /// Request didn't reached the internet
-        else if (!errorMessage.contains('errno = -3')) {
-          logger.w(
-            'Entity does not have network\n'
-            '$error',
-          );
-          startRemotePipesWhenThereIsConnectionToWww(requestUrl);
-          return;
-        }
-        logger.e(
-          'Un none errno number\n'
-          '$error',
-        );
-      } else {
-        if (error is GrpcError &&
-            isRemotePipes &&
-            error.message != null &&
-            !error.message!.contains('errorCode: 0')) {
-          logger.i('Client stream got terminated to create new one\n$error');
-          startRemotePipesWhenThereIsConnectionToWww(requestUrl);
-          return;
-        }
-        logger.e('Client stream error\n$error');
-      }
-    });
-  }
+  }) async =>
+      RequestsHelper.streamFromApp(request: request, requestUrl: requestUrl);
 
   /// Trigger to send all areas from hub to app using the
   /// HubRequestsToApp stream
