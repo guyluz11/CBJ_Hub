@@ -20,24 +20,7 @@ class _HubServerController extends IHubServerController {
     logger.i('Hub Server listening for apps clients on port ${server.port}...');
   }
 
-  void sendToApp(Stream<MqttPublishMessage> dataToSend) {
-    // dataToSend.listen((MqttPublishMessage event) async {
-    // logger.i('Got hub requests to app');
-
-    //   ISavedDevicesRepo.instance
-    //       .getAllDevices()
-    //       .forEach((String id, deviceEntityToSend) {
-    //     final DeviceEntityDtoBase deviceDtoAbstract =
-    //         DeviceHelper.convertDomainToDto(deviceEntityToSend);
-    //     HubRequestsToApp.streamRequestsToApp.sink.add(deviceDtoAbstract);
-    //   });
-
-    //   (await ISceneCbjRepository.instance.getAllScenesAsMap())
-    //       .forEach((key, value) {
-    //     HubRequestsToApp.streamRequestsToApp.sink.add(value.toInfrastructure());
-    //   });
-    // });
-  }
+  void sendToApp(Stream<MqttPublishMessage> dataToSend) {}
 
   @override
   Future getFromApp({

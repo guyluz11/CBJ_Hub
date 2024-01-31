@@ -18,50 +18,6 @@ class _CbjWebServerRepository extends ICbjWebServerRepository {
     //     if (pathArgs.length >= 3) {
     //       if (pathArgs[0] == 'Devices') {
     //         final String entityId = pathArgs[1];
-
-    //         // final ISavedDevicesRepo savedDevicesRepo =
-    //         //     ISavedDevicesRepo.instance;
-
-    //         final Map<String, DeviceEntityBase> allDevices =
-    //             savedDevicesRepo.getAllDevices();
-
-    //         DeviceEntityBase? deviceObjectOfDeviceId;
-
-    //         for (final DeviceEntityBase d in allDevices.values) {
-    //           if (d.getCbjDeviceId == entityId) {
-    //             deviceObjectOfDeviceId = d;
-    //             break;
-    //           }
-    //         }
-    //         if (deviceObjectOfDeviceId != null) {
-    //           final String requestedDeviceProperty = pathArgs[2];
-    //           final DeviceEntityDtoBase deviceEntityDtoAbstract =
-    //               deviceObjectOfDeviceId.toInfrastructure();
-    //           final Map<String, dynamic> deviceEntityJson =
-    //               deviceEntityDtoAbstract.toJson();
-    //           String? requestedFielAction;
-    //           for (final MapEntry<String, dynamic> filedAndValue
-    //               in deviceEntityJson.entries) {
-    //             if (filedAndValue.key == requestedDeviceProperty) {
-    //               requestedFielAction = filedAndValue.value.toString();
-    //               break;
-    //             }
-    //           }
-    //           if (requestedFielAction != null) {
-    //             logger.i(
-    //               'Web server response of device id $entityId with property $requestedDeviceProperty is action $requestedFielAction',
-    //             );
-    //             request.response.write(requestedFielAction);
-    //           } else {
-    //             logger.w(
-    //               'Entitey id $entityId exist but requested property could not be found',
-    //             );
-    //             request.response.write('null');
-    //           }
-    //         } else {
-    //           logger.w('Entitey id $entityId does not exist');
-    //           request.response.write('null');
-    //         }
     //       } else {
     //         logger.w('pathArgs[0] is not supported ${pathArgs[0]}');
     //         request.response.write('null');

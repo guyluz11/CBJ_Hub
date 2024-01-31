@@ -100,7 +100,7 @@ class DeviceHelperMethods {
       //           as Map<String, dynamic>,
       //     );
       case SendingType.location:
-      case SendingType.undefinedType:
+      case SendingType.undefined:
       case SendingType.stringType:
       case SendingType.partialEntityType:
       case SendingType.entityType:
