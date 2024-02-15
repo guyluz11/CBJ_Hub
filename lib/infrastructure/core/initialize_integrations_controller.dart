@@ -25,7 +25,6 @@ Future initializeIntegrationsController({
   await DevicePinListManager().setPhysicalDeviceType();
 
   Hive.init(await dbPath());
-  await IDbRepository.instance.asyncConstractor();
 }
 
 Future<String> dbPath() async {

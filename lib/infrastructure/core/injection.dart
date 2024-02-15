@@ -1,7 +1,7 @@
+import 'package:cbj_hub/infrastructure/core/injection.config.dart';
 import 'package:cbj_hub/utils.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'package:network_tools/injectable.config.dart';
 
 final getItCbj = GetIt.instance;
 
