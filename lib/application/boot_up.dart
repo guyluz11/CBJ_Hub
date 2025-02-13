@@ -1,17 +1,22 @@
-import 'package:cbj_hub/infrastructure/app_communication/app_communication_repository.dart';
-import 'package:cbj_integrations_controller/domain/connector.dart';
-import 'package:cbj_integrations_controller/infrastructure/core/initialize_integrations_controller.dart';
+import 'package:cbj_hub/domain/i_hub_server_controller.dart';
+import 'package:cbj_hub/infrastructure/remote_pipes/remote_pipes_client.dart';
+import 'package:cbj_integrations_controller/integrations_controller.dart';
 
 class BootUp {
   BootUp() {
     setup();
   }
 
-  Future<void> setup() async {
-    await setupIntegrationsController();
-    Connector().startConnector();
-    Future.delayed(const Duration(milliseconds: 3000)).whenComplete(() {
-      AppCommunicationRepository();
-    });
+  Future setup() async {
+    VendorsConnectorConjecture();
+    SearchDevices()
+        .startSearchIsolate(networkUtilitiesType: NetworkUtilities());
+
+    await Future.delayed(const Duration(milliseconds: 3000));
+    IHubServerController.instance;
+    RemotePipesClient().startRemotePipesWhenThereIsConnectionToWww(
+      // '127.0.0.1',
+      'guypodservicename.cbjinni.com',
+    );
   }
 }

@@ -34,6 +34,8 @@ dependencies:
   hive: ^2.2.3
   # Library for making HTTP requests.
   http: ^1.1.0
+  # Convenient code generator for get_it
+  injectable: ^2.3.2
   # Utility library that checks for an Active Internet connection
   internet_connection_checker: ^1.0.0+1
   # Extremely fast, easy to use, and fully async NoSQL database.
@@ -50,14 +52,10 @@ dependencies:
   mqtt_client: ^10.0.0
   # Service discovery over multicast DNS (mDNS), Bonjour, and Avahi.
   multicast_dns: ^0.3.2+4
-  # Helps you discover open ports, devices on subnet and more.
-  network_tools: ^4.0.2
   # Provides runtime support for a Dart implementation of protobufs.
   protobuf: ^3.1.0
   # Extends the capabilities of Dart Streams and StreamControllers.
   rxdart: ^0.27.7
-  # Simple, fast generation of RFC4122 UUIDs.
-  uuid: ^4.2.1
 
 dev_dependencies:
   # A build system for Dart code generation and modular compilation.
@@ -70,6 +68,8 @@ dev_dependencies:
   hive_generator: ^2.0.1
   # Code generator for the Isar Database. Finds classes annotated with @Collection.
   #  isar_generator: ^3.0.5
+  # Convenient code generator for get_it.
+  injectable_generator: ^2.4.1
   # Collection of lint rules for Dart and Flutter projects
   lint: ^2.2.0
   # Library for mocks
