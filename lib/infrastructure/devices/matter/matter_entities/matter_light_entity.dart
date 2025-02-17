@@ -76,20 +76,23 @@ class MatterLightEntity extends GenericDimmableLightDE {
 
   @override
   Future<Either<CoreFailure, Unit>> turnOnLight() async {
-    try {
-      // final setStateBodyResponse = NodeRedRepository().
-      //
-      // if (setStateBodyResponse == null) {
-      //   throw 'setStateBodyResponse is null';
-      // }
-
-      return right(unit);
-    } catch (e) {
-      // As we are using the fast = true the response is always
-      // MatterHttpException Error
-      return right(unit);
-      // return left(const CoreFailure.unexpected());
-    }
+    // lightSwitchState =
+    //     GenericDimmableLightSwitchState(EntityActions.on.toString());
+    // try {
+    //   final String nodeRedApiBaseTopic =
+    //       IMqttServerRepository.instance.getNodeRedApiBaseTopic();
+    //
+    //   final String nodeRedDevicesTopic =
+    //       IMqttServerRepository.instance.getNodeRedDevicesTopicTypeName();
+    //   final String topic =
+    //       '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/${entityKey.getOrCrash()}/${EspHomeNodeRedApi.deviceStateProperty}/${EspHomeNodeRedApi.inputDeviceProperty}';
+    //
+    //   IMqttServerRepository.instance
+    //       .publishMessage(topic, """{"state":true}""");
+    // } catch (e) {
+    //   return left(const CoreFailure.unexpected());
+    // }
+    return right(unit);
   }
 
   @override

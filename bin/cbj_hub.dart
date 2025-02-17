@@ -7,7 +7,7 @@ import 'package:cbj_hub/infrastructure/mqtt_server_repository.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 
 Future main(List<String> arguments) async {
-  MqttServerRepository();
+  await MqttServerRepository().asyncConstructor();
   // CbjWebServerRepository();
   NodeRedRepository();
   SharedVariables()
