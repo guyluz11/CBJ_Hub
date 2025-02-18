@@ -5,9 +5,7 @@ import 'package:cbj_hub/utils.dart';
 import 'package:cbj_integrations_controller/integrations_controller.dart';
 
 class DeviceHelperMethods {
-  factory DeviceHelperMethods() {
-    return _instance;
-  }
+  factory DeviceHelperMethods() => _instance;
 
   DeviceHelperMethods._singletonContractor();
 
